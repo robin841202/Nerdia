@@ -6,7 +6,9 @@
     <string name="upcoming">即將上映</string>
     <string name="label_movies">電影</string>
     <string name="label_tvshows">影集</string>
-    <string name="trending">現正熱映</string>
+    <string name="now_playing">現正熱映</string>
+    <string name="trending">本週熱門</string>
     <string name="label_movie_poster">電影海報</string>
     <string name="label_movie_title">電影標題</string>
+    <string name="popular">最多人觀看</string>
 </resources>
