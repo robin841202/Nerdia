@@ -1,16 +1,31 @@
-package com.example.movieinfo.model;
+package com.example.movieinfo.model.movie;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Movie Data Model
+ * Movie Data Model, using @SerializedName to map to json key
  */
 public class MovieData {
 
+    @SerializedName("id")
     private long id;
+
+    @SerializedName("title")
     private String title;
+
+    @SerializedName("overview")
     private String overview;
+
+    @SerializedName("poster_path")
     private String posterPath;
+
+    @SerializedName("backdrop_path")
     private String backdropPath;
+
+    @SerializedName("vote_average")
     private double rating;
+
+    @SerializedName("release_date")
     private String releaseDate;
 
     public MovieData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate){
