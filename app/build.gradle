@@ -40,12 +40,23 @@ dependencies {
     // Support - SwipeRefreshLayout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
-
     // Material Components - In order to use "BottomNavigationView" in this project
     implementation 'com.google.android.material:material:1.6.1'
 
     // Legacy Support Library - In order to use "NestedScrollView" in this project
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // Retrofit Gson Converter - In order to convert dataModel object into Json representation or in another way
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // Gson - In order to convert dataModel object into Json representation or in another way
+    implementation 'com.google.code.gson:gson:2.9.1'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
