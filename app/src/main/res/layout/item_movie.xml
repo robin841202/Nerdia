@@ -16,6 +16,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/label_movie_poster"/>
+
+        <TextView
+            android:id="@+id/text_item_movie_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/rounded_corner" />
+
     </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/text_item_movie_title"
