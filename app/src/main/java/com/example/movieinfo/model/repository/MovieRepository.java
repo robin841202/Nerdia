@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.repository;
 
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.IMovieService;
@@ -21,7 +22,9 @@ public class MovieRepository {
     private final String apiKey = "45573754115aa294605178ed2769f617";
     private String language;
     private String region;
-    private final String mediaType = "movie";
+    // set default mediaType to movie
+    private final String mediaType = StaticParameter.MediaType.MOVIE;
+
 
     public MovieRepository() {
 
