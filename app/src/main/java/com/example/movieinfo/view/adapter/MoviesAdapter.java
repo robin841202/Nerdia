@@ -1,6 +1,5 @@
-package com.example.movieinfo.view;
+package com.example.movieinfo.view.adapter;
 
-import android.graphics.Movie;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.movie.MovieData;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
     private ArrayList<MovieData> movie_list;
     private IMovieListener listener;
 
-    public interface IMovieListener{
+    public interface IMovieListener {
         /**
          * Movie item onClick Event
          */
@@ -41,7 +38,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_movie, parent, false);
+                .inflate(R.layout.item_media, parent, false);
         return new MoviesViewHolder(itemView, listener);
     }
 
@@ -56,14 +53,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
 
-    public void appendMovies(ArrayList<MovieData> movies){
+    public void appendMovies(ArrayList<MovieData> movies) {
         movie_list.addAll(movies);
         int startPosition = movie_list.size();
         // refresh partially
         notifyItemRangeInserted(startPosition, movies.size() - 1);
     }
 
-    public void removeAllMovies(){
+    public void removeAllMovies() {
         movie_list.clear();
         notifyDataSetChanged();
     }
@@ -84,9 +81,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         public MoviesViewHolder(@NonNull View itemView, IMovieListener listener) {
             super(itemView);
             this.itemView = itemView;
-            this.poster = itemView.findViewById(R.id.img_item_movie_poster);
-            this.title = itemView.findViewById(R.id.text_item_movie_title);
-            this.rating = itemView.findViewById(R.id.text_item_movie_rating);
+            this.poster = itemView.findViewById(R.id.img_item_media_poster);
+            this.title = itemView.findViewById(R.id.text_item_media_title);
+            this.rating = itemView.findViewById(R.id.text_item_media_rating);
 
             this.listener = listener;
         }
@@ -103,12 +100,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
             // set movie rating
             double ratingNum = movieData.getRating();
-            if(ratingNum > 0){
+            if (ratingNum > 0) {
                 // set rating TextView VISIBLE
                 rating.setVisibility(View.VISIBLE);
                 // set rating TextView
                 rating.setText(String.format("%.1f", ratingNum));
-            }else{
+            } else {
                 // set rating TextView GONE
                 rating.setVisibility(View.GONE);
             }
@@ -125,7 +122,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         }
 
     }
-
 
 
 }

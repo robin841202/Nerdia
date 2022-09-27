@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
+import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.ui.home.HomeFragment;
 
 
@@ -45,14 +47,30 @@ public class MediaDetailsActivity extends AppCompatActivity {
         scoreText = findViewById(R.id.text_score);
         ratingBar = findViewById(R.id.ratingBar_movie_rating);
 
-        // get data object from intent
-        MovieData movieData = getIntent().getParcelableExtra(HomeFragment.EXTRA_DATA_MOVIE_KEY);
+        // get mediaType from intent
+        String mediaType = getIntent().getStringExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY);
 
-        //  if data exists, populate data in Views
-        if (movieData != null) {
-            populateDetails(movieData);
+        switch (mediaType) {
+            case StaticParameter.MediaType.MOVIE: // Populate Movie UI
+                // get data object from intent
+                MovieData movieData = getIntent().getParcelableExtra(HomeFragment.EXTRA_DATA_MOVIE_KEY);
+                //  if data exists, populate data in Views
+                if (movieData != null) {
+                    populateDetails(movieData);
+                }
+                break;
+            case StaticParameter.MediaType.TV: // Populate TV Show UI
+                // get data object from intent
+                TvShowData tvShowData = getIntent().getParcelableExtra(HomeFragment.EXTRA_DATA_TVSHOW_KEY);
+                //  if data exists, populate data in Views
+                if (tvShowData != null) {
+                    populateDetails(tvShowData);
+                }
+                break;
+            default:
+                // do nothing
+                break;
         }
-
     }
 
     /**
@@ -67,7 +85,53 @@ public class MediaDetailsActivity extends AppCompatActivity {
     }
 
     /**
-     * Populate Details Data in Views
+     * Populate Details Data in Views (TV Show)
+     *
+     * @param tvShow tvShow data
+     */
+    private void populateDetails(TvShowData tvShow) {
+        String backdropPath = tvShow.getBackdropPath();
+        if (backdropPath != null && !backdropPath.isEmpty()) {
+            // set image backdrop
+            Glide.with(this)
+                    .load(image_baseUrl + "w1280" + backdropPath)
+                    .centerCrop()
+                    .into(backdrop);
+
+
+        }
+
+        String posterPath = tvShow.getPosterPath();
+        if (posterPath != null && !posterPath.isEmpty()) {
+            // set image poster
+            Glide.with(this)
+                    .load(image_baseUrl + "w342" + posterPath)
+                    .centerCrop()
+                    .into(poster);
+
+        }
+
+        // set title
+        title.setText(tvShow.getTitle() == null ? "" : tvShow.getTitle());
+
+        // set overview
+        overview.setText(tvShow.getOverview() == null ? "" : tvShow.getOverview());
+
+        // set releaseDate
+        releaseDate.setText(tvShow.getOnAirDate() == null ? "" : tvShow.getOnAirDate());
+
+        // set score
+        double score = tvShow.getRating();
+        String scoreInPercent = String.format("%.0f %%", score * 10);
+        scoreText.setText(scoreInPercent);
+
+        // set ratingBar
+        float scoreInRatingScale = (float) score / 2f;
+        ratingBar.setRating(scoreInRatingScale);
+    }
+
+    /**
+     * Populate Details Data in Views (Movie)
      *
      * @param movie movie data
      */

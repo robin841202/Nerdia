@@ -8,7 +8,7 @@
     <string name="label_tvshows">影集</string>
     <string name="now_playing">現正熱映</string>
     <string name="trending">本週熱門</string>
-    <string name="label_movie_poster">電影海報</string>
-    <string name="label_movie_title">電影標題</string>
+    <string name="label_media_poster">海報</string>
+    <string name="label_media_title">標題</string>
     <string name="popular">最多人觀看</string>
 </resources>

@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class TvShowsResponse {
     @SerializedName("page")
-    private int page;
+    public int page;
 
     @SerializedName("results")
-    private ArrayList<TvShowData> tvShow_list = new ArrayList<TvShowData>();
+    public ArrayList<TvShowData> tvShow_list = new ArrayList<TvShowData>();
 
     @SerializedName("total_pages")
-    private int total_pages;
+    public int total_pages;
 }

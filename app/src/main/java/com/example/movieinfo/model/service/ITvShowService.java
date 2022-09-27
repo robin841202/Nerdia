@@ -1,64 +1,24 @@
 package com.example.movieinfo.model.service;
 
-import com.example.movieinfo.model.movie.MoviesResponse;
+import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface IMovieService {
+public interface ITvShowService {
 
     /**
-     * Get Upcoming Movies
+     * Get Popular TvShows
      * @param apiKey TMDB API Key
      * @param page target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
      * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
-    @GET("movie/upcoming")
-    Call<MoviesResponse> getUpcomingMovies(
-            @Query("api_key")
-                    String apiKey,
-            @Query("page")
-                    int page,
-            @Query("language")
-                    String language,
-            @Query("region")
-                    String region
-    );
-
-    /**
-     * Get Popular Movies
-     * @param apiKey TMDB API Key
-     * @param page target page
-     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
-     * @return
-     */
-    @GET("movie/popular")
-    Call<MoviesResponse> getPopularMovies(
-            @Query("api_key")
-                    String apiKey,
-            @Query("page")
-                    int page,
-            @Query("language")
-                    String language,
-            @Query("region")
-                    String region
-    );
-
-    /**
-     * Get Now playing Movies
-     * @param apiKey TMDB API Key
-     * @param page target page
-     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
-     * @return
-     */
-    @GET("movie/now_playing")
-    Call<MoviesResponse> getNowPlayingMovies(
+    @GET("tv/popular")
+    Call<TvShowsResponse> getPopularTvShows(
             @Query("api_key")
                     String apiKey,
             @Query("page")
@@ -80,7 +40,7 @@ public interface IMovieService {
      * @return
      */
     @GET("trending/{media_type}/{time_window}")
-    Call<MoviesResponse> getTrendingMedia(
+    Call<TvShowsResponse> getTrendingMedia(
             @Path("media_type")
                     String mediaType,
             @Path("time_window")

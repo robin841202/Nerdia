@@ -1,6 +1,5 @@
 package com.example.movieinfo.ui.home;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,8 +19,11 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.repository.MovieRepository;
+import com.example.movieinfo.model.repository.TvShowRepository;
+import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.view.MediaDetailsActivity;
-import com.example.movieinfo.view.MoviesAdapter;
+import com.example.movieinfo.view.adapter.MoviesAdapter;
+import com.example.movieinfo.view.adapter.TvShowsAdapter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,16 +31,19 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListener {
+public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
 
     private final String LOG_TAG = "HomeFragment";
     // Define extra data key for passing data to other activities
+    public static final String EXTRA_DATA_MEDIA_TYPE_KEY = "EXTRA_DATA_MEDIA_TYPE";
     public static final String EXTRA_DATA_MOVIE_KEY = "EXTRA_DATA_MOVIE";
-
+    public static final String EXTRA_DATA_TVSHOW_KEY = "EXTRA_DATA_TVSHOW";
     private final MovieRepository movieRepository = new MovieRepository();
+    private final TvShowRepository tvShowRepository = new TvShowRepository();
 
     private SwipeRefreshLayout pullToRefresh;
 
+    // region Movies Variables
     private ProgressBar upcomingMovies_PB;
     private MoviesAdapter upcomingMoviesAdapter;
     private RecyclerView upcomingMovies_RcView;
@@ -57,6 +62,26 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     private LinearLayoutManager trendingMoviesLayoutMgr;
     private int trendingMoviesPage;
 
+    private ProgressBar popularMovies_PB;
+    private MoviesAdapter popularMoviesAdapter;
+    private RecyclerView popularMovies_RcView;
+    private LinearLayoutManager popularMoviesLayoutMgr;
+    private int popularMoviesPage;
+    // endregion
+
+    // TvShows Variables
+    private ProgressBar popularTvShows_PB;
+    private TvShowsAdapter popularTvShowsAdapter;
+    private RecyclerView popularTvShows_RcView;
+    private LinearLayoutManager popularTvShowsLayoutMgr;
+    private int popularTvShowsPage;
+
+    private ProgressBar trendingTvShows_PB;
+    private TvShowsAdapter trendingTvShowsAdapter;
+    private RecyclerView trendingTvShows_RcView;
+    private LinearLayoutManager trendingTvShowsLayoutMgr;
+    private int trendingTvShowsPage;
+    // endregion
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,6 +94,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         upcomingMoviesPage = 1;
         nowPlayingMoviesPage = 1;
         trendingMoviesPage = 1;
+        popularMoviesPage = 1;
+        popularTvShowsPage = 1;
+        trendingTvShowsPage = 1;
     }
 
     @Override
@@ -85,32 +113,55 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
         trendingMovies_PB = root.findViewById(R.id.pb_trending_movies);
         trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
+        popularMovies_PB = root.findViewById(R.id.pb_popular_movies);
+        popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
+        popularTvShows_PB = root.findViewById(R.id.pb_popular_shows);
+        popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
+        trendingTvShows_PB = root.findViewById(R.id.pb_trending_shows);
+        trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
         pullToRefresh = root.findViewById(R.id.swiperefresh);
 
-        // Initialize movieAdapter
+        // Initialize Adapter
         upcomingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
         nowPlayingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
         trendingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
+        popularMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
+        popularTvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
+        trendingTvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
 
         // Initialize linearLayoutManager
         upcomingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         nowPlayingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         trendingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        popularMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        popularTvShowsLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        trendingTvShowsLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
         // Set adapter
         upcomingMovies_RcView.setAdapter(upcomingMoviesAdapter);
         nowPlayingMovies_RcView.setAdapter(nowPlayingMoviesAdapter);
         trendingMovies_RcView.setAdapter(trendingMoviesAdapter);
+        popularMovies_RcView.setAdapter(popularMoviesAdapter);
+        popularTvShows_RcView.setAdapter(popularTvShowsAdapter);
+        trendingTvShows_RcView.setAdapter(trendingTvShowsAdapter);
+        ;
 
         // Set layoutManager
         upcomingMovies_RcView.setLayoutManager(upcomingMoviesLayoutMgr);
         nowPlayingMovies_RcView.setLayoutManager(nowPlayingMoviesLayoutMgr);
         trendingMovies_RcView.setLayoutManager(trendingMoviesLayoutMgr);
+        popularMovies_RcView.setLayoutManager(popularMoviesLayoutMgr);
+        popularTvShows_RcView.setLayoutManager(popularTvShowsLayoutMgr);
+        trendingTvShows_RcView.setLayoutManager(trendingTvShowsLayoutMgr);
 
         // Start getting data
         getUpcomingMovies();
         getNowPlayingMovies();
         getTrendingMovies();
+        getPopularMovies();
+        getPopularTvShows();
+        getTrendingTvShows();
+
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -124,6 +175,15 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
 
                 getTrendingMovies();
                 Log.d(LOG_TAG, "onRefreshTrendingMovies");
+
+                getPopularMovies();
+                Log.d(LOG_TAG, "onRefreshPopularMovies");
+
+                getPopularTvShows();
+                Log.d(LOG_TAG, "onRefreshPopularTvShows");
+
+                getTrendingTvShows();
+                Log.d(LOG_TAG, "onRefreshTrendingTvShows");
 
                 pullToRefresh.setRefreshing(false);
             }
@@ -296,6 +356,169 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
 
     // endregion
 
+    // region Popular Movies
+
+    /**
+     * Get Popular Movies
+     */
+    public void getPopularMovies() {
+        try {
+            // show progressBar
+            popularMovies_PB.setVisibility(View.VISIBLE);
+            Method onPopularMoviesFetched = getClass().getMethod("onPopularMoviesFetched", ArrayList.class);
+            Method onFetchDataError = getClass().getMethod("onFetchDataError");
+            movieRepository.getPopularMovies(popularMoviesPage, this, onPopularMoviesFetched, onFetchDataError);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Callback when get popular movies successfully
+     *
+     * @param movie_list popular movies data
+     */
+    public void onPopularMoviesFetched(ArrayList<MovieData> movie_list) {
+        // hide progressBar
+        popularMovies_PB.setVisibility(View.GONE);
+        // append data to adapter
+        popularMoviesAdapter.appendMovies(movie_list);
+        // attach onScrollListener to RecyclerView
+        popularMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // get the number of all items in recyclerView
+                int totalItemCount = popularMoviesLayoutMgr.getItemCount();
+                // get the number of current items attached to recyclerView
+                int visibleItemCount = popularMoviesLayoutMgr.getChildCount();
+                // get the first visible item's position
+                int firstVisibleItem = popularMoviesLayoutMgr.findFirstVisibleItemPosition();
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    // detach current OnScrollListener
+                    popularMovies_RcView.removeOnScrollListener(this);
+
+                    // append nextPage data to recyclerView
+                    popularMoviesPage++;
+                    getPopularMovies();
+                }
+            }
+        });
+
+        Log.d(LOG_TAG, "popular movies: data fetched successfully");
+    }
+
+    // endregion
+
+
+    // region Popular TvShows
+
+    /**
+     * Get Popular TvShows
+     */
+    public void getPopularTvShows() {
+        try {
+            // show progressBar
+            popularTvShows_PB.setVisibility(View.VISIBLE);
+            Method onPopularTvShowsFetched = getClass().getMethod("onPopularTvShowsFetched", ArrayList.class);
+            Method onFetchDataError = getClass().getMethod("onFetchDataError");
+            tvShowRepository.getPopularTvShows(popularTvShowsPage, this, onPopularTvShowsFetched, onFetchDataError);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Callback when get popular tvShows successfully
+     *
+     * @param tvShow_list popular tvShows data
+     */
+    public void onPopularTvShowsFetched(ArrayList<TvShowData> tvShow_list) {
+        // hide progressBar
+        popularTvShows_PB.setVisibility(View.GONE);
+        // append data to adapter
+        popularTvShowsAdapter.appendTvShows(tvShow_list);
+        // attach onScrollListener to RecyclerView
+        popularTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // get the number of all items in recyclerView
+                int totalItemCount = popularTvShowsLayoutMgr.getItemCount();
+                // get the number of current items attached to recyclerView
+                int visibleItemCount = popularTvShowsLayoutMgr.getChildCount();
+                // get the first visible item's position
+                int firstVisibleItem = popularTvShowsLayoutMgr.findFirstVisibleItemPosition();
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    // detach current OnScrollListener
+                    popularTvShows_RcView.removeOnScrollListener(this);
+
+                    // append nextPage data to recyclerView
+                    popularTvShowsPage++;
+                    getPopularTvShows();
+                }
+            }
+        });
+
+        Log.d(LOG_TAG, "popular tvShows: data fetched successfully");
+    }
+
+    // endregion
+
+    // region Trending TvShows
+
+    /**
+     * Get Trending TvShows
+     */
+    public void getTrendingTvShows() {
+        try {
+            // show progressBar
+            trendingTvShows_PB.setVisibility(View.VISIBLE);
+            Method onTrendingTvShowsFetched = getClass().getMethod("onTrendingTvShowsFetched", ArrayList.class);
+            Method onFetchDataError = getClass().getMethod("onFetchDataError");
+            tvShowRepository.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, trendingTvShowsPage, this, onTrendingTvShowsFetched, onFetchDataError);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Callback when get trending tvShows successfully
+     *
+     * @param tvShow_list trending tvShows data
+     */
+    public void onTrendingTvShowsFetched(ArrayList<TvShowData> tvShow_list) {
+        // hide progressBar
+        trendingTvShows_PB.setVisibility(View.GONE);
+        // append data to adapter
+        trendingTvShowsAdapter.appendTvShows(tvShow_list);
+        // attach onScrollListener to RecyclerView
+        trendingTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // get the number of all items in recyclerView
+                int totalItemCount = trendingTvShowsLayoutMgr.getItemCount();
+                // get the number of current items attached to recyclerView
+                int visibleItemCount = trendingTvShowsLayoutMgr.getChildCount();
+                // get the first visible item's position
+                int firstVisibleItem = trendingTvShowsLayoutMgr.findFirstVisibleItemPosition();
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    // detach current OnScrollListener
+                    trendingTvShows_RcView.removeOnScrollListener(this);
+
+                    // append nextPage data to recyclerView
+                    trendingTvShowsPage++;
+                    getTrendingTvShows();
+                }
+            }
+        });
+
+        Log.d(LOG_TAG, "trending tvShows: data fetched successfully");
+    }
+
+    // endregion
+
 
     /**
      * Callback when data fetched fail
@@ -313,7 +536,23 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     @Override
     public void onMovieClick(MovieData movie) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
+        intent.putExtra(EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
         intent.putExtra(EXTRA_DATA_MOVIE_KEY, movie);
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    /**
+     * Callback when tvShow item get clicked
+     *
+     * @param tvShow tvShow data
+     */
+    @Override
+    public void onTvShowClick(TvShowData tvShow) {
+        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
+        intent.putExtra(EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
+        intent.putExtra(EXTRA_DATA_TVSHOW_KEY, tvShow);
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
