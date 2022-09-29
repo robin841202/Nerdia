@@ -4,7 +4,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_navigation"
         android:icon="@drawable/ic_nav_home"
         android:title="@string/title_home" />
     <item
