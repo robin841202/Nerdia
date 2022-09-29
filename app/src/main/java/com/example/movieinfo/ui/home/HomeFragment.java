@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.example.movieinfo.R;
@@ -21,6 +26,9 @@ import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.repository.MovieRepository;
 import com.example.movieinfo.model.repository.TvShowRepository;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.example.movieinfo.ui.search.SearchFragment;
+import com.example.movieinfo.ui.watchlist.WatchlistFragment;
+import com.example.movieinfo.view.MainActivity;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
@@ -28,16 +36,15 @@ import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
 
     private final String LOG_TAG = "HomeFragment";
-    // Define extra data key for passing data to other activities
+    // Define extra data key for passing data to other activities or fragments
     public static final String EXTRA_DATA_MEDIA_TYPE_KEY = "EXTRA_DATA_MEDIA_TYPE";
     public static final String EXTRA_DATA_MOVIE_KEY = "EXTRA_DATA_MOVIE";
     public static final String EXTRA_DATA_TVSHOW_KEY = "EXTRA_DATA_TVSHOW";
+    public static final String EXTRA_DATA_VERTICAL_BROWSE_KEY = "EXTRA_DATA_VERTICAL_BROWSE";
+
     private final MovieRepository movieRepository = new MovieRepository();
     private final TvShowRepository tvShowRepository = new TvShowRepository();
 
@@ -49,24 +56,28 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     private RecyclerView upcomingMovies_RcView;
     private LinearLayoutManager upcomingMoviesLayoutMgr;
     private int upcomingMoviesPage;
+    private ImageButton upcomingMovies_ImgBtn;
 
     private ProgressBar nowPlayingMovies_PB;
     private MoviesAdapter nowPlayingMoviesAdapter;
     private RecyclerView nowPlayingMovies_RcView;
     private LinearLayoutManager nowPlayingMoviesLayoutMgr;
     private int nowPlayingMoviesPage;
+    private ImageButton nowPlayingMovies_ImgBtn;
 
     private ProgressBar trendingMovies_PB;
     private MoviesAdapter trendingMoviesAdapter;
     private RecyclerView trendingMovies_RcView;
     private LinearLayoutManager trendingMoviesLayoutMgr;
     private int trendingMoviesPage;
+    private ImageButton trendingMovies_ImgBtn;
 
     private ProgressBar popularMovies_PB;
     private MoviesAdapter popularMoviesAdapter;
     private RecyclerView popularMovies_RcView;
     private LinearLayoutManager popularMoviesLayoutMgr;
     private int popularMoviesPage;
+    private ImageButton popularMovies_ImgBtn;
     // endregion
 
     // TvShows Variables
@@ -75,12 +86,14 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     private RecyclerView popularTvShows_RcView;
     private LinearLayoutManager popularTvShowsLayoutMgr;
     private int popularTvShowsPage;
+    private ImageButton popularTvShows_ImgBtn;
 
     private ProgressBar trendingTvShows_PB;
     private TvShowsAdapter trendingTvShowsAdapter;
     private RecyclerView trendingTvShows_RcView;
     private LinearLayoutManager trendingTvShowsLayoutMgr;
     private int trendingTvShowsPage;
+    private ImageButton trendingTvShows_ImgBtn;
     // endregion
 
     public HomeFragment() {
@@ -90,6 +103,15 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
+
         // set default page
         upcomingMoviesPage = 1;
         nowPlayingMoviesPage = 1;
@@ -97,28 +119,26 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         popularMoviesPage = 1;
         popularTvShowsPage = 1;
         trendingTvShowsPage = 1;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-
 
         // Get Views
         upcomingMovies_PB = root.findViewById(R.id.pb_upcoming_movies);
         upcomingMovies_RcView = root.findViewById(R.id.recycler_upcoming_movies);
+        upcomingMovies_ImgBtn = root.findViewById(R.id.imgBtn_upcoming_movies);
         nowPlayingMovies_PB = root.findViewById(R.id.pb_now_playing_movies);
         nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
+        nowPlayingMovies_ImgBtn = root.findViewById(R.id.imgBtn_now_playing_movies);
         trendingMovies_PB = root.findViewById(R.id.pb_trending_movies);
         trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
+        trendingMovies_ImgBtn = root.findViewById(R.id.imgBtn_trending_movies);
         popularMovies_PB = root.findViewById(R.id.pb_popular_movies);
         popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
+        popularMovies_ImgBtn = root.findViewById(R.id.imgBtn_popular_movies);
         popularTvShows_PB = root.findViewById(R.id.pb_popular_shows);
         popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
+        popularTvShows_ImgBtn = root.findViewById(R.id.imgBtn_popular_shows);
         trendingTvShows_PB = root.findViewById(R.id.pb_trending_shows);
         trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
+        trendingTvShows_ImgBtn = root.findViewById(R.id.imgBtn_trending_shows);
         pullToRefresh = root.findViewById(R.id.swiperefresh);
 
         // Initialize Adapter
@@ -144,7 +164,6 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         popularMovies_RcView.setAdapter(popularMoviesAdapter);
         popularTvShows_RcView.setAdapter(popularTvShowsAdapter);
         trendingTvShows_RcView.setAdapter(trendingTvShowsAdapter);
-        ;
 
         // Set layoutManager
         upcomingMovies_RcView.setLayoutManager(upcomingMoviesLayoutMgr);
@@ -153,6 +172,14 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         popularMovies_RcView.setLayoutManager(popularMoviesLayoutMgr);
         popularTvShows_RcView.setLayoutManager(popularTvShowsLayoutMgr);
         trendingTvShows_RcView.setLayoutManager(trendingTvShowsLayoutMgr);
+
+        return root;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Start getting data
         getUpcomingMovies();
@@ -164,32 +191,48 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
 
 
         // Set SwipeRefreshListener
-        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getUpcomingMovies();
-                Log.d(LOG_TAG, "onRefreshUpcomingMovies");
+        pullToRefresh.setOnRefreshListener(() -> {
+            getUpcomingMovies();
+            Log.d(LOG_TAG, "onRefreshUpcomingMovies");
 
-                getNowPlayingMovies();
-                Log.d(LOG_TAG, "onRefreshNowPlayingMovies");
+            getNowPlayingMovies();
+            Log.d(LOG_TAG, "onRefreshNowPlayingMovies");
 
-                getTrendingMovies();
-                Log.d(LOG_TAG, "onRefreshTrendingMovies");
+            getTrendingMovies();
+            Log.d(LOG_TAG, "onRefreshTrendingMovies");
 
-                getPopularMovies();
-                Log.d(LOG_TAG, "onRefreshPopularMovies");
+            getPopularMovies();
+            Log.d(LOG_TAG, "onRefreshPopularMovies");
 
-                getPopularTvShows();
-                Log.d(LOG_TAG, "onRefreshPopularTvShows");
+            getPopularTvShows();
+            Log.d(LOG_TAG, "onRefreshPopularTvShows");
 
-                getTrendingTvShows();
-                Log.d(LOG_TAG, "onRefreshTrendingTvShows");
+            getTrendingTvShows();
+            Log.d(LOG_TAG, "onRefreshTrendingTvShows");
 
-                pullToRefresh.setRefreshing(false);
-            }
+            pullToRefresh.setRefreshing(false);
         });
 
-        return root;
+        //  Set ImageButtonListener
+        upcomingMovies_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.UPCOMING_MOVIES);
+        });
+        nowPlayingMovies_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.NOWPLAYING_MOVIES);
+        });
+        trendingMovies_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.TRENDING_MOVIES);
+        });
+        popularMovies_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_MOVIES);
+        });
+        popularTvShows_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_TVSHOWS);
+        });
+        trendingTvShows_ImgBtn.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.TRENDING_TVSHOWS);
+        });
+
     }
 
     // region Upcoming Movies
@@ -556,5 +599,19 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+
+    /**
+     * navigate to VerticalBrowseFragment
+     *
+     * @param homeCategory homeCategory from StaticParameter.HomeCategory
+     */
+    private void showVerticalBrowse(int homeCategory) {
+        Bundle arguments = new Bundle();
+        arguments.putInt(EXTRA_DATA_VERTICAL_BROWSE_KEY, homeCategory);
+        // navigate to verticalBrowseFragment
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_homeFragment_to_verticalBrowseFragment, arguments);
     }
 }

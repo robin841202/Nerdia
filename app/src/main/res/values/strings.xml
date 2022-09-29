@@ -11,4 +11,12 @@
     <string name="label_media_poster">海報</string>
     <string name="label_media_title">標題</string>
     <string name="popular">最多人觀看</string>
+    <string name="title_upcoming_movies">即將上映電影</string>
+    <string name="title_now_playing_movies">現正熱映電影</string>
+    <string name="title_trending_movies">本週熱門電影</string>
+    <string name="title_popular_movies">最多人觀看電影</string>
+    <string name="title_popular_tvShows">最多人觀看影集</string>
+    <string name="title_trending_tvShows">本週熱門影集</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

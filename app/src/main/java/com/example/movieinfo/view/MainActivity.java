@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,13 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "MainActivity";
     private Context context;
 
-    // Define FragmentType Enum
-    public enum FragmentType{
-        home, search, watchlist
-    }
+    private AppBarConfiguration appBarConfiguration;
+    private NavController navController;
 
-    private FragmentManager fManager;
-    private FragmentTransaction fTransaction;
     private BottomNavigationView bottomNavView;
 
     @Override
@@ -34,54 +34,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initView();
-    }
-
-    private void initView(){
+        // Get Views
         context = this;
         bottomNavView = findViewById(R.id.bottomNavView);
 
-        // initial fragmentManager
-        fManager = getSupportFragmentManager();
+        // set actionBar
+        setSupportActionBar(findViewById(R.id.toolbar));
 
-        // set bottom navigation bar selected listener
-        bottomNavView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()){
-                case R.id.navItem_home:
-                    changeFragmentTo(FragmentType.home);
-                    return true;
-                case R.id.navItem_search:
-                    changeFragmentTo(FragmentType.search);
-                    return true;
-                case R.id.navItem_watchlist:
-                    changeFragmentTo(FragmentType.watchlist);
-                    return true;
-                default:
-                    return false;
-            }
-        });
+        navController = Navigation.findNavController(this, R.id.fragment_container);
+        // set actionBar using nav_graph
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        // start from Home fragment
-        changeFragmentTo(FragmentType.home);
+        // set bottomNavigationView using nav_graph
+        NavigationUI.setupWithNavController(bottomNavView, navController);
     }
 
-    private void changeFragmentTo(FragmentType type){
-        // setup the fragment transaction
-        fTransaction = fManager.beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        switch (type){
-            case home:
-                fTransaction.replace(R.id.fragment_container,HomeFragment.class, null);
-                break;
-            case search:
-                fTransaction.replace(R.id.fragment_container, SearchFragment.class, null);
-                break;
-            case watchlist:
-                fTransaction.replace(R.id.fragment_container, WatchlistFragment.class, null);
-                break;
-        }
-        // commit transaction
-        fTransaction.commit();
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+                || super.onSupportNavigateUp();
     }
-
 }

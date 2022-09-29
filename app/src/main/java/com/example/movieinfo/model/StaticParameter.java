@@ -12,4 +12,13 @@ public class StaticParameter {
         public static final String DAILY = "day";
         public static final String WEEKLY = "week";
     }
+
+    public class HomeCategory{
+        public static final int UPCOMING_MOVIES = 0;
+        public static final int NOWPLAYING_MOVIES = 1;
+        public static final int TRENDING_MOVIES = 2;
+        public static final int POPULAR_MOVIES = 3;
+        public static final int POPULAR_TVSHOWS = 4;
+        public static final int TRENDING_TVSHOWS = 5;
+    }
 }
