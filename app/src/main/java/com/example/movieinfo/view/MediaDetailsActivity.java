@@ -9,6 +9,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
@@ -95,6 +96,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             // set image backdrop
             Glide.with(this)
                     .load(image_baseUrl + "w1280" + backdropPath)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(backdrop);
 
@@ -106,6 +108,8 @@ public class MediaDetailsActivity extends AppCompatActivity {
             // set image poster
             Glide.with(this)
                     .load(image_baseUrl + "w342" + posterPath)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.ic_arrow_left)
                     .centerCrop()
                     .into(poster);
 
@@ -141,6 +145,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             // set image backdrop
             Glide.with(this)
                     .load(image_baseUrl + "w1280" + backdropPath)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(backdrop);
 
@@ -152,6 +157,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             // set image poster
             Glide.with(this)
                     .load(image_baseUrl + "w342" + posterPath)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(poster);
 

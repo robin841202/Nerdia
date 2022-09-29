@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.movie.MovieData;
 
@@ -92,6 +93,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             // set image poster
             Glide.with(itemView)
                     .load(image_baseUrl + movieData.getPosterPath())
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(poster);
 
