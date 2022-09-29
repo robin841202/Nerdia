@@ -82,16 +82,22 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         // Initialize gridLayoutManager
         verticalBrowseLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
 
-        // Set Adapter
+        // Set Adapter & toolbar title
         switch (homeCategory){
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
+                toolBar.setTitle(getString(R.string.title_upcoming_movies));
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
+                toolBar.setTitle(getString(R.string.title_now_playing_movies));
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
+                toolBar.setTitle(getString(R.string.title_trending_movies));
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
+                toolBar.setTitle(getString(R.string.title_popular_movies));
                 verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_movie);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
+                toolBar.setTitle(getString(R.string.title_popular_tvShows));
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
+                toolBar.setTitle(getString(R.string.title_trending_tvShows));
                 verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_tv);
                 break;
             default:
@@ -123,33 +129,21 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
             switch (homeCategory){
                 case StaticParameter.HomeCategory.UPCOMING_MOVIES:
                     movieRepository.getUpcomingMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_upcoming_movies));
                     break;
                 case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
                     movieRepository.getNowPlayingMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_now_playing_movies));
                     break;
                 case StaticParameter.HomeCategory.TRENDING_MOVIES:
                     movieRepository.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_trending_movies));
                     break;
                 case StaticParameter.HomeCategory.POPULAR_MOVIES:
                     movieRepository.getPopularMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_popular_movies));
                     break;
                 case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
                     tvShowRepository.getPopularTvShows(verticalBrowsePage, this, onTvShowsFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_popular_tvShows));
                     break;
                 case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
                     tvShowRepository.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage, this, onTvShowsFetched, onFetchDataError);
-                    // set toolBar title
-                    toolBar.setTitle(getString(R.string.title_trending_tvShows));
                     break;
                 default:
                     // do nothing
