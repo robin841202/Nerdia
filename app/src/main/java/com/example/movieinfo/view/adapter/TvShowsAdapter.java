@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 
@@ -76,7 +77,6 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         private TextView title;
         private View itemView;
         private TextView rating;
-        private final String image_baseUrl = "https://image.tmdb.org/t/p/w342";
 
         private final ITvShowListener listener;
 
@@ -91,9 +91,10 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         }
 
         public void bind(TvShowData tvShowData) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
             // set image poster
             Glide.with(itemView)
-                    .load(image_baseUrl + tvShowData.getPosterPath())
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(poster);

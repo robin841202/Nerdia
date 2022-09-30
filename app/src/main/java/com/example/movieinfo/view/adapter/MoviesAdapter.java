@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 
 import java.util.ArrayList;
@@ -75,7 +76,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         private TextView title;
         private View itemView;
         private TextView rating;
-        private final String image_baseUrl = "https://image.tmdb.org/t/p/w342";
 
         private final IMovieListener listener;
 
@@ -90,9 +90,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         }
 
         public void bind(MovieData movieData) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
             // set image poster
             Glide.with(itemView)
-                    .load(image_baseUrl + movieData.getPosterPath())
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(poster);

@@ -1,6 +1,9 @@
 package com.example.movieinfo.model;
 
 public class StaticParameter {
+
+    private static final String ImageBaseUrl = "https://image.tmdb.org/t/p/";
+
     public class MediaType{
         public static final String ALL = "all";
         public static final String MOVIE = "movie";
@@ -20,5 +23,26 @@ public class StaticParameter {
         public static final int POPULAR_MOVIES = 3;
         public static final int POPULAR_TVSHOWS = 4;
         public static final int TRENDING_TVSHOWS = 5;
+    }
+
+    public class BackdropSize{
+        public static final String W300 = "w300";
+        public static final String W780 = "w780";
+        public static final String W1280 = "w1280";
+        public static final String ORIGINAL = "original";
+    }
+
+    public class PosterSize{
+        public static final String W92 = "w92";
+        public static final String W154 = "w154";
+        public static final String W185 = "w185";
+        public static final String W342 = "w342";
+        public static final String W500 = "w500";
+        public static final String W780 = "w780";
+        public static final String ORIGINAL = "original";
+    }
+
+    public static String getImageUrl(String size, String filePath){
+        return ImageBaseUrl + size + filePath;
     }
 }

@@ -3,7 +3,9 @@ package com.example.movieinfo.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -22,7 +24,8 @@ public class MediaDetailsActivity extends AppCompatActivity {
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
 
-    private final String image_baseUrl = "https://image.tmdb.org/t/p/";
+    // Define extra data key for passing data to other activities or fragments
+    public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
 
     private ImageView backdrop;
     private ImageView poster;
@@ -85,6 +88,8 @@ public class MediaDetailsActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
+    // region TvShows
+
     /**
      * Populate Details Data in Views (TV Show)
      *
@@ -93,26 +98,36 @@ public class MediaDetailsActivity extends AppCompatActivity {
     private void populateDetails(TvShowData tvShow) {
         String backdropPath = tvShow.getBackdropPath();
         if (backdropPath != null && !backdropPath.isEmpty()) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
             // set image backdrop
             Glide.with(this)
-                    .load(image_baseUrl + "w1280" + backdropPath)
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(backdrop);
 
+            // set image onClickListener
+            backdrop.setOnClickListener(v -> {
+                displayImageFullScreen(backdropPath);
+            });
 
         }
 
         String posterPath = tvShow.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
-                    .load(image_baseUrl + "w342" + posterPath)
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.ic_arrow_left)
                     .centerCrop()
                     .into(poster);
 
+            // set image onClickListener
+            poster.setOnClickListener(v -> {
+                displayImageFullScreen(posterPath);
+            });
         }
 
         // set title
@@ -134,6 +149,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
         ratingBar.setRating(scoreInRatingScale);
     }
 
+    // endregion
+
+    // region Movies
+
     /**
      * Populate Details Data in Views (Movie)
      *
@@ -142,25 +161,35 @@ public class MediaDetailsActivity extends AppCompatActivity {
     private void populateDetails(MovieData movie) {
         String backdropPath = movie.getBackdropPath();
         if (backdropPath != null && !backdropPath.isEmpty()) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
             // set image backdrop
             Glide.with(this)
-                    .load(image_baseUrl + "w1280" + backdropPath)
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(backdrop);
 
+            // set image onClickListener
+            backdrop.setOnClickListener(v -> {
+                displayImageFullScreen(backdropPath);
+            });
 
         }
 
         String posterPath = movie.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
-                    .load(image_baseUrl + "w342" + posterPath)
+                    .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(poster);
 
+            // set image onClickListener
+            poster.setOnClickListener(v -> {
+                displayImageFullScreen(posterPath);
+            });
         }
 
         // set title
@@ -182,4 +211,19 @@ public class MediaDetailsActivity extends AppCompatActivity {
         ratingBar.setRating(scoreInRatingScale);
     }
 
+    // endregion
+
+
+    /**
+     * Display image in fullscreen on another activity
+     *
+     * @param imgFilePath image file path, not the full url
+     */
+    private void displayImageFullScreen(String imgFilePath) {
+        Intent intent = new Intent(context, ImageDisplayActivity.class);
+        intent.putExtra(EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
+        startActivity(intent);
+        // set the custom transition animation
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
 }
