@@ -103,6 +103,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .centerCrop()
                     .into(backdrop);
 
@@ -120,6 +121,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .placeholder(R.drawable.ic_arrow_left)
                     .centerCrop()
                     .into(poster);
@@ -166,6 +168,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .centerCrop()
                     .into(backdrop);
 
@@ -183,6 +186,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .centerCrop()
                     .into(poster);
 

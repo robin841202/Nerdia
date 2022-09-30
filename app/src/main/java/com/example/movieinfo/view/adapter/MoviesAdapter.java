@@ -95,6 +95,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             Glide.with(itemView)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .centerCrop()
                     .into(poster);
 

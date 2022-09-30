@@ -96,6 +96,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
             Glide.with(itemView)
                     .load(imgUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
                     .centerCrop()
                     .into(poster);
 
