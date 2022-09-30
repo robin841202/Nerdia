@@ -65,7 +65,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root  =  inflater.inflate(R.layout.fragment_vertical_browse, container, false);
+        View root = inflater.inflate(R.layout.fragment_vertical_browse, container, false);
 
         // Get Views
         verticalBrowse_RcView = root.findViewById(R.id.recycler_vertical_browse);
@@ -82,22 +82,16 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         // Initialize gridLayoutManager
         verticalBrowseLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
 
-        // Set Adapter & toolbar title
-        switch (homeCategory){
+        // Set Adapter
+        switch (homeCategory) {
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
-                toolBar.setTitle(getString(R.string.title_upcoming_movies));
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
-                toolBar.setTitle(getString(R.string.title_now_playing_movies));
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
-                toolBar.setTitle(getString(R.string.title_trending_movies));
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
-                toolBar.setTitle(getString(R.string.title_popular_movies));
                 verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_movie);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
-                toolBar.setTitle(getString(R.string.title_popular_tvShows));
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
-                toolBar.setTitle(getString(R.string.title_trending_tvShows));
                 verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_tv);
                 break;
             default:
@@ -121,35 +115,47 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         return root;
     }
 
-    private void populateData(int homeCategory){
+    private void populateData(int homeCategory) {
         try {
             Method onMoviesFetched = getClass().getMethod("onMoviesFetched", ArrayList.class);
             Method onTvShowsFetched = getClass().getMethod("onTvShowsFetched", ArrayList.class);
             Method onFetchDataError = getClass().getMethod("onFetchDataError");
-            switch (homeCategory){
+            switch (homeCategory) {
                 case StaticParameter.HomeCategory.UPCOMING_MOVIES:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_upcoming_movies));
                     movieRepository.getUpcomingMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
                     break;
                 case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_now_playing_movies));
                     movieRepository.getNowPlayingMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
                     break;
                 case StaticParameter.HomeCategory.TRENDING_MOVIES:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_trending_movies));
                     movieRepository.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
                     break;
                 case StaticParameter.HomeCategory.POPULAR_MOVIES:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_popular_movies));
                     movieRepository.getPopularMovies(verticalBrowsePage, this, onMoviesFetched, onFetchDataError);
                     break;
                 case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_popular_tvShows));
                     tvShowRepository.getPopularTvShows(verticalBrowsePage, this, onTvShowsFetched, onFetchDataError);
                     break;
                 case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
+                    // set toolbar title
+                    toolBar.setTitle(getString(R.string.title_trending_tvShows));
                     tvShowRepository.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage, this, onTvShowsFetched, onFetchDataError);
                     break;
                 default:
                     // do nothing
                     return;
             }
-        }catch (NoSuchMethodException e){
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 
