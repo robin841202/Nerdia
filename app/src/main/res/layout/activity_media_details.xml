@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="ratingBar_movie_rating,text_movie_release_date" />
+            app:constraint_referenced_ids="group_vote" />
 
         <TextView
             android:id="@+id/text_movie_overview"
@@ -84,28 +84,54 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/barrier_movie_poster" />
 
-        <RatingBar
-            android:id="@+id/ratingBar_movie_rating"
-            style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/group_vote"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/text_score"
-            app:layout_constraintStart_toStartOf="@+id/card_movie_poster"
-            app:layout_constraintTop_toBottomOf="@+id/card_movie_poster"
-            app:layout_constraintBottom_toTopOf="@+id/barrier_movie_poster"/>
-
-        <TextView
-            android:id="@+id/text_score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="?attr/colorPrimaryVariant"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:layout_marginTop="4dp"
             app:layout_constraintBottom_toTopOf="@id/barrier_movie_poster"
             app:layout_constraintEnd_toEndOf="@+id/card_movie_poster"
-            app:layout_constraintStart_toEndOf="@+id/ratingBar_movie_rating"
-            app:layout_constraintTop_toBottomOf="@+id/card_movie_poster" />
+            app:layout_constraintStart_toStartOf="@+id/card_movie_poster"
+            app:layout_constraintTop_toBottomOf="@+id/card_movie_poster">
+
+            <RatingBar
+                android:id="@+id/ratingBar_movie_rating"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/text_score" />
+
+            <TextView
+                android:id="@+id/text_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="2dp"
+                android:gravity="bottom"
+                android:textColor="?attr/colorPrimaryVariant"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_vote_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/img_icon_people"
+                android:layout_marginEnd="2dp"
+                android:layout_toStartOf="@+id/img_icon_people"
+                android:textColor="?attr/colorPrimaryVariant"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/img_icon_people"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_below="@+id/text_score"
+                android:layout_alignParentEnd="true"
+                app:srcCompat="@drawable/ic_people" />
+        </RelativeLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
