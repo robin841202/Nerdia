@@ -34,6 +34,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
     private TextView releaseDate;
     private TextView scoreText;
     private RatingBar ratingBar;
+    private TextView voteCount;
 
 
     @Override
@@ -43,6 +44,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
 
         context = this;
 
+        // Get Views
         backdrop = findViewById(R.id.img_movie_backdrop);
         poster = findViewById(R.id.img_movie_poster);
         title = findViewById(R.id.text_movie_title);
@@ -50,10 +52,12 @@ public class MediaDetailsActivity extends AppCompatActivity {
         releaseDate = findViewById(R.id.text_movie_release_date);
         scoreText = findViewById(R.id.text_score);
         ratingBar = findViewById(R.id.ratingBar_movie_rating);
+        voteCount = findViewById(R.id.text_vote_count);
 
-        // get mediaType from intent
+        // Get mediaType from intent
         String mediaType = getIntent().getStringExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY);
 
+        // Populate Data in Views depends on mediaType
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE: // Populate Movie UI
                 // get data object from intent
@@ -149,6 +153,9 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // set ratingBar
         float scoreInRatingScale = (float) score / 2f;
         ratingBar.setRating(scoreInRatingScale);
+
+        // set vote count
+        voteCount.setText(String.valueOf(tvShow.getVoteCount()));
     }
 
     // endregion
@@ -213,6 +220,9 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // set ratingBar
         float scoreInRatingScale = (float) score / 2f;
         ratingBar.setRating(scoreInRatingScale);
+
+        // set vote count
+        voteCount.setText(String.valueOf(movie.getVoteCount()));
     }
 
     // endregion
