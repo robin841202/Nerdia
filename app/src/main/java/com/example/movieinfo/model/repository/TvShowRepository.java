@@ -1,6 +1,7 @@
 package com.example.movieinfo.model.repository;
 
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.ITvShowService;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
@@ -67,6 +68,25 @@ public class TvShowRepository {
                                   Method onSuccess,
                                   Method onError) {
         Call<TvShowsResponse> call = service.getTrendingMedia(mediaType, timeWindow, apiKey, page, language, region);
+        Callback<TvShowsResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
+        call.enqueue(requestHandler);
+    }
+
+    /**
+     * Search TvShows By Keyword
+     *
+     * @param keyWord          keyword for searching
+     * @param page             target page
+     * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs
+     * @param onSuccess        callback when data fetched successfully
+     * @param onError          callback when data fetched fail
+     */
+    public void searchTvShows(String keyWord,
+                             int page,
+                             Object objectToInvokeOn,
+                             Method onSuccess,
+                             Method onError) {
+        Call<TvShowsResponse> call = service.searchTvShows(apiKey, keyWord, page, language, region);
         Callback<TvShowsResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
         call.enqueue(requestHandler);
     }

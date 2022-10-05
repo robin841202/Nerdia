@@ -21,10 +21,11 @@
         <activity
             android:name=".view.MediaDetailsActivity"
             android:exported="false" />
+        <!--Set "windowSoftInputMode" to "adjustPan" to avoid bottomNavigationView push up when keyboard show up-->
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

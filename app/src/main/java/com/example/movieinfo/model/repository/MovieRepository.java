@@ -110,6 +110,26 @@ public class MovieRepository {
 
 
     /**
+     * Search Movies By Keyword
+     *
+     * @param keyWord          keyword for searching
+     * @param page             target page
+     * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs
+     * @param onSuccess        callback when data fetched successfully
+     * @param onError          callback when data fetched fail
+     */
+    public void searchMovies(String keyWord,
+                             int page,
+                             Object objectToInvokeOn,
+                             Method onSuccess,
+                             Method onError) {
+        Call<MoviesResponse> call = service.searchMovies(apiKey, keyWord, page, language, region);
+        Callback<MoviesResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
+        call.enqueue(requestHandler);
+    }
+
+
+    /**
      * (private) Get Request Handler
      *
      * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs

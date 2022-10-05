@@ -31,7 +31,10 @@ public class TvShowData implements Parcelable {
     @SerializedName("first_air_date")
     private String onAirDate;
 
-    public TvShowData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate){
+    @SerializedName("vote_count")
+    private int voteCount;
+
+    public TvShowData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate, int voteCount){
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -41,10 +44,11 @@ public class TvShowData implements Parcelable {
         this.backdropPath = backdropPath;
         this.rating = rating;
         this.onAirDate = onAirDate;
+        this.voteCount = voteCount;
     }
 
     /**
-     * Get Movie Id
+     * Get Id
      * @return Movie Id
      */
     public long getId() {
@@ -52,7 +56,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie Title
+     * Get Title
      * @return Movie Title
      */
     public String getTitle() {
@@ -60,7 +64,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie Overview
+     * Get Overview
      * @return Movie Overview
      */
     public String getOverview() {
@@ -68,7 +72,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie Poster Url
+     * Get Poster Url
      * @return Movie Poster Url
      */
     public String getPosterPath() {
@@ -76,7 +80,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie Backdrop Url
+     * Get Backdrop Url
      * @return Movie Backdrop Url
      */
     public String getBackdropPath() {
@@ -84,7 +88,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie Rating
+     * Get Rating
      * @return Movie Rating
      */
     public double getRating() {
@@ -92,7 +96,7 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Set Movie Rating
+     * Set Rating
      * @param rating Movie Rating
      */
     public void setRating(double rating) {
@@ -100,12 +104,18 @@ public class TvShowData implements Parcelable {
     }
 
     /**
-     * Get Movie onAir Date
+     * Get onAir Date
      * @return Release Date
      */
     public String getOnAirDate() {
         return onAirDate;
     }
+
+    /**
+     * Get Vote Count
+     * @return
+     */
+    public int getVoteCount(){return voteCount;}
 
 
 
@@ -121,6 +131,7 @@ public class TvShowData implements Parcelable {
         backdropPath = in.readString();
         rating = in.readDouble();
         onAirDate = in.readString();
+        voteCount = in.readInt();
     }
 
     /**
@@ -161,5 +172,6 @@ public class TvShowData implements Parcelable {
         dest.writeString(backdropPath);
         dest.writeDouble(rating);
         dest.writeString(onAirDate);
+        dest.writeInt(voteCount);
     }
 }

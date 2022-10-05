@@ -31,7 +31,10 @@ public class MovieData implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
 
-    public MovieData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate) {
+    @SerializedName("vote_count")
+    private int voteCount;
+
+    public MovieData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -41,10 +44,11 @@ public class MovieData implements Parcelable {
         this.backdropPath = backdropPath;
         this.rating = rating;
         this.releaseDate = releaseDate;
+        this.voteCount = voteCount;
     }
 
     /**
-     * Get Movie Id
+     * Get Id
      *
      * @return Movie Id
      */
@@ -53,7 +57,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Title
+     * Get Title
      *
      * @return Movie Title
      */
@@ -62,7 +66,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Overview
+     * Get Overview
      *
      * @return Movie Overview
      */
@@ -71,7 +75,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Poster Url
+     * Get Poster Url
      *
      * @return Movie Poster Url
      */
@@ -80,7 +84,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Backdrop Url
+     * Get Backdrop Url
      *
      * @return Movie Backdrop Url
      */
@@ -89,7 +93,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Rating
+     * Get Rating
      *
      * @return Movie Rating
      */
@@ -98,7 +102,7 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Set Movie Rating
+     * Set Rating
      *
      * @param rating Movie Rating
      */
@@ -107,13 +111,19 @@ public class MovieData implements Parcelable {
     }
 
     /**
-     * Get Movie Release Date
+     * Get Release Date
      *
      * @return Release Date
      */
     public String getReleaseDate() {
         return releaseDate;
     }
+
+    /**
+     * Get Vote Count
+     * @return
+     */
+    public int getVoteCount(){return voteCount;}
 
 
 
@@ -131,6 +141,7 @@ public class MovieData implements Parcelable {
         backdropPath = in.readString();
         rating = in.readDouble();
         releaseDate = in.readString();
+        voteCount = in.readInt();
     }
 
 
@@ -174,5 +185,6 @@ public class MovieData implements Parcelable {
         dest.writeString(backdropPath);
         dest.writeDouble(rating);
         dest.writeString(releaseDate);
+        dest.writeInt(voteCount);
     }
 }

@@ -2,8 +2,8 @@ package com.example.movieinfo.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -11,14 +11,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.movieinfo.R;
-import com.example.movieinfo.ui.home.HomeFragment;
-import com.example.movieinfo.ui.search.SearchFragment;
-import com.example.movieinfo.ui.watchlist.WatchlistFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "MainActivity";
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private NavController navController;
+    private Toolbar toolbar;
 
     private BottomNavigationView bottomNavView;
 
@@ -37,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
         // Get Views
         context = this;
         bottomNavView = findViewById(R.id.bottomNavView);
+        toolbar = findViewById(R.id.toolbar);
 
-        // set actionBar
-        setSupportActionBar(findViewById(R.id.toolbar));
+        // Set actionBar
+        setSupportActionBar(toolbar);
 
         navController = Navigation.findNavController(this, R.id.fragment_container);
         // set actionBar using nav_graph
@@ -48,6 +49,22 @@ public class MainActivity extends AppCompatActivity {
 
         // set bottomNavigationView using nav_graph
         NavigationUI.setupWithNavController(bottomNavView, navController);
+
+        // show and hide toolbar depends on destination fragments
+        navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
+            switch (navDestination.getId()){
+                case R.id.homeFragment:
+                case R.id.discoverFragment:
+                case R.id.watchlistFragment:
+                    // Hide Toolbar
+                    toolbar.setVisibility(View.GONE);
+                    break;
+                default:
+                    // Show Toolbar
+                    toolbar.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
     }
 
     @Override

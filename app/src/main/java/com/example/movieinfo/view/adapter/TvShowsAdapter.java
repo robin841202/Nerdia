@@ -63,7 +63,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         notifyItemRangeInserted(startPosition, tvShows.size() - 1);
     }
 
-    public void removeAllMovies() {
+    public void removeAllTvShows() {
         tvShow_list.clear();
         notifyDataSetChanged();
     }

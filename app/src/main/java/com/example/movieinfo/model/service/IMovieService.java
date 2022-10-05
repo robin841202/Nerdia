@@ -11,10 +11,11 @@ public interface IMovieService {
 
     /**
      * Get Upcoming Movies
-     * @param apiKey TMDB API Key
-     * @param page target page
+     *
+     * @param apiKey   TMDB API Key
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("movie/upcoming")
@@ -31,10 +32,11 @@ public interface IMovieService {
 
     /**
      * Get Popular Movies
-     * @param apiKey TMDB API Key
-     * @param page target page
+     *
+     * @param apiKey   TMDB API Key
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("movie/popular")
@@ -51,10 +53,11 @@ public interface IMovieService {
 
     /**
      * Get Now playing Movies
-     * @param apiKey TMDB API Key
-     * @param page target page
+     *
+     * @param apiKey   TMDB API Key
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("movie/now_playing")
@@ -71,12 +74,13 @@ public interface IMovieService {
 
     /**
      * Get Trending Movies, TvShows or Person
-     * @param mediaType "all", "movie", "tv", "person"
+     *
+     * @param mediaType  "all", "movie", "tv", "person"
      * @param timeWindow "day", "week"
-     * @param apiKey TMDB API Key
-     * @param page target page
-     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param apiKey     TMDB API Key
+     * @param page       target page
+     * @param language   ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region     ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("trending/{media_type}/{time_window}")
@@ -87,6 +91,30 @@ public interface IMovieService {
                     String timeWindow,
             @Query("api_key")
                     String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("region")
+                    String region
+    );
+
+    /**
+     * Search Movies By Keyword
+     *
+     * @param apiKey   TMDB API Key
+     * @param keyWord  searching keyword
+     * @param page     target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @return
+     */
+    @GET("search/movie")
+    Call<MoviesResponse> searchMovies(
+            @Query("api_key")
+                    String apiKey,
+            @Query("query")
+                    String keyWord,
             @Query("page")
                     int page,
             @Query("language")

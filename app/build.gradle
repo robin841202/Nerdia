@@ -43,6 +43,7 @@ dependencies {
     // Support - SwipeRefreshLayout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
+
     // Material Components - In order to use "BottomNavigationView" in this project
     implementation 'com.google.android.material:material:1.6.1'
 

@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
 import retrofit2.Call;
@@ -47,6 +48,30 @@ public interface ITvShowService {
                     String timeWindow,
             @Query("api_key")
                     String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("region")
+                    String region
+    );
+
+    /**
+     * Search TvShows By Keyword
+     *
+     * @param apiKey   TMDB API Key
+     * @param keyWord  searching keyword
+     * @param page     target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @return
+     */
+    @GET("search/tv")
+    Call<TvShowsResponse> searchTvShows(
+            @Query("api_key")
+                    String apiKey,
+            @Query("query")
+                    String keyWord,
             @Query("page")
                     int page,
             @Query("language")

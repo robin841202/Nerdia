@@ -8,9 +8,9 @@
         android:icon="@drawable/ic_nav_home"
         android:title="@string/title_home" />
     <item
-        android:id="@+id/searchFragment"
+        android:id="@+id/discover_navigation"
         android:icon="@drawable/ic_nav_search"
-        android:title="@string/title_search" />
+        android:title="@string/title_discover" />
     <item
         android:id="@+id/watchlistFragment"
         android:icon="@drawable/ic_nav_watchlist"

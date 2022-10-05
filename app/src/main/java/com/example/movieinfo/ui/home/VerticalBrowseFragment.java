@@ -208,6 +208,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         verticalBrowse_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
                 // get the number of all items in recyclerView
                 int totalItemCount = verticalBrowseLayoutMgr.getItemCount();
                 // get the number of current items attached to recyclerView
