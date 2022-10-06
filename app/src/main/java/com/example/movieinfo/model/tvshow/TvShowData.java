@@ -11,28 +11,28 @@ import com.google.gson.annotations.SerializedName;
 public class TvShowData implements Parcelable {
 
     @SerializedName("id")
-    private long id;
+    private final long id;
 
     @SerializedName("name")
-    private String title;
+    private final String title;
 
     @SerializedName("overview")
-    private String overview;
+    private final String overview;
 
     @SerializedName("poster_path")
-    private String posterPath;
+    private final String posterPath;
 
     @SerializedName("backdrop_path")
-    private String backdropPath;
+    private final String backdropPath;
 
     @SerializedName("vote_average")
     private double rating;
 
     @SerializedName("first_air_date")
-    private String onAirDate;
+    private final String onAirDate;
 
     @SerializedName("vote_count")
-    private int voteCount;
+    private final int voteCount;
 
     public TvShowData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate, int voteCount){
         this.id = id;

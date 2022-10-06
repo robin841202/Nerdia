@@ -186,8 +186,8 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
     @Override
     public void onTvShowClick(TvShowData tvShow) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(HomeFragment.EXTRA_DATA_TVSHOW_KEY, tvShow);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

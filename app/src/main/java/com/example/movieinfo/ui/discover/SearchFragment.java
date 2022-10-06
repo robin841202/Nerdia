@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import com.example.movieinfo.R;
 import com.example.movieinfo.ui.discover.tab.SearchMoviesTab;
 import com.example.movieinfo.ui.discover.tab.SearchTvShowsTab;
-import com.example.movieinfo.view.adapter.SearchPagerAdapter;
+import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -34,8 +34,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 public class SearchFragment extends Fragment {
     private final String LOG_TAG = "SearchFragment";
 
-    private SearchPagerAdapter searchPagerAdapter;
-    private TabLayout tabLayout;
     private SearchKeywordViewModel searchKeywordViewModel;
     private NavController navController;
 
@@ -72,7 +70,6 @@ public class SearchFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 // Add menu items here
                 menuInflater.inflate(R.menu.search_menu, menu);
-
 
 
                 // Initialize keyword viewModel LiveData, data only survive after the current destination
@@ -119,32 +116,41 @@ public class SearchFragment extends Fragment {
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
         // endregion
 
-        // Get Views
-        final ViewPager2 viewPager = view.findViewById(R.id.viewpager);
-        tabLayout = view.findViewById(R.id.tabLayout);
+        // Initialize Views
+        ViewPager2 viewPager = view.findViewById(R.id.viewpager);
+        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
 
+        // Initialize pagerAdapter
+        CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(this);
+
+        // Create and bind tabs and viewpager together
+        createTabContents(customPagerAdapter, viewPager, tabLayout);
+    }
+
+    /**
+     * Create and bind tabs and viewpager together
+     */
+    private void createTabContents(CustomPagerAdapter pagerAdapter, ViewPager2 viewPager, TabLayout tabLayout) {
         /*
-        Use custom SearchPagerAdapter class to manage page views in fragments.
+        Use custom CustomPagerAdapter class to manage page views in fragments.
         Each page is represented by its own fragment.
         */
-        searchPagerAdapter = new SearchPagerAdapter(this);
-        searchPagerAdapter.addFragment(new SearchMoviesTab(), getString(R.string.label_movies));
-        searchPagerAdapter.addFragment(new SearchTvShowsTab(), getString(R.string.label_tvshows));
-        viewPager.setAdapter(searchPagerAdapter);
+        pagerAdapter.addFragment(new SearchMoviesTab(), getString(R.string.label_movies));
+        pagerAdapter.addFragment(new SearchTvShowsTab(), getString(R.string.label_tvshows));
+        viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
         new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 // Get page title from viewpager2
-                String title = searchPagerAdapter.getPageTitle(position);
+                String title = pagerAdapter.getPageTitle(position);
                 // Set tab title
                 tab.setText(title);
 
                 Log.d(LOG_TAG, String.valueOf(position));
             }
         }).attach();
-
     }
 
 }

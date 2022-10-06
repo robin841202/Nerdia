@@ -1,6 +1,8 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
+import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
 import retrofit2.Call;
@@ -55,6 +57,29 @@ public interface ITvShowService {
             @Query("region")
                     String region
     );
+
+
+    /**
+     * Get TvShow Detail By TvShow Id
+     *
+     * @param id             TvShow Id
+     * @param apiKey         TMDB API Key
+     * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @return
+     */
+    @GET("tv/{tv_id}")
+    Call<TvShowDetailData> getTvShowDetail(
+            @Path("tv_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("language")
+                    String language,
+            @Query("append_to_response")
+                    String subRequestType
+    );
+
 
     /**
      * Search TvShows By Keyword

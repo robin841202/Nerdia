@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 
 import retrofit2.Call;
@@ -98,6 +99,29 @@ public interface IMovieService {
             @Query("region")
                     String region
     );
+
+    /**
+     * Get Movie Detail By Movie Id
+     *
+     * @param id             Movie Id
+     * @param apiKey         TMDB API Key
+     * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @return
+     */
+    @GET("movie/{movie_id}")
+    Call<MovieDetailData> getMovieDetail(
+            @Path("movie_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("language")
+                    String language,
+            @Query("append_to_response")
+                    String subRequestType
+    );
+
+
 
     /**
      * Search Movies By Keyword

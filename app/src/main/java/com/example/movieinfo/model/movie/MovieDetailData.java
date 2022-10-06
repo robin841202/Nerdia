@@ -3,12 +3,35 @@ package com.example.movieinfo.model.movie;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.ProductionCompany;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 /**
- * Movie Data Model, using @SerializedName to map to json key
+ * Movie Detail Data Model, using @SerializedName to map to json key
  */
-public class MovieData implements Parcelable {
+public class MovieDetailData implements Parcelable {
+
+
+    @SerializedName("adult")
+    private final boolean isAdult;
+
+    @SerializedName("budget")
+    private final int budget;
+
+    @SerializedName("genres")
+    private ArrayList<Genre> genres;
+
+    @SerializedName("production_companies")
+    private ArrayList<ProductionCompany> productionCompanies;
+
+    @SerializedName("status")
+    private final String status;
+
+    @SerializedName("revenue")
+    private final int revenue;
 
     @SerializedName("id")
     private final long id;
@@ -34,7 +57,13 @@ public class MovieData implements Parcelable {
     @SerializedName("vote_count")
     private final int voteCount;
 
-    public MovieData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
+    public MovieDetailData(boolean isAdult, int budget, ArrayList<Genre> genres, ArrayList<ProductionCompany> productionCompanies, String status, int revenue, long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
+        this.isAdult = isAdult;
+        this.budget = budget;
+        this.genres = genres;
+        this.productionCompanies = productionCompanies;
+        this.status = status;
+        this.revenue = revenue;
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -46,6 +75,44 @@ public class MovieData implements Parcelable {
         this.releaseDate = releaseDate;
         this.voteCount = voteCount;
     }
+
+
+    /**
+     * Get IsAdult or not
+     *
+     * @return
+     */
+    public boolean getIsAdult() {
+        return isAdult;
+    }
+
+    /**
+     * Get Budget
+     *
+     * @return
+     */
+    public int getBudget() {
+        return budget;
+    }
+
+    /**
+     * Get Genres
+     *
+     * @return
+     */
+    public ArrayList<Genre> getGenres() {
+        return genres;
+    }
+
+    /**
+     * Get Production Companies
+     *
+     * @return
+     */
+    public ArrayList<ProductionCompany> getProductionCompanies() {
+        return productionCompanies;
+    }
+
 
     /**
      * Get Id
@@ -121,19 +188,24 @@ public class MovieData implements Parcelable {
 
     /**
      * Get Vote Count
+     *
      * @return
      */
-    public int getVoteCount(){return voteCount;}
-
-
-
+    public int getVoteCount() {
+        return voteCount;
+    }
 
 
     /**
      * 新增的Parcelable部分，讀取參數，參數順序要和建構子一樣
+     *
      * @param in
      */
-    protected MovieData(Parcel in) {
+    protected MovieDetailData(Parcel in) {
+        isAdult = in.readByte() != 0;
+        budget = in.readInt();
+        status = in.readString();
+        revenue = in.readInt();
         id = in.readLong();
         title = in.readString();
         overview = in.readString();
@@ -144,25 +216,25 @@ public class MovieData implements Parcelable {
         voteCount = in.readInt();
     }
 
-
     /**
      * 新增的Parcelable部分
      */
-    public static final Creator<MovieData> CREATOR = new Creator<MovieData>() {
+    public static final Creator<MovieDetailData> CREATOR = new Creator<MovieDetailData>() {
         @Override
-        public MovieData createFromParcel(Parcel in) {
-            return new MovieData(in);
+        public MovieDetailData createFromParcel(Parcel in) {
+            return new MovieDetailData(in);
         }
 
         @Override
-        public MovieData[] newArray(int size) {
-            return new MovieData[size];
+        public MovieDetailData[] newArray(int size) {
+            return new MovieDetailData[size];
         }
     };
 
 
     /**
      * 新增的Parcelable部分，Describe the kinds of special objects contained in this Parcelable instance's marshaled representation.
+     *
      * @return
      */
     @Override
@@ -170,14 +242,18 @@ public class MovieData implements Parcelable {
         return 0;
     }
 
-
     /**
      * 新增的Parcelable部分，將物件攤平成Parcel，參數順序要和建構子一樣
+     *
      * @param dest
      * @param flags
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (isAdult ? 1 : 0));
+        dest.writeInt(budget);
+        dest.writeString(status);
+        dest.writeInt(revenue);
         dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(overview);
@@ -187,4 +263,6 @@ public class MovieData implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeInt(voteCount);
     }
+
+
 }

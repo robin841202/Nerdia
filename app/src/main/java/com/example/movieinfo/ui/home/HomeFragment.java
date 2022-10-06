@@ -34,11 +34,6 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
 
     private final String LOG_TAG = "HomeFragment";
-    // Define extra data key for passing data to other activities or fragments
-    public static final String EXTRA_DATA_MEDIA_TYPE_KEY = "EXTRA_DATA_MEDIA_TYPE";
-    public static final String EXTRA_DATA_MOVIE_KEY = "EXTRA_DATA_MOVIE";
-    public static final String EXTRA_DATA_TVSHOW_KEY = "EXTRA_DATA_TVSHOW";
-    public static final String EXTRA_DATA_VERTICAL_BROWSE_KEY = "EXTRA_DATA_VERTICAL_BROWSE";
 
     private final MovieRepository movieRepository = new MovieRepository();
     private final TvShowRepository tvShowRepository = new TvShowRepository();
@@ -574,8 +569,8 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     @Override
     public void onMovieClick(MovieData movie) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(EXTRA_DATA_MOVIE_KEY, movie);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -589,8 +584,8 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     @Override
     public void onTvShowClick(TvShowData tvShow) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(EXTRA_DATA_TVSHOW_KEY, tvShow);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -604,7 +599,7 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     private void showVerticalBrowse(int homeCategory) {
         Bundle arguments = new Bundle();
-        arguments.putInt(EXTRA_DATA_VERTICAL_BROWSE_KEY, homeCategory);
+        arguments.putInt(StaticParameter.ExtraDataKey.EXTRA_DATA_VERTICAL_BROWSE_KEY, homeCategory);
         // navigate to verticalBrowseFragment
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_homeFragment_to_verticalBrowseFragment, arguments);

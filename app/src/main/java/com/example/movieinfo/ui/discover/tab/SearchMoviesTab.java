@@ -185,8 +185,8 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
     @Override
     public void onMovieClick(MovieData movie) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MOVIE_KEY, movie);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

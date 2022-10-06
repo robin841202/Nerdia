@@ -1,6 +1,13 @@
 package com.example.movieinfo.model.repository;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.IMovieService;
 
@@ -22,11 +29,15 @@ public class MovieRepository {
     // set default mediaType to movie
     private final String mediaType = StaticParameter.MediaType.MOVIE;
 
+    private MutableLiveData<MovieDetailData> movieDetailLiveData;
+
 
     public MovieRepository() {
-
         this.language = "zh-TW";
         this.region = "TW";
+
+        // Initialize LiveData
+        movieDetailLiveData = new MutableLiveData<>();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.themoviedb.org/3/")
@@ -110,6 +121,58 @@ public class MovieRepository {
 
 
     /**
+     * Get Movie Detail By Movie Id (Deprecated)
+     *
+     * @param movieId          Movie Id
+     * @param subRequestType   Can do subRequest in the same time  ex: videos
+     * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs
+     * @param onSuccess        callback when data fetched successfully
+     * @param onError          callback when data fetched fail
+     */
+    /*public void getMovieDetail(long movieId,
+                               String subRequestType,
+                               Object objectToInvokeOn,
+                               Method onSuccess,
+                               Method onError) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType);
+        Callback<MovieDetailData> requestHandler = new Callback<MovieDetailData>() {
+            @Override
+            public void onResponse(Call<MovieDetailData> call, Response<MovieDetailData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    MovieDetailData responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        try {
+                            // invoke the callback method with the data
+                            onSuccess.invoke(objectToInvokeOn, responseBody);
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    } else { // No Data exists
+                        try {
+                            // invoke the callback method
+                            onError.invoke(objectToInvokeOn);
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieDetailData> call, Throwable t) {
+                try {
+                    // invoke the callback method
+                    onError.invoke(objectToInvokeOn);
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        call.enqueue(requestHandler);
+    }*/
+
+
+    /**
      * Search Movies By Keyword
      *
      * @param keyWord          keyword for searching
@@ -187,4 +250,49 @@ public class MovieRepository {
     public void setRegion(String region) {
         this.region = region;
     }
+
+
+
+
+    // region MVVM architecture using LiveData
+
+
+    /**
+     * Get Movie Detail By Movie Id (using LiveData)
+     *
+     * @param movieId          Movie Id
+     * @param subRequestType   Can do subRequest in the same time  ex: videos
+     */
+    public void getMovieDetail(long movieId, String subRequestType) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType);
+        call.enqueue(new Callback<MovieDetailData>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    MovieDetailData responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        movieDetailLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieDetailData> call, @NonNull Throwable t) {
+                // post null to liveData
+                movieDetailLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getMovieDetail,\n %s ", t.getMessage()));
+            }
+        });
+    }
+
+
+    /***
+     * Get Movie Detail Live Data
+     * @return
+     */
+    public MutableLiveData<MovieDetailData> getMovieDetailLiveData(){
+        return movieDetailLiveData;
+    }
+    // endregion
 }

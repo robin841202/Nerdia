@@ -73,7 +73,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         toolBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
         // Get homeCategory argument from HomeFragment
-        homeCategory = getArguments().getInt(HomeFragment.EXTRA_DATA_VERTICAL_BROWSE_KEY, 0);
+        homeCategory = getArguments().getInt(StaticParameter.ExtraDataKey.EXTRA_DATA_VERTICAL_BROWSE_KEY, 0);
 
         // Initialize Adapter
         verticalBrowseAdapter_movie = new MoviesAdapter(new ArrayList<>(), this);
@@ -247,8 +247,8 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
     @Override
     public void onMovieClick(MovieData movie) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MOVIE_KEY, movie);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
@@ -262,8 +262,8 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
     @Override
     public void onTvShowClick(TvShowData tvShow) {
         Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(HomeFragment.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(HomeFragment.EXTRA_DATA_TVSHOW_KEY, tvShow);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
         startActivity(intent);
         // set the custom transition animation
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

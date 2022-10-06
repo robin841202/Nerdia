@@ -9,14 +9,19 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
-public class SearchPagerAdapter extends FragmentStateAdapter {
+public class CustomPagerAdapter extends FragmentStateAdapter {
 
     private final ArrayList<Fragment> fragmentList = new ArrayList<>();
     private final ArrayList<String> fragmentTitle = new ArrayList<>();
 
-    public SearchPagerAdapter(@NonNull Fragment fragment) {
+    public CustomPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
     }
+
+    public CustomPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+        super(fragmentManager, lifecycle);
+    }
+
 
     /**
      * Add Fragment in ViewPager2
