@@ -23,4 +23,5 @@
     <string name="label_title_discover">探索</string>
     <string name="label_search_movies_tvshows">搜尋電影, 影集</string>
     <string name="label_about">關於</string>
+    <string name="label_genre">類別</string>
 </resources>

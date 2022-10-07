@@ -1,4 +1,4 @@
-package com.example.movieinfo.ui.discover.tab;
+package com.example.movieinfo.view.fragments.discover.tab;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,13 +23,11 @@ import android.view.ViewGroup;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
-import com.example.movieinfo.model.repository.MovieRepository;
-import com.example.movieinfo.ui.home.HomeFragment;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
+import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieListener {
@@ -37,7 +35,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
 
     private final String LOG_TAG = "SearchMoviesTab";
 
-    private final MovieRepository movieRepository = new MovieRepository();
+    private MoviesViewModel moviesViewModel;
 
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
@@ -60,6 +58,13 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         super.onCreate(savedInstanceState);
         // set default page
         currentPage = 1;
+
+        // Initialize viewModel, data only survive this fragment lifecycle
+        moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
+        moviesViewModel.init();
+
+        // Set Observer
+        moviesViewModel.getMoviesLiveData().observe(this, getSearchMoviesObserver());
     }
 
     @Override
@@ -89,6 +94,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
+            clearResults();
             searchMovies(currentKeyword, currentPage);
             Log.d(LOG_TAG, "onRefresh");
             pullToRefresh.setRefreshing(false);
@@ -98,8 +104,8 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         navController = NavHostFragment.findNavController(this);
         NavBackStackEntry backStackEntry = navController.getCurrentBackStackEntry();
 
-        if (backStackEntry != null){
-            // Initialize keyword LiveData
+        if (backStackEntry != null) {
+            // Initialize Keyword ViewModel
             searchKeywordViewModel = new ViewModelProvider(backStackEntry).get(SearchKeywordViewModel.class);
 
             // Keep monitoring search keyword changes
@@ -107,7 +113,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
                 @Override
                 public void onChanged(String keyword) {
                     // reset searched results
-                    resetResults();
+                    clearResults();
 
                     currentKeyword = keyword;
 
@@ -126,55 +132,42 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
      */
     private void searchMovies(String keyword, int page) {
         if (keyword != null && !keyword.isEmpty()) {
-            try {
-                Method onSearchMoviesFetched = getClass().getMethod("onSearchMoviesFetched", ArrayList.class);
-                Method onFetchDataError = getClass().getMethod("onFetchDataError");
-                movieRepository.searchMovies(keyword, page, this, onSearchMoviesFetched, onFetchDataError);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            moviesViewModel.searchMovies(keyword, page);
         }
     }
 
     /**
-     * Callback when searching movies successfully
-     *
-     * @param movie_list searched movies data
+     * Observe when MovieData List LiveData changed
      */
-    public void onSearchMoviesFetched(ArrayList<MovieData> movie_list) {
-        // append data to adapter
-        movieAdapter.appendMovies(movie_list);
+    public Observer<ArrayList<MovieData>> getSearchMoviesObserver() {
+        return movies -> {
+            // append data to adapter
+            movieAdapter.appendMovies(movies);
 
-        // attach onScrollListener to RecyclerView
-        mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                // get the number of all items in recyclerView
-                int totalItemCount = mLayoutMgr.getItemCount();
-                // get the number of current items attached to recyclerView
-                int visibleItemCount = mLayoutMgr.getChildCount();
-                // get the first visible item's position
-                int firstVisibleItem = mLayoutMgr.findFirstVisibleItemPosition();
+            // attach onScrollListener to RecyclerView
+            mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    // get the number of all items in recyclerView
+                    int totalItemCount = mLayoutMgr.getItemCount();
+                    // get the number of current items attached to recyclerView
+                    int visibleItemCount = mLayoutMgr.getChildCount();
+                    // get the first visible item's position
+                    int firstVisibleItem = mLayoutMgr.findFirstVisibleItemPosition();
 
-                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                    // detach current OnScrollListener
-                    mRcView.removeOnScrollListener(this);
+                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                        // detach current OnScrollListener
+                        mRcView.removeOnScrollListener(this);
 
-                    // append nextPage data to recyclerView
-                    currentPage++;
-                    searchMovies(currentKeyword, currentPage);
+                        // append nextPage data to recyclerView
+                        currentPage++;
+                        searchMovies(currentKeyword, currentPage);
+                    }
                 }
-            }
-        });
+            });
 
-        Log.d(LOG_TAG, "search movies: data fetched successfully");
-    }
-
-    /**
-     * Callback when data fetched fail
-     */
-    public void onFetchDataError() {
-        Log.d(LOG_TAG, "data fetched fail");
+            Log.d(LOG_TAG, "search movies: data fetched successfully");
+        };
     }
 
     /**
@@ -195,7 +188,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
     /**
      * Reset search results
      */
-    private void resetResults() {
+    private void clearResults() {
         currentPage = 1;
         movieAdapter.removeAllMovies();
     }

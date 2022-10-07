@@ -6,14 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.movie.MovieDetailData;
-import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.ITvShowService;
+import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,13 +30,27 @@ public class TvShowRepository {
     // set default mediaType to tv
     private final String mediaType = StaticParameter.MediaType.TV;
 
+    // region TvShowData List LiveData
+    private MutableLiveData<ArrayList<TvShowData>> tvShowsLiveData;
+
+    // used when multiple liveData needs to observe different data in same activity or fragment
+    private MutableLiveData<ArrayList<TvShowData>> popularTvShowsLiveData;
+    private MutableLiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
+
+    // endregion
+
+    // region TvShowDetail LiveData
     private MutableLiveData<TvShowDetailData> tvShowDetailLiveData;
+    // endregion
 
     public TvShowRepository() {
         this.language = "zh-TW";
         this.region = "TW";
 
         // Initialize LiveData
+        tvShowsLiveData = new MutableLiveData<>();
+        popularTvShowsLiveData = new MutableLiveData<>();
+        trendingTvShowsLiveData = new MutableLiveData<>();
         tvShowDetailLiveData = new MutableLiveData<>();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -46,25 +60,37 @@ public class TvShowRepository {
         service = retrofit.create(ITvShowService.class);
     }
 
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+
+    // region MVC methods [without viewModel] (Deprecated)
+
     /**
-     * Get Popular TvShows
+     * Get Popular TvShows (Deprecated)
      *
      * @param page             target page
      * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs
      * @param onSuccess        callback when data fetched successfully
      * @param onError          callback when data fetched fail
      */
-    public void getPopularTvShows(int page,
+    /*public void getPopularTvShows(int page,
                                   Object objectToInvokeOn,
                                   Method onSuccess,
                                   Method onError) {
         Call<TvShowsResponse> call = service.getPopularTvShows(apiKey, page, language, region);
         Callback<TvShowsResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
         call.enqueue(requestHandler);
-    }
+    }*/
 
     /**
-     * Get Trending TvShows
+     * Get Trending TvShows (Deprecated)
      *
      * @param timeWindow       weekly or daily trending: "day", "week"
      * @param page             target page
@@ -72,7 +98,7 @@ public class TvShowRepository {
      * @param onSuccess        callback when data fetched successfully
      * @param onError          callback when data fetched fail
      */
-    public void getTrendingTvShows(String timeWindow,
+    /*public void getTrendingTvShows(String timeWindow,
                                    int page,
                                    Object objectToInvokeOn,
                                    Method onSuccess,
@@ -80,7 +106,7 @@ public class TvShowRepository {
         Call<TvShowsResponse> call = service.getTrendingMedia(mediaType, timeWindow, apiKey, page, language, region);
         Callback<TvShowsResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
         call.enqueue(requestHandler);
-    }
+    }*/
 
     /**
      * Get TvShow Detail By TvShow Id (Deprecated)
@@ -133,8 +159,9 @@ public class TvShowRepository {
         call.enqueue(requestHandler);
     }*/
 
+
     /**
-     * Search TvShows By Keyword
+     * Search TvShows By Keyword (Deprecated)
      *
      * @param keyWord          keyword for searching
      * @param page             target page
@@ -142,7 +169,7 @@ public class TvShowRepository {
      * @param onSuccess        callback when data fetched successfully
      * @param onError          callback when data fetched fail
      */
-    public void searchTvShows(String keyWord,
+    /*public void searchTvShows(String keyWord,
                               int page,
                               Object objectToInvokeOn,
                               Method onSuccess,
@@ -150,18 +177,18 @@ public class TvShowRepository {
         Call<TvShowsResponse> call = service.searchTvShows(apiKey, keyWord, page, language, region);
         Callback<TvShowsResponse> requestHandler = getRequestHandler(objectToInvokeOn, onSuccess, onError);
         call.enqueue(requestHandler);
-    }
+    }*/
 
 
     /**
-     * (private) Get Request Handler
+     * (private) Get Request Handler (Deprecated)
      *
      * @param objectToInvokeOn Object instance that "onSuccess", "onError" belongs
      * @param onSuccess        callback when data fetched successfully
      * @param onError          callback when data fetched fail
      * @return Request Handler
      */
-    private Callback<TvShowsResponse> getRequestHandler(Object objectToInvokeOn, Method onSuccess, Method onError) {
+    /*private Callback<TvShowsResponse> getRequestHandler(Object objectToInvokeOn, Method onSuccess, Method onError) {
         return new Callback<TvShowsResponse>() {
             @Override
             public void onResponse(Call<TvShowsResponse> call, Response<TvShowsResponse> response) {
@@ -201,33 +228,82 @@ public class TvShowRepository {
                 }
             }
         };
-    }
+    }*/
 
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-
-
-
-
-
-
-
+    // endregion
 
     // region MVVM architecture using LiveData
 
 
     /**
+     * Get Popular TvShows (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getPopularTvShows(int page) {
+        Call<TvShowsResponse> call = service.getPopularTvShows(apiKey, page, language, region);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(popularTvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
+     * Get Trending TvShows (using LiveData)
+     *
+     * @param timeWindow weekly or daily trending: "day", "week"
+     * @param page       target page
+     */
+    public void getTrendingTvShows(String timeWindow, int page) {
+        Call<TvShowsResponse> call = service.getTrendingMedia(mediaType, timeWindow, apiKey, page, language, region);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(trendingTvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
+     * (private) Get Request Handler (using LiveData)
+     *
+     * @param tvShowsLiveData live data
+     * @return Request Handler
+     */
+    private Callback<TvShowsResponse> getTvShowsResponseRequestHandler(MutableLiveData<ArrayList<TvShowData>> tvShowsLiveData) {
+        return new Callback<TvShowsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TvShowsResponse> call, @NonNull Response<TvShowsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    TvShowsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        tvShowsLiveData.postValue(responseBody.tvShow_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TvShowsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                tvShowsLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        };
+    }
+
+    /**
+     * Search TvShows By Keyword (using LiveData)
+     *
+     * @param keyWord keyword for searching
+     * @param page    target page
+     */
+    public void searchTvShows(String keyWord, int page) {
+        Call<TvShowsResponse> call = service.searchTvShows(apiKey, keyWord, page, language, region);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+
+    /**
      * Get TvShow Detail By TvShow Id (using LiveData)
      *
-     * @param tvShowId         TvShow Id
-     * @param subRequestType   Can do subRequest in the same time  ex: videos
+     * @param tvShowId       TvShow Id
+     * @param subRequestType Can do subRequest in the same time  ex: videos
      */
     public void getTvShowDetail(long tvShowId,
                                 String subRequestType) {
@@ -255,10 +331,35 @@ public class TvShowRepository {
 
 
     /***
+     * Get TvShows Response Live Data (For Popular TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getPopularTvShowsLiveData() {
+        return popularTvShowsLiveData;
+    }
+
+    /***
+     * Get TvShows Response Live Data (For Trending TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getTrendingTvShowsLiveData() {
+        return trendingTvShowsLiveData;
+    }
+
+
+    /***
+     * Get TvShows Response Live Data (For Trending TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getTvShowsLiveData() {
+        return tvShowsLiveData;
+    }
+
+    /***
      * Get TvShow Detail Live Data
      * @return
      */
-    public MutableLiveData<TvShowDetailData> getTvShowDetailLiveData(){
+    public MutableLiveData<TvShowDetailData> getTvShowDetailLiveData() {
         return tvShowDetailLiveData;
     }
 

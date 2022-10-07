@@ -1,4 +1,4 @@
-package com.example.movieinfo.ui.discover;
+package com.example.movieinfo.view.fragments.discover;
 
 import android.os.Bundle;
 
@@ -24,8 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movieinfo.R;
-import com.example.movieinfo.ui.discover.tab.SearchMoviesTab;
-import com.example.movieinfo.ui.discover.tab.SearchTvShowsTab;
+import com.example.movieinfo.view.fragments.discover.tab.SearchMoviesTab;
+import com.example.movieinfo.view.fragments.discover.tab.SearchTvShowsTab;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.google.android.material.tabs.TabLayout;

@@ -1,4 +1,4 @@
-package com.example.movieinfo.ui.watchlist;
+package com.example.movieinfo.view.fragments.watchlist;
 
 import android.os.Bundle;
 

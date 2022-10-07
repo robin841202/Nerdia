@@ -9,7 +9,7 @@
         app:startDestination="@id/homeFragment">
         <fragment
             android:id="@+id/homeFragment"
-            android:name="com.example.movieinfo.ui.home.HomeFragment"
+            android:name="com.example.movieinfo.view.fragments.home.HomeFragment"
             android:label="@string/title_home"
             tools:layout="@layout/fragment_home">
             <action
@@ -20,7 +20,7 @@
         </fragment>
         <fragment
             android:id="@+id/verticalBrowseFragment"
-            android:name="com.example.movieinfo.ui.home.VerticalBrowseFragment"
+            android:name="com.example.movieinfo.view.fragments.home.VerticalBrowseFragment"
             tools:layout="@layout/fragment_vertical_browse">
             <action
                 android:id="@+id/action_verticalBrowseFragment_to_homeFragment"
@@ -33,7 +33,7 @@
         app:startDestination="@id/discoverFragment">
         <fragment
             android:id="@+id/discoverFragment"
-            android:name="com.example.movieinfo.ui.discover.DiscoverFragment"
+            android:name="com.example.movieinfo.view.fragments.discover.DiscoverFragment"
             android:label="@string/title_discover"
             tools:layout="@layout/fragment_discover">
             <action
@@ -44,7 +44,7 @@
         </fragment>
         <fragment
             android:id="@+id/searchFragment"
-            android:name="com.example.movieinfo.ui.discover.SearchFragment"
+            android:name="com.example.movieinfo.view.fragments.discover.SearchFragment"
             android:label="@string/title_search"
             tools:layout="@layout/fragment_search">
             <action
@@ -56,7 +56,7 @@
     </navigation>
     <fragment
         android:id="@+id/watchlistFragment"
-        android:name="com.example.movieinfo.ui.watchlist.WatchlistFragment"
+        android:name="com.example.movieinfo.view.fragments.watchlist.WatchlistFragment"
         android:label="@string/title_watchlist"
         tools:layout="@layout/fragment_watch_list" />
 

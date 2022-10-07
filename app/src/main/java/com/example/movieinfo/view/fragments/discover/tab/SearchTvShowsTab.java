@@ -1,4 +1,4 @@
-package com.example.movieinfo.ui.discover.tab;
+package com.example.movieinfo.view.fragments.discover.tab;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,14 +22,12 @@ import android.view.ViewGroup;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.repository.TvShowRepository;
 import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.ui.home.HomeFragment;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
+import com.example.movieinfo.viewmodel.TvShowsViewModel;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShowListener {
@@ -37,7 +35,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
     private final String LOG_TAG = "SearchTvShowsTab";
 
 
-    private final TvShowRepository tvShowRepository = new TvShowRepository();
+    private TvShowsViewModel tvShowsViewModel;
 
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
@@ -59,6 +57,13 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         super.onCreate(savedInstanceState);
         // set default page
         currentPage = 1;
+
+        // Initialize viewModel, data only survive this fragment lifecycle
+        tvShowsViewModel = new ViewModelProvider(this).get(TvShowsViewModel.class);
+        tvShowsViewModel.init();
+
+        // Set Observer
+        tvShowsViewModel.getTvShowsLiveData().observe(this, getSearchTvShowsObserver());
     }
 
     @Override
@@ -89,6 +94,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
+            clearResults();
             searchTvShows(currentKeyword, currentPage);
             Log.d(LOG_TAG, "onRefresh");
             pullToRefresh.setRefreshing(false);
@@ -107,7 +113,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
                 @Override
                 public void onChanged(String keyword) {
                     // reset searched results
-                    resetResults();
+                    clearResults();
 
                     currentKeyword = keyword;
 
@@ -127,56 +133,45 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
      */
     private void searchTvShows(String keyword, int page) {
         if (keyword != null && !keyword.isEmpty()) {
-            try {
-                Method onSearchTvShowsFetched = getClass().getMethod("onSearchTvShowsFetched", ArrayList.class);
-                Method onFetchDataError = getClass().getMethod("onFetchDataError");
-                tvShowRepository.searchTvShows(keyword, page, this, onSearchTvShowsFetched, onFetchDataError);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            tvShowsViewModel.searchTvShows(keyword, page);
         }
     }
 
+
     /**
-     * Callback when get tvShows successfully
-     *
-     * @param tvShow_list tvShows data
+     * Observe when TvShowData List LiveData changed
      */
-    public void onSearchTvShowsFetched(ArrayList<TvShowData> tvShow_list) {
-        // append data to adapter
-        tvShowsAdapter.appendTvShows(tvShow_list);
-        // attach onScrollListener to RecyclerView
-        mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+    public Observer<ArrayList<TvShowData>> getSearchTvShowsObserver() {
+        return tvShows -> {
+            // append data to adapter
+            tvShowsAdapter.appendTvShows(tvShows);
+            // attach onScrollListener to RecyclerView
+            mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                // get the number of all items in recyclerView
-                int totalItemCount = mLayoutMgr.getItemCount();
-                // get the number of current items attached to recyclerView
-                int visibleItemCount = mLayoutMgr.getChildCount();
-                // get the first visible item's position
-                int firstVisibleItem = mLayoutMgr.findFirstVisibleItemPosition();
+                    // get the number of all items in recyclerView
+                    int totalItemCount = mLayoutMgr.getItemCount();
+                    // get the number of current items attached to recyclerView
+                    int visibleItemCount = mLayoutMgr.getChildCount();
+                    // get the first visible item's position
+                    int firstVisibleItem = mLayoutMgr.findFirstVisibleItemPosition();
 
-                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                    // detach current OnScrollListener
-                    mRcView.removeOnScrollListener(this);
+                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                        // detach current OnScrollListener
+                        mRcView.removeOnScrollListener(this);
 
-                    // append nextPage data to recyclerView
-                    currentPage++;
-                    searchTvShows(currentKeyword, currentPage);
+                        // append nextPage data to recyclerView
+                        currentPage++;
+                        searchTvShows(currentKeyword, currentPage);
+                    }
                 }
-            }
-        });
+            });
 
-        Log.d(LOG_TAG, "tvShows: data fetched successfully");
+            Log.d(LOG_TAG, "tvShows: data fetched successfully");
+        };
     }
 
-    /**
-     * Callback when data fetched fail
-     */
-    public void onFetchDataError() {
-        Log.d(LOG_TAG, "data fetched fail");
-    }
 
     /**
      * Callback when tvShow item get clicked
@@ -193,11 +188,10 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-
     /**
      * Reset search results
      */
-    private void resetResults() {
+    private void clearResults() {
         currentPage = 1;
         tvShowsAdapter.removeAllTvShows();
     }

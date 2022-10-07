@@ -14,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+
+import java.util.ArrayList;
 
 public class MovieDetails_AboutTab extends Fragment {
 
@@ -25,7 +28,7 @@ public class MovieDetails_AboutTab extends Fragment {
     private MovieDetailViewModel movieDetailViewModel;
 
     private TextView overView;
-
+    private TextView genres;
 
     public MovieDetails_AboutTab() {
         // Required empty public constructor
@@ -58,6 +61,7 @@ public class MovieDetails_AboutTab extends Fragment {
 
         // Initialize Views
         overView = view.findViewById(R.id.text_movie_overview);
+        genres = view.findViewById(R.id.text_genres);
 
     }
 
@@ -74,5 +78,19 @@ public class MovieDetails_AboutTab extends Fragment {
     private void populateUI(MovieDetailData movieDetail){
         // set overview
         overView.setText(movieDetail.getOverview() == null ? "" : movieDetail.getOverview());
+
+        // set genres
+        ArrayList<Genre> genre_List = movieDetail.getGenres();
+        if (genre_List != null){
+            String genreString = "";
+            for (int i=0;i < genre_List.size();i++){
+                Genre genre = genre_List.get(i);
+                String genreName = genre.getName();
+                genreString += genreName += " ";
+            }
+
+            genres.setText(genreString);
+        }
+
     }
 }

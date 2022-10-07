@@ -1,4 +1,4 @@
-package com.example.movieinfo.ui.discover;
+package com.example.movieinfo.view.fragments.discover;
 
 import android.os.Bundle;
 
