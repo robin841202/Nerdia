@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.movieinfo"
-        minSdk 21
+        minSdk 23
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -61,6 +61,9 @@ dependencies {
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+
+    // ExpandableTextView - In order to expand or collapse textView
+    implementation 'com.github.giangpham96:ExpandableTextView:1.0.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

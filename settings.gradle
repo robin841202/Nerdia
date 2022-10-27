@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' } // In order to use ExpandableTextView library
     }
 }
 rootProject.name = "MovieInfo"
