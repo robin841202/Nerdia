@@ -19,13 +19,15 @@ import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 
+import io.github.giangpham96.expandabletextview.ExpandableTextView;
+
 public class TvShowDetails_AboutTab extends Fragment {
 
     private final String LOG_TAG = "TvShowDetails_AboutTab";
 
     private TvShowDetailViewModel tvShowDetailViewModel;
 
-    private TextView overView;
+    private ExpandableTextView overView;
 
 
     public TvShowDetails_AboutTab() {
@@ -56,7 +58,7 @@ public class TvShowDetails_AboutTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Views
-        overView = view.findViewById(R.id.text_movie_overview);
+        overView = view.findViewById(R.id.expandText_tvShow_overview);
     }
 
     /**
@@ -70,7 +72,8 @@ public class TvShowDetails_AboutTab extends Fragment {
     }
 
     private void populateUI(TvShowDetailData tvShowDetail) {
-        // set overview
-        overView.setText(tvShowDetail.getOverview() == null ? "" : tvShowDetail.getOverview());
+        // set overview - using ExpandableTextView library setOriginalText function to show contents, do not use setText
+        overView.setOriginalText(tvShowDetail.getOverview() == null ? "" : tvShowDetail.getOverview());
+
     }
 }

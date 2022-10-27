@@ -13,11 +13,14 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/text_movie_overview"
+        <io.github.giangpham96.expandabletextview.ExpandableTextView
+            android:id="@+id/expandText_movie_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:expandAction="@string/label_read_more"
+            app:limitedMaxLines="5"
+            app:expandActionColor="?attr/colorPrimary"/>
 
         <TextView
             android:layout_width="match_parent"

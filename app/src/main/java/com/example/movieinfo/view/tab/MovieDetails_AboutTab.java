@@ -21,13 +21,15 @@ import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 
 import java.util.ArrayList;
 
+import io.github.giangpham96.expandabletextview.ExpandableTextView;
+
 public class MovieDetails_AboutTab extends Fragment {
 
     private final String LOG_TAG = "MovieDetails_AboutTab";
 
     private MovieDetailViewModel movieDetailViewModel;
 
-    private TextView overView;
+    private ExpandableTextView overView;
     private TextView genres;
 
     public MovieDetails_AboutTab() {
@@ -60,7 +62,7 @@ public class MovieDetails_AboutTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Views
-        overView = view.findViewById(R.id.text_movie_overview);
+        overView = view.findViewById(R.id.expandText_movie_overview);
         genres = view.findViewById(R.id.text_genres);
 
     }
@@ -76,8 +78,8 @@ public class MovieDetails_AboutTab extends Fragment {
     }
 
     private void populateUI(MovieDetailData movieDetail){
-        // set overview
-        overView.setText(movieDetail.getOverview() == null ? "" : movieDetail.getOverview());
+        // set overview - using ExpandableTextView library setOriginalText function to show contents, do not use setText
+        overView.setOriginalText(movieDetail.getOverview() == null ? "" : movieDetail.getOverview());
 
         // set genres
         ArrayList<Genre> genre_List = movieDetail.getGenres();

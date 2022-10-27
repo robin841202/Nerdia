@@ -7,18 +7,35 @@
     android:fillViewport="true"
     tools:context=".view.tab.TvShowDetails_AboutTab">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/text_movie_overview"
+        <io.github.giangpham96.expandabletextview.ExpandableTextView
+            android:id="@+id/expandText_tvShow_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:expandAction="@string/label_read_more"
+            app:limitedMaxLines="5"
+            app:expandActionColor="?attr/colorPrimary"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_genre"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <TextView
+            android:id="@+id/text_genres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>
