@@ -25,4 +25,13 @@
     <string name="label_about">關於</string>
     <string name="label_genre">類別</string>
     <string name="label_read_more">更多</string>
+    <string name="label_other_info">其他相關資訊</string>
+    <string name="label_status">狀態</string>
+    <string name="label_runtime">片長</string>
+    <string name="label_budget">總預算</string>
+    <string name="label_box_office_revenue">累計票房</string>
+    <string name="label_empty">無</string>
+    <string name="label_first_air_date">最初放送日期</string>
+    <string name="label_last_air_date">最新放送日期</string>
+    <string name="label_numOfEpisodes">已上線集數</string>
 </resources>

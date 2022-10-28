@@ -1,9 +1,11 @@
 package com.example.movieinfo.view.tab;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,10 +16,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.google.common.base.Strings;
+
+import java.util.ArrayList;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
@@ -25,9 +31,16 @@ public class TvShowDetails_AboutTab extends Fragment {
 
     private final String LOG_TAG = "TvShowDetails_AboutTab";
 
+    private Context context;
+
     private TvShowDetailViewModel tvShowDetailViewModel;
 
-    private ExpandableTextView overView;
+    private ExpandableTextView overViewTextView;
+    private ViewGroup genresGroup;
+    private TextView statusTextView;
+    private TextView firstAirDateTextView;
+    private TextView lastAirDateTextView;
+    private TextView numOfEpisodesTextView;
 
 
     public TvShowDetails_AboutTab() {
@@ -38,6 +51,8 @@ public class TvShowDetails_AboutTab extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        context = getContext();
 
         // Get the same viewModel that created in parent activity, in order to share the data
         tvShowDetailViewModel = new ViewModelProvider(getActivity()).get(TvShowDetailViewModel.class);
@@ -58,7 +73,13 @@ public class TvShowDetails_AboutTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Views
-        overView = view.findViewById(R.id.expandText_tvShow_overview);
+        overViewTextView = view.findViewById(R.id.expandText_tvShow_overview);
+        genresGroup = view.findViewById(R.id.group_genres);
+        statusTextView = view.findViewById(R.id.text_status);
+        firstAirDateTextView = view.findViewById(R.id.text_first_air_date);
+        lastAirDateTextView = view.findViewById(R.id.text_last_air_date);
+        numOfEpisodesTextView = view.findViewById(R.id.text_numOfEpisodes);
+
     }
 
     /**
@@ -72,8 +93,59 @@ public class TvShowDetails_AboutTab extends Fragment {
     }
 
     private void populateUI(TvShowDetailData tvShowDetail) {
+        // get all information
+        String overView = Strings.isNullOrEmpty(tvShowDetail.getOverview()) ? getString(R.string.label_empty) : tvShowDetail.getOverview();
+        ArrayList<Genre> genre_List = tvShowDetail.getGenres();
+        String status = Strings.isNullOrEmpty(tvShowDetail.getStatus()) ? getString(R.string.label_empty) : tvShowDetail.getStatus();
+        String firstAirDate = Strings.isNullOrEmpty(tvShowDetail.getOnAirDate()) ? getString(R.string.label_empty) : tvShowDetail.getOnAirDate();
+        String lastAirDate = Strings.isNullOrEmpty(tvShowDetail.getLastAirDate()) ? getString(R.string.label_empty) : tvShowDetail.getLastAirDate();
+        int numOfEpisodes = tvShowDetail.getNumOfEpisodes();
+
+
         // set overview - using ExpandableTextView library setOriginalText function to show contents, do not use setText
-        overView.setOriginalText(tvShowDetail.getOverview() == null ? "" : tvShowDetail.getOverview());
+        overViewTextView.setOriginalText(overView);
+
+        // set genres
+        if (genre_List != null) {
+            for (int i = 0; i < genre_List.size(); i++) {
+                Genre genre = genre_List.get(i);
+
+                // add a TextView dynamically
+                addGenreTextViewToGroup(genre.getName(), genresGroup);
+            }
+        }
+
+        // set status
+        statusTextView.setText(status);
+
+        // set firstAirDate
+        firstAirDateTextView.setText(firstAirDate);
+
+        // set lastAirDate
+        lastAirDateTextView.setText(lastAirDate);
+
+        // set episode runtime
+        String numOfEpisodesDisplay = numOfEpisodes > 0 ? String.format("%d 集", numOfEpisodes) : getString(R.string.label_empty);
+        numOfEpisodesTextView.setText(numOfEpisodesDisplay);
 
     }
+
+    /**
+     * Add a new TextView to Genres Group
+     *
+     * @param name  Genre name
+     * @param group Container that contains multiple genre TextView
+     */
+    private void addGenreTextViewToGroup(String name, ViewGroup group) {
+        TextView genreTextView = new TextView(context);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMarginEnd(8);
+        genreTextView.setLayoutParams(params);
+        genreTextView.setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Small);
+        genreTextView.setBackgroundResource(R.drawable.rounded_corner);
+        genreTextView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.lightGray));
+        genreTextView.setText(name);
+        group.addView(genreTextView);
+    }
+
 }

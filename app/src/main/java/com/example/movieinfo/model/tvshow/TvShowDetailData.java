@@ -14,6 +14,9 @@ import java.util.ArrayList;
  */
 public class TvShowDetailData implements Parcelable {
 
+    @SerializedName("number_of_episodes")
+    private final int numOfEpisodes;
+
     @SerializedName("last_air_date")
     private final String lastAirDate;
 
@@ -53,7 +56,8 @@ public class TvShowDetailData implements Parcelable {
     @SerializedName("vote_count")
     private final int voteCount;
 
-    public TvShowDetailData(String lastAirDate, boolean isAdult, String status, long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate, int voteCount) {
+    public TvShowDetailData(int numOfEpisodes, String lastAirDate, boolean isAdult, String status, long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate, int voteCount) {
+        this.numOfEpisodes = numOfEpisodes;
         this.lastAirDate = lastAirDate;
         this.isAdult = isAdult;
         this.status = status;
@@ -150,6 +154,15 @@ public class TvShowDetailData implements Parcelable {
         return voteCount;
     }
 
+    /**
+     * Get NumOfEpisodes
+     *
+     * @return
+     */
+    public int getNumOfEpisodes() {
+        return numOfEpisodes;
+    }
+
 
     /**
      * Get Last-air Date
@@ -204,6 +217,7 @@ public class TvShowDetailData implements Parcelable {
      * @param in
      */
     protected TvShowDetailData(Parcel in) {
+        numOfEpisodes = in.readInt();
         lastAirDate = in.readString();
         isAdult = in.readByte() != 0;
         status = in.readString();
@@ -251,6 +265,7 @@ public class TvShowDetailData implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(numOfEpisodes);
         dest.writeString(lastAirDate);
         dest.writeByte((byte) (isAdult ? 1 : 0));
         dest.writeString(status);

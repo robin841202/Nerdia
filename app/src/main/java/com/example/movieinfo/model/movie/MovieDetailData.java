@@ -33,6 +33,9 @@ public class MovieDetailData implements Parcelable {
     @SerializedName("revenue")
     private final int revenue;
 
+    @SerializedName("runtime")
+    private final int runtime;
+
     @SerializedName("id")
     private final long id;
 
@@ -57,13 +60,14 @@ public class MovieDetailData implements Parcelable {
     @SerializedName("vote_count")
     private final int voteCount;
 
-    public MovieDetailData(boolean isAdult, int budget, ArrayList<Genre> genres, ArrayList<ProductionCompany> productionCompanies, String status, int revenue, long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
+    public MovieDetailData(boolean isAdult, int budget, ArrayList<Genre> genres, ArrayList<ProductionCompany> productionCompanies, String status, int revenue, int runtime, long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
         this.isAdult = isAdult;
         this.budget = budget;
         this.genres = genres;
         this.productionCompanies = productionCompanies;
         this.status = status;
         this.revenue = revenue;
+        this.runtime = runtime;
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -84,6 +88,15 @@ public class MovieDetailData implements Parcelable {
      */
     public boolean getIsAdult() {
         return isAdult;
+    }
+
+    /**
+     * Get Status
+     *
+     * @return
+     */
+    public String getStatus() {
+        return status;
     }
 
     /**
@@ -113,6 +126,26 @@ public class MovieDetailData implements Parcelable {
         return productionCompanies;
     }
 
+
+    /**
+     * Get Revenue
+     *
+     * @return
+     */
+    public int getRevenue() {
+        return revenue;
+    }
+
+
+
+    /**
+     * Get Runtime
+     *
+     * @return
+     */
+    public int getRuntime() {
+        return runtime;
+    }
 
     /**
      * Get Id
@@ -206,6 +239,7 @@ public class MovieDetailData implements Parcelable {
         budget = in.readInt();
         status = in.readString();
         revenue = in.readInt();
+        runtime = in.readInt();
         id = in.readLong();
         title = in.readString();
         overview = in.readString();
@@ -254,6 +288,7 @@ public class MovieDetailData implements Parcelable {
         dest.writeInt(budget);
         dest.writeString(status);
         dest.writeInt(revenue);
+        dest.writeInt(runtime);
         dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(overview);

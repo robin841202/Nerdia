@@ -52,18 +52,25 @@ public class MovieRepository {
         this.region = "TW";
 
         // Initialize LiveData
-        moviesLiveData = new MutableLiveData<>();
-        upcomingMoviesLiveData = new MutableLiveData<>();
-        nowPlayingMoviesLiveData = new MutableLiveData<>();
-        trendingMoviesLiveData = new MutableLiveData<>();
-        popularMoviesLiveData = new MutableLiveData<>();
-        movieDetailLiveData = new MutableLiveData<>();
+        initLiveData();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.themoviedb.org/3/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(IMovieService.class);
+    }
+
+    /**
+     * Initialize every LiveData
+     */
+    private void initLiveData(){
+        moviesLiveData = new MutableLiveData<>();
+        upcomingMoviesLiveData = new MutableLiveData<>();
+        nowPlayingMoviesLiveData = new MutableLiveData<>();
+        trendingMoviesLiveData = new MutableLiveData<>();
+        popularMoviesLiveData = new MutableLiveData<>();
+        movieDetailLiveData = new MutableLiveData<>();
     }
 
 
@@ -323,7 +330,7 @@ public class MovieRepository {
     }
 
     /**
-     * Search Movies By Keyword
+     * Search Movies By Keyword (using LiveData)
      *
      * @param keyWord keyword for searching
      * @param page    target page

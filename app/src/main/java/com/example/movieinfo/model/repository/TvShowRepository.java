@@ -48,10 +48,7 @@ public class TvShowRepository {
         this.region = "TW";
 
         // Initialize LiveData
-        tvShowsLiveData = new MutableLiveData<>();
-        popularTvShowsLiveData = new MutableLiveData<>();
-        trendingTvShowsLiveData = new MutableLiveData<>();
-        tvShowDetailLiveData = new MutableLiveData<>();
+        initLiveData();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.themoviedb.org/3/")
@@ -60,6 +57,15 @@ public class TvShowRepository {
         service = retrofit.create(ITvShowService.class);
     }
 
+    /**
+     * Initialize every LiveData
+     */
+    private void initLiveData(){
+        tvShowsLiveData = new MutableLiveData<>();
+        popularTvShowsLiveData = new MutableLiveData<>();
+        trendingTvShowsLiveData = new MutableLiveData<>();
+        tvShowDetailLiveData = new MutableLiveData<>();
+    }
 
     public void setLanguage(String language) {
         this.language = language;
