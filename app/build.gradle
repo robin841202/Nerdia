@@ -13,6 +13,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // build api keys field to allow used in repository, actual value is set in gradle.properties
+        buildConfigField("String", "YOUTUBE_API_KEY", YOUTUBE_API_KEY)
+        buildConfigField("String", "TMDB_API_KEY", TMDB_API_KEY)
     }
 
     buildTypes {
@@ -67,6 +71,9 @@ dependencies {
 
     // Guava - In order to check string isNullOrEmpty easily
     implementation("com.google.guava:guava:31.1-android")
+
+    // Youtube Player Api lib
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

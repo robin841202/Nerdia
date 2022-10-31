@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.movieinfo.BuildConfig;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.service.ITvShowService;
 import com.example.movieinfo.model.tvshow.TvShowData;
@@ -24,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TvShowRepository {
     private final String LOG_TAG = "TvShowRepository";
     private final ITvShowService service;
-    private final String apiKey = "45573754115aa294605178ed2769f617";
+    private final String apiKey = BuildConfig.TMDB_API_KEY;
     private String language;
     private String region;
     // set default mediaType to tv
