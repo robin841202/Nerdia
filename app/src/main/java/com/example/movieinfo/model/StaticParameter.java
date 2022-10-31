@@ -12,6 +12,7 @@ public class StaticParameter {
         public static final String EXTRA_DATA_MOVIE_ID_KEY = "EXTRA_DATA_MOVIE_ID";
         public static final String EXTRA_DATA_TVSHOW_ID_KEY = "EXTRA_DATA_TVSHOW_ID";
         public static final String EXTRA_DATA_VERTICAL_BROWSE_KEY = "EXTRA_DATA_VERTICAL_BROWSE";
+        public static final String EXTRA_DATA_VIDEO_ID_KEY = "EXTRA_DATA_VIDEO_ID";
     }
 
     public static class MediaType{

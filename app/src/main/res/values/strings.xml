@@ -36,4 +36,6 @@
     <string name="label_numOfEpisodes">已上線集數</string>
     <string name="label_video_thumbnail">影片縮圖</string>
     <string name="label_videos">相關影音</string>
+    <string name="label_youtube_player">Youtube Player</string>
+    <string name="label_youtube_player_error_display">影片播放器初始化發生錯誤!</string>
 </resources>

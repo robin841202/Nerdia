@@ -1,9 +1,10 @@
 package com.example.movieinfo.model;
 
-import com.example.movieinfo.model.movie.MovieData;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Response Data Model, using @SerializedName to map to json key
@@ -11,8 +12,41 @@ import java.util.ArrayList;
 public class VideosResponse {
 
     @SerializedName("results")
-    public ArrayList<VideoData> video_list;
+    private ArrayList<VideoData> video_list;
 
+    public VideosResponse(ArrayList<VideoData> video_list) {
+        this.video_list = video_list;
+    }
+
+    public ArrayList<VideoData> getVideo_list() {
+        return video_list;
+    }
+
+    /**
+     * Sort Videos By Language, Taiwan(zh) videos always sort in first
+     */
+    public void sortVideosByLanguage(){
+        Collections.sort(video_list, new Comparator<VideoData>() {
+            @Override
+            public int compare(VideoData o1, VideoData o2) {
+                String lc1 = o1.getLanguageCode();
+                String lc2 = o2.getLanguageCode();
+                if (lc1 != null && lc1.equalsIgnoreCase("zh"))
+                    return -1;
+                if (lc2 != null && lc2.equalsIgnoreCase("zh"))
+                    return 1;
+
+                if (lc1 != null && lc2 != null)
+                    return lc1.compareTo(lc2);
+
+                return 0;
+            }
+        });
+    }
+
+    /**
+     * Individual Video Data
+     */
     public static class VideoData{
 
         /**

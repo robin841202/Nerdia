@@ -1,12 +1,12 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,15 +19,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movieinfo.R;
+import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
-import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
@@ -156,7 +159,9 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         // set video thumbnails recyclerView
         VideosResponse videosResponse = movieDetail.getVideosResponse();
         if (videosResponse != null){
-            ArrayList<VideosResponse.VideoData> videos = videosResponse.video_list;
+            // sort videos first
+            videosResponse.sortVideosByLanguage();
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
             videoThumbnailAdapter.setVideos(videos);
         }
     }
@@ -186,7 +191,11 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
      */
     @Override
     public void onVideoClick(VideosResponse.VideoData video) {
-
+        Intent intent = new Intent(getContext(), YoutubePlayerActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, video.getVideoId());
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }
 

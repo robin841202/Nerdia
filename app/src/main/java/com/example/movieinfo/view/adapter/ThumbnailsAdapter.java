@@ -106,14 +106,14 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
 
                         @Override
                         public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-                            Log.d(LOG_TAG, String.format("YoutubeThumbnailView Loading Error! Reason: {0}",  errorReason.toString()));
+                            Log.d(LOG_TAG, String.format("YoutubeThumbnailView Loading Error! Reason: {0}",  errorReason.name()));
                         }
                     });
                 }
 
                 @Override
                 public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-                    Log.d(LOG_TAG, String.format("YoutubeThumbnailView Initialize Failed! Reason: {0}",  youTubeInitializationResult.toString()));
+                    Log.d(LOG_TAG, String.format("YoutubeThumbnailView Initialize Failed! Reason: {0}",  youTubeInitializationResult.name()));
                 }
             });
 

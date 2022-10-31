@@ -147,7 +147,9 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         // set video thumbnails recyclerView
         VideosResponse videosResponse = tvShowDetail.getVideosResponse();
         if (videosResponse != null){
-            ArrayList<VideosResponse.VideoData> videos = videosResponse.video_list;
+            // sort videos first
+            videosResponse.sortVideosByLanguage();
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
             videoThumbnailAdapter.setVideos(videos);
         }
     }

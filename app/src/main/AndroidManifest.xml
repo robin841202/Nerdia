@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.movieinfo">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
     <queries>
+
         <!-- Youtube Api -->
         <intent>
             <action android:name="com.google.android.youtube.api.service.START" />
@@ -23,15 +22,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieInfo"
         tools:targetApi="31">
+        <!-- Set "configChanges" to avoid screen rotation recreate the activity -->
+        <activity
+            android:name=".view.YoutubePlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false" />
         <activity
             android:name=".view.ImageDisplayActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
             android:name=".view.MediaDetailsActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="false" />
-        <!--Set "windowSoftInputMode" to "adjustPan" to avoid bottomNavigationView push up when keyboard show up-->
+        <!-- Set "windowSoftInputMode" to "adjustPan" to avoid bottomNavigationView push up when keyboard show up -->
         <activity
             android:name=".view.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
