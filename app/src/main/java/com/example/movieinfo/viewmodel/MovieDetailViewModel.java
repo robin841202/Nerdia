@@ -23,9 +23,10 @@ public class MovieDetailViewModel extends ViewModel {
      *
      * @param movieId
      * @param subRequestType
+     * @param videoLanguages
      */
-    public void getMovieDetail(long movieId, String subRequestType) {
-        repository.getMovieDetail(movieId, subRequestType);
+    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages) {
+        repository.getMovieDetail(movieId, subRequestType, videoLanguages);
     }
 
     /**

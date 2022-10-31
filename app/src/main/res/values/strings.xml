@@ -34,4 +34,6 @@
     <string name="label_first_air_date">最初放送日期</string>
     <string name="label_last_air_date">最新放送日期</string>
     <string name="label_numOfEpisodes">已上線集數</string>
+    <string name="label_video_thumbnail">影片縮圖</string>
+    <string name="label_videos">相關影音</string>
 </resources>

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
@@ -18,9 +20,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
+import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
@@ -28,14 +32,19 @@ import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 
-public class MediaDetailsActivity extends AppCompatActivity {
+
+public class MediaDetailsActivity extends AppCompatActivity{
 
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
 
     // Define extra data key for passing data to other activities or fragments
     public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
+
+    private final String SUB_REQUEST_TYPE = "videos";
+    private final String VIDEO_LANGUAGES = "zh-TW,en";
 
     private ImageView backdrop;
     private ImageView poster;
@@ -69,7 +78,6 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // Initialize pagerAdapter
         CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), getLifecycle());
 
-
         // Get mediaType from intent
         Intent intent = getIntent();
         String mediaType = intent.getStringExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
@@ -92,7 +100,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
                     // Set movieDetail observer
                     movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
-                    getMovieDetail(movieId, null);
+                    getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES);
                 }
                 break;
             case StaticParameter.MediaType.TV:
@@ -111,7 +119,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
                     // Set tvShowDetail observer
                     tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
-                    getTvShowDetail(tvShowId, null);
+                    getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES);
                 }
                 break;
             default:
@@ -187,9 +195,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
      *
      * @param id             movie id
      * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
      */
-    public void getMovieDetail(long id, String subRequestType) {
-        movieDetailViewModel.getMovieDetail(id, subRequestType);
+    public void getMovieDetail(long id, String subRequestType, String videoLanguages) {
+        movieDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages);
     }
 
     /**
@@ -314,11 +323,12 @@ public class MediaDetailsActivity extends AppCompatActivity {
     /**
      * Get TvShow Detail By TvShow Id
      *
-     * @param id tvShow id
+     * @param id             tvShow id
      * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
      */
-    public void getTvShowDetail(long id, String subRequestType) {
-        tvShowDetailViewModel.getTvShowDetail(id, subRequestType);
+    public void getTvShowDetail(long id, String subRequestType, String videoLanguages) {
+        tvShowDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages);
     }
 
     /**
@@ -465,4 +475,5 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
+
 }

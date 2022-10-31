@@ -5,6 +5,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
+    <queries>
+        <!-- Youtube Api -->
+        <intent>
+            <action android:name="com.google.android.youtube.api.service.START" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

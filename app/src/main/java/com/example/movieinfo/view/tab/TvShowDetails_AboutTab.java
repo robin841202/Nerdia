@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +19,10 @@ import android.widget.TextView;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
+import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.common.base.Strings;
@@ -27,7 +31,7 @@ import java.util.ArrayList;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
-public class TvShowDetails_AboutTab extends Fragment {
+public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapter.IThumbnailListener {
 
     private final String LOG_TAG = "TvShowDetails_AboutTab";
 
@@ -42,6 +46,8 @@ public class TvShowDetails_AboutTab extends Fragment {
     private TextView lastAirDateTextView;
     private TextView numOfEpisodesTextView;
 
+    private RecyclerView videoThumbnail_RcView;
+    private ThumbnailsAdapter videoThumbnailAdapter;
 
     public TvShowDetails_AboutTab() {
         // Required empty public constructor
@@ -79,6 +85,16 @@ public class TvShowDetails_AboutTab extends Fragment {
         firstAirDateTextView = view.findViewById(R.id.text_first_air_date);
         lastAirDateTextView = view.findViewById(R.id.text_last_air_date);
         numOfEpisodesTextView = view.findViewById(R.id.text_numOfEpisodes);
+        videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
+
+        // Initialize Recycler Adapter
+        videoThumbnailAdapter = new ThumbnailsAdapter(new ArrayList<>(), this);
+
+        // Set adapter
+        videoThumbnail_RcView.setAdapter(videoThumbnailAdapter);
+
+        // Set layoutManager
+        videoThumbnail_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
 
     }
 
@@ -128,6 +144,12 @@ public class TvShowDetails_AboutTab extends Fragment {
         String numOfEpisodesDisplay = numOfEpisodes > 0 ? String.format("%d 集", numOfEpisodes) : getString(R.string.label_empty);
         numOfEpisodesTextView.setText(numOfEpisodesDisplay);
 
+        // set video thumbnails recyclerView
+        VideosResponse videosResponse = tvShowDetail.getVideosResponse();
+        if (videosResponse != null){
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.video_list;
+            videoThumbnailAdapter.setVideos(videos);
+        }
     }
 
     /**
@@ -146,6 +168,15 @@ public class TvShowDetails_AboutTab extends Fragment {
         genreTextView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.lightGray));
         genreTextView.setText(name);
         group.addView(genreTextView);
+    }
+
+    /**
+     * Callback when video item get clicked
+     * @param video video Data
+     */
+    @Override
+    public void onVideoClick(VideosResponse.VideoData video) {
+
     }
 
 }

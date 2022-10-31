@@ -14,10 +14,11 @@ public interface ITvShowService {
 
     /**
      * Get Popular TvShows
-     * @param apiKey TMDB API Key
-     * @param page target page
+     *
+     * @param apiKey   TMDB API Key
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("tv/popular")
@@ -34,12 +35,13 @@ public interface ITvShowService {
 
     /**
      * Get Trending Movies, TvShows or Person
-     * @param mediaType "all", "movie", "tv", "person"
+     *
+     * @param mediaType  "all", "movie", "tv", "person"
      * @param timeWindow "day", "week"
-     * @param apiKey TMDB API Key
-     * @param page target page
-     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
-     * @param region ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param apiKey     TMDB API Key
+     * @param page       target page
+     * @param language   ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region     ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
      * @return
      */
     @GET("trending/{media_type}/{time_window}")
@@ -66,6 +68,7 @@ public interface ITvShowService {
      * @param apiKey         TMDB API Key
      * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
      * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
      * @return
      */
     @GET("tv/{tv_id}")
@@ -77,7 +80,9 @@ public interface ITvShowService {
             @Query("language")
                     String language,
             @Query("append_to_response")
-                    String subRequestType
+                    String subRequestType,
+            @Query("include_video_language")
+                    String videoLanguages
     );
 
 

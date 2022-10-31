@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.ProductionCompany;
+import com.example.movieinfo.model.VideosResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -12,14 +13,14 @@ import java.util.ArrayList;
 /**
  * Movie Detail Data Model, using @SerializedName to map to json key
  */
-public class MovieDetailData implements Parcelable {
+public class MovieDetailData{
 
 
     @SerializedName("adult")
-    private final boolean isAdult;
+    private boolean isAdult;
 
     @SerializedName("budget")
-    private final int budget;
+    private int budget;
 
     @SerializedName("genres")
     private ArrayList<Genre> genres;
@@ -28,57 +29,41 @@ public class MovieDetailData implements Parcelable {
     private ArrayList<ProductionCompany> productionCompanies;
 
     @SerializedName("status")
-    private final String status;
+    private String status;
 
     @SerializedName("revenue")
-    private final int revenue;
+    private int revenue;
 
     @SerializedName("runtime")
-    private final int runtime;
+    private int runtime;
 
     @SerializedName("id")
-    private final long id;
+    private long id;
 
     @SerializedName("title")
-    private final String title;
+    private String title;
 
     @SerializedName("overview")
-    private final String overview;
+    private String overview;
 
     @SerializedName("poster_path")
-    private final String posterPath;
+    private String posterPath;
 
     @SerializedName("backdrop_path")
-    private final String backdropPath;
+    private String backdropPath;
 
     @SerializedName("vote_average")
     private double rating;
 
     @SerializedName("release_date")
-    private final String releaseDate;
+    private String releaseDate;
 
     @SerializedName("vote_count")
-    private final int voteCount;
-
-    public MovieDetailData(boolean isAdult, int budget, ArrayList<Genre> genres, ArrayList<ProductionCompany> productionCompanies, String status, int revenue, int runtime, long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
-        this.isAdult = isAdult;
-        this.budget = budget;
-        this.genres = genres;
-        this.productionCompanies = productionCompanies;
-        this.status = status;
-        this.revenue = revenue;
-        this.runtime = runtime;
-        this.id = id;
-        this.title = title;
-        this.overview = overview;
+    private int voteCount;
 
 
-        this.posterPath = posterPath;
-        this.backdropPath = backdropPath;
-        this.rating = rating;
-        this.releaseDate = releaseDate;
-        this.voteCount = voteCount;
-    }
+    @SerializedName("videos")
+    private VideosResponse videosResponse;
 
 
     /**
@@ -228,76 +213,9 @@ public class MovieDetailData implements Parcelable {
         return voteCount;
     }
 
-
     /**
-     * 新增的Parcelable部分，讀取參數，參數順序要和建構子一樣
-     *
-     * @param in
-     */
-    protected MovieDetailData(Parcel in) {
-        isAdult = in.readByte() != 0;
-        budget = in.readInt();
-        status = in.readString();
-        revenue = in.readInt();
-        runtime = in.readInt();
-        id = in.readLong();
-        title = in.readString();
-        overview = in.readString();
-        posterPath = in.readString();
-        backdropPath = in.readString();
-        rating = in.readDouble();
-        releaseDate = in.readString();
-        voteCount = in.readInt();
-    }
-
-    /**
-     * 新增的Parcelable部分
-     */
-    public static final Creator<MovieDetailData> CREATOR = new Creator<MovieDetailData>() {
-        @Override
-        public MovieDetailData createFromParcel(Parcel in) {
-            return new MovieDetailData(in);
-        }
-
-        @Override
-        public MovieDetailData[] newArray(int size) {
-            return new MovieDetailData[size];
-        }
-    };
-
-
-    /**
-     * 新增的Parcelable部分，Describe the kinds of special objects contained in this Parcelable instance's marshaled representation.
-     *
+     * Get Videos Response
      * @return
      */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * 新增的Parcelable部分，將物件攤平成Parcel，參數順序要和建構子一樣
-     *
-     * @param dest
-     * @param flags
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (isAdult ? 1 : 0));
-        dest.writeInt(budget);
-        dest.writeString(status);
-        dest.writeInt(revenue);
-        dest.writeInt(runtime);
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(overview);
-        dest.writeString(posterPath);
-        dest.writeString(backdropPath);
-        dest.writeDouble(rating);
-        dest.writeString(releaseDate);
-        dest.writeInt(voteCount);
-    }
-
-
+    public VideosResponse getVideosResponse() {return videosResponse;}
 }

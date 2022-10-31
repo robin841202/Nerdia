@@ -311,10 +311,11 @@ public class TvShowRepository {
      *
      * @param tvShowId       TvShow Id
      * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages  Can include multiple languages of video ex:zh-TW,en
      */
     public void getTvShowDetail(long tvShowId,
-                                String subRequestType) {
-        Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType);
+                                String subRequestType, String videoLanguages) {
+        Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType, videoLanguages);
         call.enqueue(new Callback<TvShowDetailData>() {
             @Override
             public void onResponse(Call<TvShowDetailData> call, Response<TvShowDetailData> response) {

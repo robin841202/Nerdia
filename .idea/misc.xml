@@ -22,8 +22,9 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_vertical_browse.xml" value="0.25" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watch_list.xml" value="0.12916246215943492" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragments/fragment_watch_list.xml" value="0.30052083333333335" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_media.xml" value="0.1" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_media.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_movie.xml" value="0.2994791666666667" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_video_thumbnail.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/menu/bottom_nav_menu.xml" value="0.26666666666666666" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/menu/search_menu.xml" value="0.5057291666666667" />
       </map>

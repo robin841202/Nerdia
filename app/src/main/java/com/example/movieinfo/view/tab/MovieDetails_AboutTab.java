@@ -10,6 +10,8 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,9 @@ import android.widget.TextView;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
+import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.common.base.Strings;
@@ -27,7 +31,7 @@ import java.util.ArrayList;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
-public class MovieDetails_AboutTab extends Fragment {
+public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter.IThumbnailListener{
 
     private final String LOG_TAG = "MovieDetails_AboutTab";
 
@@ -41,6 +45,9 @@ public class MovieDetails_AboutTab extends Fragment {
     private TextView runtimeTextView;
     private TextView budgetTextView;
     private TextView revenueTextView;
+
+    private RecyclerView videoThumbnail_RcView;
+    private ThumbnailsAdapter videoThumbnailAdapter;
 
     public MovieDetails_AboutTab() {
         // Required empty public constructor
@@ -78,6 +85,16 @@ public class MovieDetails_AboutTab extends Fragment {
         runtimeTextView = view.findViewById(R.id.text_runtime);
         budgetTextView = view.findViewById(R.id.text_budget);
         revenueTextView = view.findViewById(R.id.text_revenue);
+        videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
+
+        // Initialize Recycler Adapter
+        videoThumbnailAdapter = new ThumbnailsAdapter(new ArrayList<>(), this);
+
+        // Set adapter
+        videoThumbnail_RcView.setAdapter(videoThumbnailAdapter);
+
+        // Set layoutManager
+        videoThumbnail_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
 
     }
 
@@ -136,6 +153,12 @@ public class MovieDetails_AboutTab extends Fragment {
         String revenue = revenueNum > 0 ? String.format("USD$ %,d", revenueNum) : getString(R.string.label_empty);
         revenueTextView.setText(revenue);
 
+        // set video thumbnails recyclerView
+        VideosResponse videosResponse = movieDetail.getVideosResponse();
+        if (videosResponse != null){
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.video_list;
+            videoThumbnailAdapter.setVideos(videos);
+        }
     }
 
     /**
@@ -157,5 +180,13 @@ public class MovieDetails_AboutTab extends Fragment {
     }
 
 
+    /**
+     * Callback when video item get clicked
+     * @param video video Data
+     */
+    @Override
+    public void onVideoClick(VideosResponse.VideoData video) {
+
+    }
 }
 

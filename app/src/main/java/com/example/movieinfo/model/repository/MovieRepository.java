@@ -376,9 +376,10 @@ public class MovieRepository {
      *
      * @param movieId        Movie Id
      * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages  Can include multiple languages of video ex:zh-TW,en
      */
-    public void getMovieDetail(long movieId, String subRequestType) {
-        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType);
+    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages);
         call.enqueue(new Callback<MovieDetailData>() {
             @Override
             public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {

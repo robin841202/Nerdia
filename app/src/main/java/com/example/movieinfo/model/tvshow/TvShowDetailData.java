@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.ProductionCompany;
+import com.example.movieinfo.model.VideosResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -12,16 +13,16 @@ import java.util.ArrayList;
 /**
  * TvShow Detail Data Model, using @SerializedName to map to json key
  */
-public class TvShowDetailData implements Parcelable {
+public class TvShowDetailData{
 
     @SerializedName("number_of_episodes")
-    private final int numOfEpisodes;
+    private int numOfEpisodes;
 
     @SerializedName("last_air_date")
-    private final String lastAirDate;
+    private String lastAirDate;
 
     @SerializedName("adult")
-    private final boolean isAdult;
+    private boolean isAdult;
 
     @SerializedName("genres")
     private ArrayList<Genre> genres;
@@ -30,48 +31,36 @@ public class TvShowDetailData implements Parcelable {
     private ArrayList<ProductionCompany> productionCompanies;
 
     @SerializedName("status")
-    private final String status;
+    private String status;
 
     @SerializedName("id")
-    private final long id;
+    private long id;
 
     @SerializedName("name")
-    private final String title;
+    private String title;
 
     @SerializedName("overview")
-    private final String overview;
+    private String overview;
 
     @SerializedName("poster_path")
-    private final String posterPath;
+    private String posterPath;
 
     @SerializedName("backdrop_path")
-    private final String backdropPath;
+    private String backdropPath;
 
     @SerializedName("vote_average")
     private double rating;
 
     @SerializedName("first_air_date")
-    private final String onAirDate;
+    private String onAirDate;
 
     @SerializedName("vote_count")
-    private final int voteCount;
-
-    public TvShowDetailData(int numOfEpisodes, String lastAirDate, boolean isAdult, String status, long id, String title, String overview, String posterPath, String backdropPath, double rating, String onAirDate, int voteCount) {
-        this.numOfEpisodes = numOfEpisodes;
-        this.lastAirDate = lastAirDate;
-        this.isAdult = isAdult;
-        this.status = status;
-        this.id = id;
-        this.title = title;
-        this.overview = overview;
+    private int voteCount;
 
 
-        this.posterPath = posterPath;
-        this.backdropPath = backdropPath;
-        this.rating = rating;
-        this.onAirDate = onAirDate;
-        this.voteCount = voteCount;
-    }
+    @SerializedName("videos")
+    private VideosResponse videosResponse;
+
 
     /**
      * Get Id
@@ -200,7 +189,6 @@ public class TvShowDetailData implements Parcelable {
         return productionCompanies;
     }
 
-
     /**
      * Get Status
      *
@@ -210,73 +198,9 @@ public class TvShowDetailData implements Parcelable {
         return status;
     }
 
-
     /**
-     * 新增的Parcelable部分，讀取參數，參數順序要和建構子一樣
-     *
-     * @param in
-     */
-    protected TvShowDetailData(Parcel in) {
-        numOfEpisodes = in.readInt();
-        lastAirDate = in.readString();
-        isAdult = in.readByte() != 0;
-        status = in.readString();
-        id = in.readLong();
-        title = in.readString();
-        overview = in.readString();
-        posterPath = in.readString();
-        backdropPath = in.readString();
-        rating = in.readDouble();
-        onAirDate = in.readString();
-        voteCount = in.readInt();
-    }
-
-    /**
-     * 新增的Parcelable部分
-     */
-    public static final Creator<TvShowDetailData> CREATOR = new Creator<TvShowDetailData>() {
-        @Override
-        public TvShowDetailData createFromParcel(Parcel in) {
-            return new TvShowDetailData(in);
-        }
-
-        @Override
-        public TvShowDetailData[] newArray(int size) {
-            return new TvShowDetailData[size];
-        }
-    };
-
-
-    /**
-     * 新增的Parcelable部分，Describe the kinds of special objects contained in this Parcelable instance's marshaled representation.
-     *
+     * Get Videos Response
      * @return
      */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    /**
-     * 新增的Parcelable部分，將物件攤平成Parcel，參數順序要和建構子一樣
-     *
-     * @param dest
-     * @param flags
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(numOfEpisodes);
-        dest.writeString(lastAirDate);
-        dest.writeByte((byte) (isAdult ? 1 : 0));
-        dest.writeString(status);
-        dest.writeLong(id);
-        dest.writeString(title);
-        dest.writeString(overview);
-        dest.writeString(posterPath);
-        dest.writeString(backdropPath);
-        dest.writeDouble(rating);
-        dest.writeString(onAirDate);
-        dest.writeInt(voteCount);
-    }
-
+    public VideosResponse getVideosResponse() {return videosResponse;}
 }
