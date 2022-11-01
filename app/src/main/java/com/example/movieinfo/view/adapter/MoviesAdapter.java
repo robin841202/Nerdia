@@ -20,8 +20,8 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
-    private ArrayList<MovieData> movie_list;
-    private IMovieListener listener;
+    private final ArrayList<MovieData> movie_list;
+    private final IMovieListener listener;
 
     public interface IMovieListener {
         /**
@@ -73,11 +73,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     /**
      * ViewHolder which set data to views in one itemView
      */
-    class MoviesViewHolder extends RecyclerView.ViewHolder {
-        private ImageView poster;
-        private TextView title;
-        private View itemView;
-        private TextView rating;
+    static class MoviesViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView poster;
+        private final TextView title;
+        private final View itemView;
+        private final TextView rating;
 
         private final IMovieListener listener;
 

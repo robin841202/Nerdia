@@ -28,7 +28,7 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
     private final String LOG_TAG = "ThumbnailsAdapter";
 
     private ArrayList<VideoData> video_list;
-    private IThumbnailListener listener;
+    private final IThumbnailListener listener;
 
     public interface IThumbnailListener {
         /**
@@ -79,8 +79,8 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
      * ViewHolder which set data to views in one itemView
      */
     class ThumbnailsViewHolder extends RecyclerView.ViewHolder {
-        private YouTubeThumbnailView thumbnailView;
-        private TextView title;
+        private final YouTubeThumbnailView thumbnailView;
+        private final TextView title;
         private final IThumbnailListener listener;
 
         public ThumbnailsViewHolder(@NonNull View itemView, IThumbnailListener listener) {

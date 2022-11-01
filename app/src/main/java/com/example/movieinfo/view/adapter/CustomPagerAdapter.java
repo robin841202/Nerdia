@@ -25,7 +25,7 @@ public class CustomPagerAdapter extends FragmentStateAdapter {
 
     /**
      * Add Fragment in ViewPager2
-     * @param fragment
+     * @param fragment tab fragment
      * @param title page title
      */
     public void addFragment(Fragment fragment, String title){
@@ -35,7 +35,7 @@ public class CustomPagerAdapter extends FragmentStateAdapter {
 
     /**
      * Get Page Title
-     * @param position
+     * @param position index
      * @return page title
      */
     public String getPageTitle(int position){
@@ -45,9 +45,7 @@ public class CustomPagerAdapter extends FragmentStateAdapter {
 
     @NonNull
     @Override
-    public Fragment createFragment(int position) {
-        return fragmentList.get(position);
-    }
+    public Fragment createFragment(int position) {return fragmentList.get(position);}
 
     @Override
     public int getItemCount() {

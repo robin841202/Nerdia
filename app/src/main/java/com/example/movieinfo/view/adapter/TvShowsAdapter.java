@@ -19,8 +19,8 @@ import com.example.movieinfo.model.tvshow.TvShowData;
 import java.util.ArrayList;
 
 public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsViewHolder> {
-    private ArrayList<TvShowData> tvShow_list;
-    private ITvShowListener listener;
+    private final ArrayList<TvShowData> tvShow_list;
+    private final ITvShowListener listener;
 
     public interface ITvShowListener {
         /**
@@ -72,11 +72,11 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
     /**
      * ViewHolder which set data to views in one itemView
      */
-    class TvShowsViewHolder extends RecyclerView.ViewHolder {
-        private ImageView poster;
-        private TextView title;
-        private View itemView;
-        private TextView rating;
+    static class TvShowsViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView poster;
+        private final TextView title;
+        private final View itemView;
+        private final TextView rating;
 
         private final ITvShowListener listener;
 
