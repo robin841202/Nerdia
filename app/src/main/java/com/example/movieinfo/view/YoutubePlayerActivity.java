@@ -40,13 +40,17 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 youTubePlayer.loadVideo(videoId);
+                // enable automatic control of the orientation.
+                youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+                // automatically enter fullscreen when the device enters landscape orientation
+                youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
                 youTubePlayer.play();
             }
 
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
                 Toast.makeText(context, getString(R.string.label_youtube_player_error_display), Toast.LENGTH_LONG).show();
-                Log.d(LOG_TAG, String.format("YouTubePlayerView Initialize Failed! Reason: {0}",  youTubeInitializationResult.name()));
+                Log.d(LOG_TAG, String.format("YouTubePlayerView Initialize Failed! Reason: %s",  youTubeInitializationResult.name()));
             }
         });
 

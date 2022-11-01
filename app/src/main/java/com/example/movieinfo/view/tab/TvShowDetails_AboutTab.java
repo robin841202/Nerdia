@@ -1,6 +1,7 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,9 +20,11 @@ import android.widget.TextView;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
+import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
@@ -178,7 +181,11 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
      */
     @Override
     public void onVideoClick(VideosResponse.VideoData video) {
-
+        Intent intent = new Intent(getContext(), YoutubePlayerActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, video.getVideoId());
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }
