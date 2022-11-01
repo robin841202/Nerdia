@@ -36,6 +36,13 @@ public class StaticParameter {
         public static final int TRENDING_TVSHOWS = 5;
     }
 
+    public static class VideoType{
+        public static final String TRAILER = "Trailer";
+        public static final String TEASER = "Teaser";
+        public static final String BEHIND_THE_SCENES = "Behind the Scenes";
+        public static final String FEATURETTE = "Featurette";
+    }
+
     public static class BackdropSize{
         public static final String W300 = "w300";
         public static final String W780 = "w780";

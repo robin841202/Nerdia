@@ -2,6 +2,7 @@ package com.example.movieinfo.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.TextUtilsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -33,6 +35,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class MediaDetailsActivity extends AppCompatActivity{
@@ -44,7 +47,8 @@ public class MediaDetailsActivity extends AppCompatActivity{
     public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
 
     private final String SUB_REQUEST_TYPE = "videos";
-    private final String VIDEO_LANGUAGES = "zh-TW,en";
+    private final String[] videoLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage()};
+    private final String VIDEO_LANGUAGES = TextUtils.join(",", videoLanguagesCodeArray);
 
     private ImageView backdrop;
     private ImageView poster;

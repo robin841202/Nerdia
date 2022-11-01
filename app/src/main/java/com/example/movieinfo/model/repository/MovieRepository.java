@@ -16,6 +16,7 @@ import com.example.movieinfo.model.service.IMovieService;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,8 +50,8 @@ public class MovieRepository {
     // endregion
 
     public MovieRepository() {
-        this.language = "zh-TW";
-        this.region = "TW";
+        this.language = Locale.TRADITIONAL_CHINESE.toLanguageTag();
+        this.region = Locale.TAIWAN.getCountry();
 
         // Initialize LiveData
         initLiveData();

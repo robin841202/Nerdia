@@ -22,11 +22,9 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
-import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
-import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.common.base.Strings;
 
@@ -151,7 +149,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         VideosResponse videosResponse = tvShowDetail.getVideosResponse();
         if (videosResponse != null){
             // sort videos first
-            videosResponse.sortVideosByLanguage();
+            videosResponse.sortVideos();
             ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
             videoThumbnailAdapter.setVideos(videos);
         }

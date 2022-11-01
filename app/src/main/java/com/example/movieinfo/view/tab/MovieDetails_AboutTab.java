@@ -29,8 +29,6 @@ import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
@@ -160,7 +158,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         VideosResponse videosResponse = movieDetail.getVideosResponse();
         if (videosResponse != null){
             // sort videos first
-            videosResponse.sortVideosByLanguage();
+            videosResponse.sortVideos();
             ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
             videoThumbnailAdapter.setVideos(videos);
         }

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 /**
  * Response Data Model, using @SerializedName to map to json key
@@ -23,25 +24,63 @@ public class VideosResponse {
     }
 
     /**
-     * Sort Videos By Language, Taiwan(zh) videos always sort in first
+     * Sort Videos, Taiwan(zh) videos always sort in first, then sort Trailer, Teaser on top
      */
-    public void sortVideosByLanguage(){
-        Collections.sort(video_list, new Comparator<VideoData>() {
+    public void sortVideos(){
+        Collections.sort(video_list, getCustomVideoComparator());
+    }
+
+    /**
+     * (Private) Get Video Custom Comparator
+     * @return Custom Comparator
+     */
+    private Comparator<VideoData> getCustomVideoComparator(){
+        String tch_ISO = Locale.TRADITIONAL_CHINESE.getLanguage();
+        return new Comparator<VideoData>() {
             @Override
             public int compare(VideoData o1, VideoData o2) {
                 String lc1 = o1.getLanguageCode();
                 String lc2 = o2.getLanguageCode();
-                if (lc1 != null && lc1.equalsIgnoreCase("zh"))
+                String vt1 = o1.getVideoType();
+                String vt2 = o2.getVideoType();
+
+
+                if (lc1.equalsIgnoreCase(tch_ISO) && lc2.equalsIgnoreCase(tch_ISO)) {
+                    // region Assure VideoType TRAILER will always come first, TEASER comes second
+                    if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                        return -1;
+                    if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                        return 1;
+                    if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
+                        return -1;
+                    if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
+                        return 1;
+                    return vt1.compareTo(vt2);
+                    // endregion
+                }
+
+
+                // region Assure specific language (zh) of video will always be top
+                if (lc1.equalsIgnoreCase(tch_ISO))
                     return -1;
-                if (lc2 != null && lc2.equalsIgnoreCase("zh"))
+                if (lc2.equalsIgnoreCase(tch_ISO))
                     return 1;
+                // endregion
 
-                if (lc1 != null && lc2 != null)
-                    return lc1.compareTo(lc2);
+                // region Assure VideoType TRAILER will always come first, TEASER comes second
+                if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                    return -1;
+                if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                    return 1;
+                if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
+                    return -1;
+                if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
+                    return 1;
+                return vt1.compareTo(vt2);
+                // endregion
 
-                return 0;
             }
-        });
+        };
     }
 
     /**
@@ -50,13 +89,13 @@ public class VideosResponse {
     public static class VideoData{
 
         /**
-         * Language Code according in iso 639-1 ,ex: en,zh-TW
+         * Language Code according in iso 639-1 ,ex: en,zh
          */
         @SerializedName("iso_639_1")
         private String languageCode;
 
         /**
-         * Country Code according in iso 639-1 ,ex: TW,US
+         * Country Code according in iso 3166-1 ,ex: TW,US
          */
         @SerializedName("iso_3166_1")
         private String countryCode;
