@@ -26,13 +26,14 @@ import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
-public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter.IThumbnailListener{
+public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter.IThumbnailListener {
 
     private final String LOG_TAG = "MovieDetails_AboutTab";
 
@@ -47,6 +48,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
     private TextView budgetTextView;
     private TextView revenueTextView;
 
+    private ShimmerFrameLayout videoThumbnail_Shimmer;
     private RecyclerView videoThumbnail_RcView;
     private ThumbnailsAdapter videoThumbnailAdapter;
 
@@ -87,6 +89,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         budgetTextView = view.findViewById(R.id.text_budget);
         revenueTextView = view.findViewById(R.id.text_revenue);
         videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
+        videoThumbnail_Shimmer = view.findViewById(R.id.shimmer_videos);
 
         // Initialize Recycler Adapter
         videoThumbnailAdapter = new ThumbnailsAdapter(new ArrayList<>(), this);
@@ -96,6 +99,10 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
 
         // Set layoutManager
         videoThumbnail_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+
+        // show shimmer animation
+        videoThumbnail_Shimmer.startShimmer();
+        videoThumbnail_Shimmer.setVisibility(View.VISIBLE);
 
     }
 
@@ -110,6 +117,9 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
     }
 
     private void populateUI(MovieDetailData movieDetail) {
+        // hide shimmer animation
+        videoThumbnail_Shimmer.stopShimmer();
+        videoThumbnail_Shimmer.setVisibility(View.GONE);
 
         // get all information
         String overView = Strings.isNullOrEmpty(movieDetail.getOverview()) ? getString(R.string.label_empty) : movieDetail.getOverview();
@@ -156,7 +166,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
 
         // set video thumbnails recyclerView
         VideosResponse videosResponse = movieDetail.getVideosResponse();
-        if (videosResponse != null){
+        if (videosResponse != null) {
             // sort videos first
             videosResponse.sortVideos();
             ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
@@ -185,6 +195,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
 
     /**
      * Callback when video item get clicked
+     *
      * @param video video Data
      */
     @Override

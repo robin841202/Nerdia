@@ -82,6 +82,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         private final TextView rating;
 
         private final ITvShowListener listener;
+        private final ShimmerDrawable shimmerDrawable;
 
         public TvShowsViewHolder(@NonNull View itemView, ITvShowListener listener) {
             super(itemView);
@@ -91,12 +92,8 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
             this.rating = itemView.findViewById(R.id.text_item_media_rating);
 
             this.listener = listener;
-        }
 
-        public void bind(TvShowData tvShowData) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
-
-            // Initialize Shimmer Animation
+            // region Create image placeholder animation using shimmer
             Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                     .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
                     .setBaseAlpha(1)
@@ -104,10 +101,13 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
                     .setHighlightAlpha(1)
                     .setDropoff(50)
                     .build();
+            this.shimmerDrawable = new ShimmerDrawable();
+            this.shimmerDrawable.setShimmer(shimmer);
+            // endregion
+        }
 
-            // Initialize Shimmer Drawable - placeholder for image
-            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-            shimmerDrawable.setShimmer(shimmer);
+        public void bind(TvShowData tvShowData) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
 
             // set image poster
             Glide.with(itemView)

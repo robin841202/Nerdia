@@ -27,6 +27,7 @@ import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
 
     private MoviesViewModel moviesViewModel;
 
+    private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
     private MoviesAdapter movieAdapter;
@@ -81,6 +83,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         // Get Views
         mRcView = view.findViewById(R.id.recycler_search);
         pullToRefresh = view.findViewById(R.id.swiperefresh_search);
+        mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
         movieAdapter = new MoviesAdapter(new ArrayList<>(), this);
@@ -132,6 +135,9 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
      */
     private void searchMovies(String keyword, int page) {
         if (keyword != null && !keyword.isEmpty()) {
+            // show shimmer animation
+            mShimmer.startShimmer();
+            mShimmer.setVisibility(View.VISIBLE);
             moviesViewModel.searchMovies(keyword, page);
         }
     }
@@ -141,6 +147,10 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
      */
     public Observer<ArrayList<MovieData>> getSearchMoviesObserver() {
         return movies -> {
+            // hide shimmer animation
+            mShimmer.stopShimmer();
+            mShimmer.setVisibility(View.GONE);
+
             // append data to adapter
             movieAdapter.appendMovies(movies);
 

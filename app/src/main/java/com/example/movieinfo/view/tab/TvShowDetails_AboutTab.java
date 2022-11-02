@@ -26,6 +26,7 @@ import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
     private TextView lastAirDateTextView;
     private TextView numOfEpisodesTextView;
 
+    private ShimmerFrameLayout videoThumbnail_Shimmer;
     private RecyclerView videoThumbnail_RcView;
     private ThumbnailsAdapter videoThumbnailAdapter;
 
@@ -87,6 +89,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         lastAirDateTextView = view.findViewById(R.id.text_last_air_date);
         numOfEpisodesTextView = view.findViewById(R.id.text_numOfEpisodes);
         videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
+        videoThumbnail_Shimmer = view.findViewById(R.id.shimmer_videos);
 
         // Initialize Recycler Adapter
         videoThumbnailAdapter = new ThumbnailsAdapter(new ArrayList<>(), this);
@@ -104,12 +107,19 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
      */
     private Observer<TvShowDetailData> getDataObserver() {
         return tvShowDetail -> {
+            // show shimmer animation
+            videoThumbnail_Shimmer.startShimmer();
+            videoThumbnail_Shimmer.setVisibility(View.VISIBLE);
             // populate data to UI
             populateUI(tvShowDetail);
         };
     }
 
     private void populateUI(TvShowDetailData tvShowDetail) {
+        // hide shimmer animation
+        videoThumbnail_Shimmer.stopShimmer();
+        videoThumbnail_Shimmer.setVisibility(View.GONE);
+
         // get all information
         String overView = Strings.isNullOrEmpty(tvShowDetail.getOverview()) ? getString(R.string.label_empty) : tvShowDetail.getOverview();
         ArrayList<Genre> genre_List = tvShowDetail.getGenres();
@@ -147,7 +157,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
 
         // set video thumbnails recyclerView
         VideosResponse videosResponse = tvShowDetail.getVideosResponse();
-        if (videosResponse != null){
+        if (videosResponse != null) {
             // sort videos first
             videosResponse.sortVideos();
             ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
@@ -175,6 +185,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
 
     /**
      * Callback when video item get clicked
+     *
      * @param video video Data
      */
     @Override

@@ -29,6 +29,7 @@ import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
@@ -42,28 +43,28 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     private MoviesViewModel moviesViewModel;
 
 
-    private ProgressBar upcomingMovies_PB;
+    private ShimmerFrameLayout upcomingMovies_Shimmer;
     private MoviesAdapter upcomingMoviesAdapter;
     private RecyclerView upcomingMovies_RcView;
     private LinearLayoutManager upcomingMoviesLayoutMgr;
     private int upcomingMoviesPage;
     private View upcomingMovies_ClickableLayout;
 
-    private ProgressBar nowPlayingMovies_PB;
+    private ShimmerFrameLayout nowPlayingMovies_Shimmer;
     private MoviesAdapter nowPlayingMoviesAdapter;
     private RecyclerView nowPlayingMovies_RcView;
     private LinearLayoutManager nowPlayingMoviesLayoutMgr;
     private int nowPlayingMoviesPage;
     private View nowPlayingMovies_ClickableLayout;
 
-    private ProgressBar trendingMovies_PB;
+    private ShimmerFrameLayout trendingMovies_Shimmer;
     private MoviesAdapter trendingMoviesAdapter;
     private RecyclerView trendingMovies_RcView;
     private LinearLayoutManager trendingMoviesLayoutMgr;
     private int trendingMoviesPage;
     private View trendingMovies_ClickableLayout;
 
-    private ProgressBar popularMovies_PB;
+    private ShimmerFrameLayout popularMovies_Shimmer;
     private MoviesAdapter popularMoviesAdapter;
     private RecyclerView popularMovies_RcView;
     private LinearLayoutManager popularMoviesLayoutMgr;
@@ -74,14 +75,14 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     // region TvShows Variables
     private TvShowsViewModel tvShowsViewModel;
 
-    private ProgressBar popularTvShows_PB;
+    private ShimmerFrameLayout popularTvShows_Shimmer;
     private TvShowsAdapter popularTvShowsAdapter;
     private RecyclerView popularTvShows_RcView;
     private LinearLayoutManager popularTvShowsLayoutMgr;
     private int popularTvShowsPage;
     private View popularTvShows_ClickableLayout;
 
-    private ProgressBar trendingTvShows_PB;
+    private ShimmerFrameLayout trendingTvShows_Shimmer;
     private TvShowsAdapter trendingTvShowsAdapter;
     private RecyclerView trendingTvShows_RcView;
     private LinearLayoutManager trendingTvShowsLayoutMgr;
@@ -121,22 +122,22 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
 
 
         // Initialize Views
-        upcomingMovies_PB = root.findViewById(R.id.pb_upcoming_movies);
+        upcomingMovies_Shimmer = root.findViewById(R.id.shimmer_upcoming_movies);
         upcomingMovies_RcView = root.findViewById(R.id.recycler_upcoming_movies);
         upcomingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_upcoming_movies);
-        nowPlayingMovies_PB = root.findViewById(R.id.pb_now_playing_movies);
+        nowPlayingMovies_Shimmer = root.findViewById(R.id.shimmer_now_playing_movies);
         nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
         nowPlayingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_now_playing_movies);
-        trendingMovies_PB = root.findViewById(R.id.pb_trending_movies);
+        trendingMovies_Shimmer = root.findViewById(R.id.shimmer_trending_movies);
         trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
         trendingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_movies);
-        popularMovies_PB = root.findViewById(R.id.pb_popular_movies);
+        popularMovies_Shimmer = root.findViewById(R.id.shimmer_popular_movies);
         popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
         popularMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_movies);
-        popularTvShows_PB = root.findViewById(R.id.pb_popular_shows);
+        popularTvShows_Shimmer = root.findViewById(R.id.shimmer_popular_shows);
         popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
         popularTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_shows);
-        trendingTvShows_PB = root.findViewById(R.id.pb_trending_shows);
+        trendingTvShows_Shimmer = root.findViewById(R.id.shimmer_trending_shows);
         trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
         trendingTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_shows);
         pullToRefresh = root.findViewById(R.id.swiperefresh);
@@ -578,8 +579,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Upcoming Movies (using LiveData)
      */
     public void getUpcomingMovies(int page) {
-        // show progressBar
-        upcomingMovies_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        upcomingMovies_Shimmer.startShimmer();
+        upcomingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getUpcomingMovies(page);
     }
 
@@ -588,8 +590,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<MovieData>> getUpcomingMoviesObserver() {
         return movies -> {
-            // hide progressBar
-            upcomingMovies_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            upcomingMovies_Shimmer.stopShimmer();
+            upcomingMovies_Shimmer.setVisibility(View.GONE);
 
             // append data to adapter
             upcomingMoviesAdapter.appendMovies(movies);
@@ -629,8 +632,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Now-Playing Movies (using LiveData)
      */
     public void getNowPlayingMovies(int page) {
-        // show progressBar
-        nowPlayingMovies_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        nowPlayingMovies_Shimmer.startShimmer();
+        nowPlayingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getNowPlayingMovies(page);
     }
 
@@ -639,8 +643,10 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<MovieData>> getNowPlayingMoviesObserver() {
         return movies -> {
-            // hide progressBar
-            nowPlayingMovies_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            nowPlayingMovies_Shimmer.stopShimmer();
+            nowPlayingMovies_Shimmer.setVisibility(View.GONE);
+
             // append data to adapter
             nowPlayingMoviesAdapter.appendMovies(movies);
             // attach onScrollListener to RecyclerView
@@ -678,8 +684,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Trending Movies (using LiveData)
      */
     public void getTrendingMovies(int page) {
-        // show progressBar
-        trendingMovies_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        trendingMovies_Shimmer.startShimmer();
+        trendingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
@@ -688,8 +695,10 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<MovieData>> getTrendingMoviesObserver() {
         return movies -> {
-            // hide progressBar
-            trendingMovies_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            trendingMovies_Shimmer.stopShimmer();
+            trendingMovies_Shimmer.setVisibility(View.GONE);
+
             // append data to adapter
             trendingMoviesAdapter.appendMovies(movies);
             // attach onScrollListener to RecyclerView
@@ -726,8 +735,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Popular Movies (using LiveData)
      */
     public void getPopularMovies(int page) {
-        // show progressBar
-        popularMovies_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        popularMovies_Shimmer.startShimmer();
+        popularMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getPopularMovies(page);
     }
 
@@ -736,8 +746,10 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<MovieData>> getPopularMoviesObserver() {
         return movies -> {
-            // hide progressBar
-            popularMovies_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            popularMovies_Shimmer.stopShimmer();
+            popularMovies_Shimmer.setVisibility(View.GONE);
+
             // append data to adapter
             popularMoviesAdapter.appendMovies(movies);
             // attach onScrollListener to RecyclerView
@@ -775,8 +787,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Popular TvShows (using LiveData)
      */
     public void getPopularTvShows(int page) {
-        // show progressBar
-        popularTvShows_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        popularTvShows_Shimmer.startShimmer();
+        popularTvShows_Shimmer.setVisibility(View.VISIBLE);
         tvShowsViewModel.getPopularTvShows(page);
     }
 
@@ -785,8 +798,10 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<TvShowData>> getPopularTvShowsObserver() {
         return tvShows -> {
-            // hide progressBar
-            popularTvShows_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            popularTvShows_Shimmer.stopShimmer();
+            popularTvShows_Shimmer.setVisibility(View.GONE);
+
             // append data to adapter
             popularTvShowsAdapter.appendTvShows(tvShows);
             // attach onScrollListener to RecyclerView
@@ -824,8 +839,9 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      * Get Trending TvShows (using LiveData)
      */
     public void getTrendingTvShows(int page) {
-        // show progressBar
-        trendingTvShows_PB.setVisibility(View.VISIBLE);
+        // show shimmer animation
+        trendingTvShows_Shimmer.startShimmer();
+        trendingTvShows_Shimmer.setVisibility(View.VISIBLE);
         tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
@@ -834,8 +850,10 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
      */
     public Observer<ArrayList<TvShowData>> getTrendingTvShowsObserver() {
         return tvShows -> {
-            // hide progressBar
-            trendingTvShows_PB.setVisibility(View.GONE);
+            // hide shimmer animation
+            trendingTvShows_Shimmer.stopShimmer();
+            trendingTvShows_Shimmer.setVisibility(View.GONE);
+
             // append data to adapter
             trendingTvShowsAdapter.appendTvShows(tvShows);
             // attach onScrollListener to RecyclerView

@@ -84,6 +84,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         private final TextView rating;
 
         private final IMovieListener listener;
+        private final ShimmerDrawable shimmerDrawable;
 
         public MoviesViewHolder(@NonNull View itemView, IMovieListener listener) {
             super(itemView);
@@ -93,14 +94,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             this.rating = itemView.findViewById(R.id.text_item_media_rating);
 
             this.listener = listener;
-        }
-
-        public void bind(MovieData movieData) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
 
             // region Create image placeholder animation using shimmer
-
-            // Initialize Shimmer Animation
             Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
                     .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
                     .setBaseAlpha(1)
@@ -108,12 +103,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                     .setHighlightAlpha(1)
                     .setDropoff(50)
                     .build();
-
-            // Initialize Shimmer Drawable - placeholder for image
-            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-            shimmerDrawable.setShimmer(shimmer);
-
+            this.shimmerDrawable = new ShimmerDrawable();
+            this.shimmerDrawable.setShimmer(shimmer);
             // endregion
+        }
+
+        public void bind(MovieData movieData) {
+            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
 
             // set image poster
             Glide.with(itemView)

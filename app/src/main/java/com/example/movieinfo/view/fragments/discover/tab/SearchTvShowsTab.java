@@ -27,6 +27,7 @@ import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
 
     private TvShowsViewModel tvShowsViewModel;
 
+    private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
     private TvShowsAdapter tvShowsAdapter;
@@ -81,6 +83,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         // Get Views
         mRcView = view.findViewById(R.id.recycler_search);
         pullToRefresh = view.findViewById(R.id.swiperefresh_search);
+        mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
         tvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
@@ -133,6 +136,9 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
      */
     private void searchTvShows(String keyword, int page) {
         if (keyword != null && !keyword.isEmpty()) {
+            // show shimmer animation
+            mShimmer.startShimmer();
+            mShimmer.setVisibility(View.VISIBLE);
             tvShowsViewModel.searchTvShows(keyword, page);
         }
     }
@@ -143,6 +149,10 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
      */
     public Observer<ArrayList<TvShowData>> getSearchTvShowsObserver() {
         return tvShows -> {
+            // hide shimmer animation
+            mShimmer.stopShimmer();
+            mShimmer.setVisibility(View.GONE);
+
             // append data to adapter
             tvShowsAdapter.appendTvShows(tvShows);
             // attach onScrollListener to RecyclerView

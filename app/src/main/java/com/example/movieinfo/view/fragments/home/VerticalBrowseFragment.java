@@ -27,6 +27,7 @@ import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,8 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
 
     private SwipeRefreshLayout pullToRefresh;
     private ActionBar toolBar;
+
+    private ShimmerFrameLayout verticalBrowse_Shimmer;
 
     private MoviesAdapter verticalBrowseAdapter_movie;
     private TvShowsAdapter verticalBrowseAdapter_tv;
@@ -74,6 +77,10 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         final Observer<ArrayList<MovieData>> moviesObserver = new Observer<ArrayList<MovieData>>() {
             @Override
             public void onChanged(ArrayList<MovieData> movies) {
+                // hide shimmer animation
+                verticalBrowse_Shimmer.stopShimmer();
+                verticalBrowse_Shimmer.setVisibility(View.GONE);
+
                 // append data to adapter
                 verticalBrowseAdapter_movie.appendMovies(movies);
                 // attach onScrollListener to RecyclerView
@@ -93,7 +100,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
 
                             // append nextPage data to recyclerView
                             verticalBrowsePage++;
-                            populateData(homeCategory);
+                            fetchData(homeCategory);
                         }
                     }
                 });
@@ -108,6 +115,10 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         final Observer<ArrayList<TvShowData>> tvShowsObserver = new Observer<ArrayList<TvShowData>>() {
             @Override
             public void onChanged(ArrayList<TvShowData> tvShows) {
+                // hide shimmer animation
+                verticalBrowse_Shimmer.stopShimmer();
+                verticalBrowse_Shimmer.setVisibility(View.GONE);
+
                 // append data to adapter
                 verticalBrowseAdapter_tv.appendTvShows(tvShows);
                 // attach onScrollListener to RecyclerView
@@ -128,7 +139,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
 
                             // append nextPage data to recyclerView
                             verticalBrowsePage++;
-                            populateData(homeCategory);
+                            fetchData(homeCategory);
                         }
                     }
                 });
@@ -171,6 +182,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         View root = inflater.inflate(R.layout.fragment_vertical_browse, container, false);
 
         // Get Views
+        verticalBrowse_Shimmer = root.findViewById(R.id.shimmer_vertical_browse);
         verticalBrowse_RcView = root.findViewById(R.id.recycler_vertical_browse);
         pullToRefresh = root.findViewById(R.id.swiperefresh_vertical_browse);
         toolBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -204,7 +216,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         verticalBrowse_RcView.setLayoutManager(verticalBrowseLayoutMgr);
 
         // Start getting data
-        populateData(homeCategory);
+        fetchData(homeCategory);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -215,7 +227,17 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         return root;
     }
 
-    private void populateData(int homeCategory) {
+
+    /**
+     * (Private) Fetch data depends on what kinds of homeCategory
+     *
+     * @param homeCategory StaticParameter.HomeCategory value
+     */
+    private void fetchData(int homeCategory) {
+        // show shimmer animation
+        verticalBrowse_Shimmer.startShimmer();
+        verticalBrowse_Shimmer.setVisibility(View.VISIBLE);
+
         switch (homeCategory) {
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
                 // set toolbar title
@@ -310,7 +332,7 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         }
 
         // populate data to UI
-        populateData(homeCategory);
+        fetchData(homeCategory);
 
     }
 

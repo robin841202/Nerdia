@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,6 +19,8 @@ import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse.VideoData;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.VideosResponse;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
@@ -83,12 +86,26 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
         private final TextView title;
         private final IThumbnailListener listener;
 
+        private final ShimmerDrawable shimmerDrawable;
+
         public ThumbnailsViewHolder(@NonNull View itemView, IThumbnailListener listener) {
             super(itemView);
             this.thumbnailView = itemView.findViewById(R.id.thumbnail_item_video);
             this.title = itemView.findViewById(R.id.text_item_video_thumbnail_title);
 
             this.listener = listener;
+
+            // region Create image placeholder animation using shimmer
+            Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseAlpha(1)
+                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightAlpha(1)
+                    .setDropoff(50)
+                    .build();
+            this.shimmerDrawable = new ShimmerDrawable();
+            this.shimmerDrawable.setShimmer(shimmer);
+            // endregion
         }
 
         public void bind(VideoData videoData) {
@@ -96,6 +113,9 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
             thumbnailView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
                 @Override
                 public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
+                    // show shimmer drawable effect when thumbnail is not ready
+                    youTubeThumbnailView.setImageDrawable(shimmerDrawable);
+                    // set video thumbnail
                     youTubeThumbnailLoader.setVideo(videoData.getVideoId());
                     youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
                         @Override
