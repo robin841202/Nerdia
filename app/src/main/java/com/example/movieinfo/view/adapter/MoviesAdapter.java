@@ -1,5 +1,6 @@
 package com.example.movieinfo.view.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +16,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 
 import org.w3c.dom.Text;
 
@@ -93,9 +97,28 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         public void bind(MovieData movieData) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
+
+            // region Create image placeholder animation using shimmer
+
+            // Initialize Shimmer Animation
+            Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseAlpha(1)
+                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightAlpha(1)
+                    .setDropoff(50)
+                    .build();
+
+            // Initialize Shimmer Drawable - placeholder for image
+            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+            shimmerDrawable.setShimmer(shimmer);
+
+            // endregion
+
             // set image poster
             Glide.with(itemView)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()

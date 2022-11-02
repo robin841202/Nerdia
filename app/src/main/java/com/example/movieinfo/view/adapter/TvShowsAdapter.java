@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,6 +16,8 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 
 import java.util.ArrayList;
 
@@ -92,9 +95,24 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
 
         public void bind(TvShowData tvShowData) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
+
+            // Initialize Shimmer Animation
+            Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseAlpha(1)
+                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightAlpha(1)
+                    .setDropoff(50)
+                    .build();
+
+            // Initialize Shimmer Drawable - placeholder for image
+            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+            shimmerDrawable.setShimmer(shimmer);
+
             // set image poster
             Glide.with(itemView)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()

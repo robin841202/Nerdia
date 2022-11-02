@@ -44,7 +44,6 @@ public class VideosResponse {
                 String vt1 = o1.getVideoType();
                 String vt2 = o2.getVideoType();
 
-
                 if (lc1.equalsIgnoreCase(tch_ISO) && lc2.equalsIgnoreCase(tch_ISO)) {
                     // region Assure VideoType TRAILER will always come first, TEASER comes second
                     if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
@@ -58,7 +57,6 @@ public class VideosResponse {
                     return vt1.compareTo(vt2);
                     // endregion
                 }
-
 
                 // region Assure specific language (zh) of video will always be top
                 if (lc1.equalsIgnoreCase(tch_ISO))

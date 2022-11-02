@@ -2,6 +2,7 @@ package com.example.movieinfo.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.text.TextUtilsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +32,8 @@ import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -38,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-public class MediaDetailsActivity extends AppCompatActivity{
+public class MediaDetailsActivity extends AppCompatActivity {
 
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
@@ -225,12 +228,32 @@ public class MediaDetailsActivity extends AppCompatActivity{
      * @param movieDetail movie detail data
      */
     private void populateDetails(MovieDetailData movieDetail) {
+
+        // region Create image placeholder animation using shimmer
+
+        // Initialize Shimmer Animation
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(ContextCompat.getColor(context, R.color.gray))
+                .setBaseAlpha(1)
+                .setHighlightColor(ContextCompat.getColor(context, R.color.lightGray))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+
+        // Initialize Shimmer Drawable - placeholder for image
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+        // endregion
+
+        // region Backdrop Image
         String backdropPath = movieDetail.getBackdropPath();
         if (backdropPath != null && !backdropPath.isEmpty()) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
             // set image backdrop
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()
@@ -242,13 +265,16 @@ public class MediaDetailsActivity extends AppCompatActivity{
             });
 
         }
+        // endregion
 
+        // region Poster Image
         String posterPath = movieDetail.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()
@@ -259,6 +285,7 @@ public class MediaDetailsActivity extends AppCompatActivity{
                 displayImageFullScreen(posterPath);
             });
         }
+        // endregion
 
         // set title
         title.setText(movieDetail.getTitle() == null ? "" : movieDetail.getTitle());
@@ -355,12 +382,33 @@ public class MediaDetailsActivity extends AppCompatActivity{
      * @param tvShowDetail tvShow Detail data
      */
     private void populateDetails(TvShowDetailData tvShowDetail) {
+
+
+        // region Create image placeholder animation using shimmer
+
+        // Initialize Shimmer Animation
+        Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
+                .setBaseColor(ContextCompat.getColor(context, R.color.gray))
+                .setBaseAlpha(1)
+                .setHighlightColor(ContextCompat.getColor(context, R.color.lightGray))
+                .setHighlightAlpha(1)
+                .setDropoff(50)
+                .build();
+
+        // Initialize Shimmer Drawable - placeholder for image
+        ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+        shimmerDrawable.setShimmer(shimmer);
+
+        // endregion
+
+        // region Backdrop Image
         String backdropPath = tvShowDetail.getBackdropPath();
         if (backdropPath != null && !backdropPath.isEmpty()) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
             // set image backdrop
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()
@@ -370,15 +418,17 @@ public class MediaDetailsActivity extends AppCompatActivity{
             backdrop.setOnClickListener(v -> {
                 displayImageFullScreen(backdropPath);
             });
-
         }
+        // endregion
 
+        // region Poster Image
         String posterPath = tvShowDetail.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
             String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
                     .load(imgUrl)
+                    .placeholder(shimmerDrawable)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_image_not_found)
                     .centerCrop()
@@ -389,6 +439,7 @@ public class MediaDetailsActivity extends AppCompatActivity{
                 displayImageFullScreen(posterPath);
             });
         }
+        // endregion
 
         // set title
         title.setText(tvShowDetail.getTitle() == null ? "" : tvShowDetail.getTitle());
