@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.ProductionCompany;
 import com.example.movieinfo.model.VideosResponse;
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 /**
  * TvShow Detail Data Model, using @SerializedName to map to json key
  */
-public class TvShowDetailData{
+public class TvShowDetailData {
 
     @SerializedName("number_of_episodes")
     private int numOfEpisodes;
@@ -60,6 +61,9 @@ public class TvShowDetailData{
 
     @SerializedName("videos")
     private VideosResponse videosResponse;
+
+    @SerializedName("images")
+    private ImagesResponse imagesResponse;
 
 
     /**
@@ -200,7 +204,20 @@ public class TvShowDetailData{
 
     /**
      * Get Videos Response
+     *
      * @return
      */
-    public VideosResponse getVideosResponse() {return videosResponse;}
+    public VideosResponse getVideosResponse() {
+        return videosResponse;
+    }
+
+
+    /**
+     * Get Images Response
+     *
+     * @return
+     */
+    public ImagesResponse getImagesResponse() {
+        return imagesResponse;
+    }
 }

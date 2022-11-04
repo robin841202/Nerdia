@@ -66,7 +66,7 @@ public class MovieRepository {
     /**
      * Initialize every LiveData
      */
-    private void initLiveData(){
+    private void initLiveData() {
         moviesLiveData = new MutableLiveData<>();
         upcomingMoviesLiveData = new MutableLiveData<>();
         nowPlayingMoviesLiveData = new MutableLiveData<>();
@@ -377,10 +377,11 @@ public class MovieRepository {
      *
      * @param movieId        Movie Id
      * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages  Can include multiple languages of video ex:zh-TW,en
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
-    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages) {
-        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages);
+    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
         call.enqueue(new Callback<MovieDetailData>() {
             @Override
             public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {

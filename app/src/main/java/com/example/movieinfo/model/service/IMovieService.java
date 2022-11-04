@@ -107,7 +107,8 @@ public interface IMovieService {
      * @param apiKey         TMDB API Key
      * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
      * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages  Can include multiple languages of video ex:zh-TW,en
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      * @return
      */
     @GET("movie/{movie_id}")
@@ -121,7 +122,9 @@ public interface IMovieService {
             @Query("append_to_response")
                     String subRequestType,
             @Query("include_video_language")
-                    String videoLanguages
+                    String videoLanguages,
+            @Query("include_image_language")
+                    String imageLanguages
     );
 
 

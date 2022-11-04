@@ -62,7 +62,7 @@ public class TvShowRepository {
     /**
      * Initialize every LiveData
      */
-    private void initLiveData(){
+    private void initLiveData() {
         tvShowsLiveData = new MutableLiveData<>();
         popularTvShowsLiveData = new MutableLiveData<>();
         trendingTvShowsLiveData = new MutableLiveData<>();
@@ -312,11 +312,12 @@ public class TvShowRepository {
      *
      * @param tvShowId       TvShow Id
      * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages  Can include multiple languages of video ex:zh-TW,en
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
     public void getTvShowDetail(long tvShowId,
-                                String subRequestType, String videoLanguages) {
-        Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType, videoLanguages);
+                                String subRequestType, String videoLanguages, String imageLanguages) {
+        Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
         call.enqueue(new Callback<TvShowDetailData>() {
             @Override
             public void onResponse(Call<TvShowDetailData> call, Response<TvShowDetailData> response) {

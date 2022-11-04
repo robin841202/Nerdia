@@ -22,11 +22,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
+import com.example.movieinfo.view.adapter.MoviesAdapter;
+import com.example.movieinfo.view.adapter.SlideShowAdapter;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
@@ -41,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-public class MediaDetailsActivity extends AppCompatActivity {
+public class MediaDetailsActivity extends AppCompatActivity implements SlideShowAdapter.ISlideShowListener {
 
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
@@ -49,9 +52,18 @@ public class MediaDetailsActivity extends AppCompatActivity {
     // Define extra data key for passing data to other activities or fragments
     public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
 
-    private final String SUB_REQUEST_TYPE = "videos";
+    // Define subRequest type
+    private final String SUB_REQUEST_TYPE = "videos,images";
+
+    // Define video languages
     private final String[] videoLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage()};
     private final String VIDEO_LANGUAGES = TextUtils.join(",", videoLanguagesCodeArray);
+
+    // Define image languages
+    private final String[] imageLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage(), "null"};
+    private final String IMAGE_LANGUAGES = TextUtils.join(",", imageLanguagesCodeArray);
+
+    private SlideShowAdapter slideshowAdapter;
 
     private ImageView backdrop;
     private ImageView poster;
@@ -72,7 +84,6 @@ public class MediaDetailsActivity extends AppCompatActivity {
         context = this;
 
         // Initialize Views
-        backdrop = findViewById(R.id.img_movie_backdrop);
         poster = findViewById(R.id.img_movie_poster);
         title = findViewById(R.id.text_movie_title);
         releaseDate = findViewById(R.id.text_movie_release_date);
@@ -81,9 +92,16 @@ public class MediaDetailsActivity extends AppCompatActivity {
         voteCount = findViewById(R.id.text_vote_count);
         ViewPager2 viewPager = findViewById(R.id.viewpager_details);
         TabLayout tabLayout = findViewById(R.id.tabLayout_details);
+        ViewPager2 slideshowViewPager2 = findViewById(R.id.viewpager_slideshow);
+
+        // Initialize RecyclerView Adapter
+        slideshowAdapter = new SlideShowAdapter(new ArrayList<>(), this);
 
         // Initialize pagerAdapter
         CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), getLifecycle());
+
+        // Set slideshow Adapter
+        slideshowViewPager2.setAdapter(slideshowAdapter);
 
         // Get mediaType from intent
         Intent intent = getIntent();
@@ -107,7 +125,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
                     // Set movieDetail observer
                     movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
-                    getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES);
+                    getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
                 }
                 break;
             case StaticParameter.MediaType.TV:
@@ -126,7 +144,7 @@ public class MediaDetailsActivity extends AppCompatActivity {
                     // Set tvShowDetail observer
                     tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
-                    getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES);
+                    getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
                 }
                 break;
             default:
@@ -203,9 +221,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
      * @param id             movie id
      * @param subRequestType Can do subRequest in the same time  ex: videos
      * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
-    public void getMovieDetail(long id, String subRequestType, String videoLanguages) {
-        movieDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages);
+    public void getMovieDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
+        movieDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
@@ -247,24 +266,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // endregion
 
         // region Backdrop Image
-        String backdropPath = movieDetail.getBackdropPath();
-        if (backdropPath != null && !backdropPath.isEmpty()) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
-            // set image backdrop
-            Glide.with(this)
-                    .load(imgUrl)
-                    .placeholder(shimmerDrawable)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.ic_image_not_found)
-                    .centerCrop()
-                    .into(backdrop);
 
-            // set image onClickListener
-            backdrop.setOnClickListener(v -> {
-                displayImageFullScreen(backdropPath);
-            });
+        // set backdrop slideshow
+        slideshowAdapter.setImages(movieDetail.getImagesResponse().getBackdrops_list(), StaticParameter.BackdropSize.W1280);
 
-        }
         // endregion
 
         // region Poster Image
@@ -357,9 +362,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
      * @param id             tvShow id
      * @param subRequestType Can do subRequest in the same time  ex: videos
      * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
-    public void getTvShowDetail(long id, String subRequestType, String videoLanguages) {
-        tvShowDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages);
+    public void getTvShowDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
+        tvShowDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
@@ -383,7 +389,6 @@ public class MediaDetailsActivity extends AppCompatActivity {
      */
     private void populateDetails(TvShowDetailData tvShowDetail) {
 
-
         // region Create image placeholder animation using shimmer
 
         // Initialize Shimmer Animation
@@ -402,23 +407,10 @@ public class MediaDetailsActivity extends AppCompatActivity {
         // endregion
 
         // region Backdrop Image
-        String backdropPath = tvShowDetail.getBackdropPath();
-        if (backdropPath != null && !backdropPath.isEmpty()) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.W1280, backdropPath);
-            // set image backdrop
-            Glide.with(this)
-                    .load(imgUrl)
-                    .placeholder(shimmerDrawable)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.ic_image_not_found)
-                    .centerCrop()
-                    .into(backdrop);
 
-            // set image onClickListener
-            backdrop.setOnClickListener(v -> {
-                displayImageFullScreen(backdropPath);
-            });
-        }
+        // set backdrop slideshow
+        slideshowAdapter.setImages(tvShowDetail.getImagesResponse().getBackdrops_list(), StaticParameter.BackdropSize.W1280);
+
         // endregion
 
         // region Poster Image
@@ -531,4 +523,13 @@ public class MediaDetailsActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
+    /**
+     * Callback when slideshow item get clicked
+     *
+     * @param image
+     */
+    @Override
+    public void onImageClick(ImagesResponse.ImageData image) {
+        displayImageFullScreen(image.getFilePath());
+    }
 }

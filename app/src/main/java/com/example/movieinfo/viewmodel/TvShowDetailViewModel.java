@@ -24,9 +24,10 @@ public class TvShowDetailViewModel extends ViewModel {
      * @param tvShowId       TvShow Id
      * @param subRequestType Can do subRequest in the same time  ex: videos
      * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
-    public void getTvShowDetail(long tvShowId, String subRequestType, String videoLanguages) {
-        repository.getTvShowDetail(tvShowId, subRequestType, videoLanguages);
+    public void getTvShowDetail(long tvShowId, String subRequestType, String videoLanguages, String imageLanguages) {
+        repository.getTvShowDetail(tvShowId, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
