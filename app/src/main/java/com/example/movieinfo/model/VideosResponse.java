@@ -1,11 +1,16 @@
 package com.example.movieinfo.model;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Response Data Model, using @SerializedName to map to json key
@@ -26,15 +31,29 @@ public class VideosResponse {
     /**
      * Sort Videos, Taiwan(zh) videos always sort in first, then sort Trailer, Teaser on top
      */
-    public void sortVideos(){
+    public void sortVideos() {
         Collections.sort(video_list, getCustomVideoComparator());
     }
 
     /**
+     * Filter Videos By SourceSite
+     *
+     * @param sourceSite ex: YouTube
+     * @return List of VideoData
+     */
+    public ArrayList<VideoData> getVideosBySourceSite(String sourceSite) {
+        return new ArrayList<VideoData>(Collections2.filter(video_list, input -> {
+            Pattern pattern = Pattern.compile(sourceSite);
+            return pattern.matcher(input.getSourceSite()).find();
+        }));
+    }
+
+    /**
      * (Private) Get Video Custom Comparator
+     *
      * @return Custom Comparator
      */
-    private Comparator<VideoData> getCustomVideoComparator(){
+    private Comparator<VideoData> getCustomVideoComparator() {
         String tch_ISO = Locale.TRADITIONAL_CHINESE.getLanguage();
         return new Comparator<VideoData>() {
             @Override
@@ -84,7 +103,7 @@ public class VideosResponse {
     /**
      * Individual Video Data
      */
-    public static class VideoData{
+    public static class VideoData {
 
         /**
          * Language Code according in iso 639-1 ,ex: en,zh

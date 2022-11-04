@@ -160,7 +160,8 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         if (videosResponse != null) {
             // sort videos first
             videosResponse.sortVideos();
-            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
+            // get videos only provided by youtube
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideosBySourceSite(StaticParameter.VideoSourceSite.YOUTUBE);
             videoThumbnailAdapter.setVideos(videos);
         }
     }

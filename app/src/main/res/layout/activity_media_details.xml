@@ -30,6 +30,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout_slideshow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/guideline_backdrop"
+                    app:layout_constraintStart_toEndOf="@+id/card_movie_poster"
+                    app:tabBackground="@drawable/slideshow_indicator_selector"
+                    app:tabGravity="start"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabMode="fixed"
+                    app:tabPaddingEnd="5dp"/>
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_movie_poster"
                     android:layout_width="128dp"

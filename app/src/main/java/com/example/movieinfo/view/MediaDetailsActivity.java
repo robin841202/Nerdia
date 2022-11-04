@@ -40,7 +40,10 @@ import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 
@@ -65,7 +68,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     private SlideShowAdapter slideshowAdapter;
 
-    private ImageView backdrop;
     private ImageView poster;
     private TextView title;
     private TextView releaseDate;
@@ -91,8 +93,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         ratingBar = findViewById(R.id.ratingBar_movie_rating);
         voteCount = findViewById(R.id.text_vote_count);
         ViewPager2 viewPager = findViewById(R.id.viewpager_details);
-        TabLayout tabLayout = findViewById(R.id.tabLayout_details);
+        TabLayout tabLayoutDetails = findViewById(R.id.tabLayout_details);
         ViewPager2 slideshowViewPager2 = findViewById(R.id.viewpager_slideshow);
+        TabLayout tabLayoutSlideshow = findViewById(R.id.tabLayout_slideshow);
 
         // Initialize RecyclerView Adapter
         slideshowAdapter = new SlideShowAdapter(new ArrayList<>(), this);
@@ -101,7 +104,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), getLifecycle());
 
         // Set slideshow Adapter
-        slideshowViewPager2.setAdapter(slideshowAdapter);
+        initSlideshow(slideshowAdapter, slideshowViewPager2, tabLayoutSlideshow);
+
 
         // Get mediaType from intent
         Intent intent = getIntent();
@@ -112,7 +116,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             case StaticParameter.MediaType.MOVIE:
 
                 // Create and bind tabs and viewpager together (movie)
-                createMovieTabContents(customPagerAdapter, viewPager, tabLayout);
+                createMovieTabContents(customPagerAdapter, viewPager, tabLayoutDetails);
 
                 // get movie id from intent
                 long movieId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, 0);
@@ -131,7 +135,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             case StaticParameter.MediaType.TV:
 
                 // Create and bind tabs and viewpager together (tvShow)
-                createTvShowTabContents(customPagerAdapter, viewPager, tabLayout);
+                createTvShowTabContents(customPagerAdapter, viewPager, tabLayoutDetails);
 
                 // get tvShow id from intent
                 long tvShowId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, 0);
@@ -268,7 +272,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // region Backdrop Image
 
         // set backdrop slideshow
-        slideshowAdapter.setImages(movieDetail.getImagesResponse().getBackdrops_list(), StaticParameter.BackdropSize.W1280);
+        ArrayList<ImagesResponse.ImageData> allBackdropImages = movieDetail.getImagesResponse().getBackdrops_list();
+        ArrayList<ImagesResponse.ImageData> top10BackdropImages = allBackdropImages.size() > 10 ? new ArrayList<>(allBackdropImages.subList(0, 10)) : allBackdropImages;
+        slideshowAdapter.setImages(top10BackdropImages, StaticParameter.BackdropSize.W1280);
 
         // endregion
 
@@ -409,7 +415,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // region Backdrop Image
 
         // set backdrop slideshow
-        slideshowAdapter.setImages(tvShowDetail.getImagesResponse().getBackdrops_list(), StaticParameter.BackdropSize.W1280);
+        ArrayList<ImagesResponse.ImageData> allBackdropImages = tvShowDetail.getImagesResponse().getBackdrops_list();
+        ArrayList<ImagesResponse.ImageData> top10BackdropImages = allBackdropImages.size() > 10 ? new ArrayList<>(allBackdropImages.subList(0, 10)) : allBackdropImages;
+        slideshowAdapter.setImages(top10BackdropImages, StaticParameter.BackdropSize.W1280);
 
         // endregion
 
@@ -510,6 +518,34 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     // endregion
 
+
+    // region Backdrop Slideshow
+
+    /**
+     * Initialize slideshows
+     */
+    private void initSlideshow(SlideShowAdapter slideshowAdapter, ViewPager2 viewPager, TabLayout tabLayout) {
+
+        viewPager.setAdapter(slideshowAdapter);
+
+        // Generate indicator by viewpager2 and attach viewpager2 & indicator together
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+        }).attach();
+    }
+
+    /**
+     * Callback when slideshow item get clicked
+     *
+     * @param image
+     */
+    @Override
+    public void onImageClick(ImagesResponse.ImageData image) {
+        displayImageFullScreen(image.getFilePath());
+    }
+
+    // endregion
+
+
     /**
      * Display image in fullscreen on another activity
      *
@@ -521,15 +557,5 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         startActivity(intent);
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-    }
-
-    /**
-     * Callback when slideshow item get clicked
-     *
-     * @param image
-     */
-    @Override
-    public void onImageClick(ImagesResponse.ImageData image) {
-        displayImageFullScreen(image.getFilePath());
     }
 }

@@ -43,6 +43,10 @@ public class StaticParameter {
         public static final String FEATURETTE = "Featurette";
     }
 
+    public static class VideoSourceSite{
+        public static final String YOUTUBE = "YouTube";
+    }
+
     public static class BackdropSize{
         public static final String W300 = "w300";
         public static final String W780 = "w780";
