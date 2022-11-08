@@ -3,6 +3,7 @@ package com.example.movieinfo.model;
 public class StaticParameter {
 
     private static final String ImageBaseUrl = "https://image.tmdb.org/t/p/";
+    private static final String YoutubeThumbnailBaseUrl = "https://img.youtube.com/vi/";
 
     /**
      * Define extra data key for passing data to other activities or fragments
@@ -47,6 +48,11 @@ public class StaticParameter {
         public static final String YOUTUBE = "YouTube";
     }
 
+    public static class SlideShowType{
+        public static final int VIDEO = 0;
+        public static final int IMAGE = 1;
+    }
+
     public static class BackdropSize{
         public static final String W300 = "w300";
         public static final String W780 = "w780";
@@ -64,6 +70,12 @@ public class StaticParameter {
         public static final String ORIGINAL = "original";
     }
 
+    /**
+     * Get TMDB Image Full Url
+     * @param size Define in StaticParameter.BackdropSize or .PosterSize ex: w1280
+     * @param filePath
+     * @return TMDB Image Full Url
+     */
     public static String getImageUrl(String size, String filePath){
         return ImageBaseUrl + size + filePath;
     }

@@ -3,11 +3,8 @@ package com.example.movieinfo.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.text.TextUtilsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
@@ -23,14 +20,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.ImagesResponse;
+import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
-import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
-import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
@@ -40,10 +36,7 @@ import com.facebook.shimmer.ShimmerDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 
@@ -98,7 +91,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         TabLayout tabLayoutSlideshow = findViewById(R.id.tabLayout_slideshow);
 
         // Initialize RecyclerView Adapter
-        slideshowAdapter = new SlideShowAdapter(new ArrayList<>(), this);
+        slideshowAdapter = new SlideShowAdapter(this, getLifecycle());
 
         // Initialize pagerAdapter
         CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), getLifecycle());
@@ -274,7 +267,22 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set backdrop slideshow
         ArrayList<ImagesResponse.ImageData> allBackdropImages = movieDetail.getImagesResponse().getBackdrops_list();
         ArrayList<ImagesResponse.ImageData> top10BackdropImages = allBackdropImages.size() > 10 ? new ArrayList<>(allBackdropImages.subList(0, 10)) : allBackdropImages;
-        slideshowAdapter.setImages(top10BackdropImages, StaticParameter.BackdropSize.W1280);
+        ArrayList<VideosResponse.VideoData> topNVideos = new ArrayList<>();
+        VideosResponse videosResponse = movieDetail.getVideosResponse();
+        if (videosResponse != null) {
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
+            // sort videos first
+            videos = videosResponse.sortVideos(videos);
+            // get videos only provided by youtube
+            videos = videosResponse.getVideosBySourceSite(videos, StaticParameter.VideoSourceSite.YOUTUBE);
+            // get videos only belongs trailer
+            videos = videosResponse.getVideosByVideoType(videos, StaticParameter.VideoType.TRAILER);
+            // get top n videos
+            if (videos.size() > 0) {
+                topNVideos = new ArrayList<>(videos.subList(0, 1));
+            }
+        }
+        slideshowAdapter.setSlideShowItems(topNVideos, top10BackdropImages, StaticParameter.BackdropSize.W1280);
 
         // endregion
 
@@ -417,7 +425,22 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set backdrop slideshow
         ArrayList<ImagesResponse.ImageData> allBackdropImages = tvShowDetail.getImagesResponse().getBackdrops_list();
         ArrayList<ImagesResponse.ImageData> top10BackdropImages = allBackdropImages.size() > 10 ? new ArrayList<>(allBackdropImages.subList(0, 10)) : allBackdropImages;
-        slideshowAdapter.setImages(top10BackdropImages, StaticParameter.BackdropSize.W1280);
+        ArrayList<VideosResponse.VideoData> topNVideos = new ArrayList<>();
+        VideosResponse videosResponse = tvShowDetail.getVideosResponse();
+        if (videosResponse != null) {
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
+            // sort videos first
+            videos = videosResponse.sortVideos(videos);
+            // get videos only provided by youtube
+            videos = videosResponse.getVideosBySourceSite(videos, StaticParameter.VideoSourceSite.YOUTUBE);
+            // get videos only belongs trailer
+            videos = videosResponse.getVideosByVideoType(videos, StaticParameter.VideoType.TRAILER);
+            // get top n videos
+            if (videos.size() > 0) {
+                topNVideos = new ArrayList<>(videos.subList(0, 1));
+            }
+        }
+        slideshowAdapter.setSlideShowItems(topNVideos, top10BackdropImages, StaticParameter.BackdropSize.W1280);
 
         // endregion
 
@@ -536,11 +559,18 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Callback when slideshow item get clicked
      *
-     * @param image
+     * @param itemData SlideShowItemData
      */
     @Override
-    public void onImageClick(ImagesResponse.ImageData image) {
-        displayImageFullScreen(image.getFilePath());
+    public void onSlideShowItemClick(SlideShowItemData itemData) {
+        switch (itemData.getItemType()) {
+            case StaticParameter.SlideShowType.VIDEO:
+                playVideoInNewActivity(itemData.getSource());
+                break;
+            case StaticParameter.SlideShowType.IMAGE:
+                displayImageFullScreen(itemData.getSource());
+                break;
+        }
     }
 
     // endregion
@@ -557,5 +587,17 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         startActivity(intent);
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+
+    /**
+     * Play youtube video in new activity
+     */
+    private void playVideoInNewActivity(String videoId){
+        Intent intent = new Intent(context, YoutubePlayerActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, videoId);
+        startActivity(intent);
+        // set the custom transition animation
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }

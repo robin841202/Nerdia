@@ -41,8 +41,8 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
     }
 
 
-    public ThumbnailsAdapter(ArrayList<VideoData> video_list, IThumbnailListener listener) {
-        this.video_list = video_list;
+    public ThumbnailsAdapter(IThumbnailListener listener) {
+        this.video_list = new ArrayList<>();
         this.listener = listener;
     }
 

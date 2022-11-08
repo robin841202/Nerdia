@@ -39,12 +39,12 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         ytPlayerFragment.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                youTubePlayer.loadVideo(videoId);
                 // enable automatic control of the orientation.
                 youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
                 // automatically enter fullscreen when the device enters landscape orientation
                 youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
-                youTubePlayer.play();
+                // load the video and play it
+                youTubePlayer.loadVideo(videoId);
             }
 
             @Override

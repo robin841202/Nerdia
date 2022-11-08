@@ -92,7 +92,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         videoThumbnail_Shimmer = view.findViewById(R.id.shimmer_videos);
 
         // Initialize Recycler Adapter
-        videoThumbnailAdapter = new ThumbnailsAdapter(new ArrayList<>(), this);
+        videoThumbnailAdapter = new ThumbnailsAdapter(this);
 
         // Set adapter
         videoThumbnail_RcView.setAdapter(videoThumbnailAdapter);
@@ -167,10 +167,11 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         // set video thumbnails recyclerView
         VideosResponse videosResponse = movieDetail.getVideosResponse();
         if (videosResponse != null) {
+            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideo_list();
             // sort videos first
-            videosResponse.sortVideos();
+            videos = videosResponse.sortVideos(videos);
             // get videos only provided by youtube
-            ArrayList<VideosResponse.VideoData> videos = videosResponse.getVideosBySourceSite(StaticParameter.VideoSourceSite.YOUTUBE);
+            videos = videosResponse.getVideosBySourceSite(videos, StaticParameter.VideoSourceSite.YOUTUBE);
             videoThumbnailAdapter.setVideos(videos);
         }
     }

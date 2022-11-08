@@ -31,8 +31,9 @@ public class VideosResponse {
     /**
      * Sort Videos, Taiwan(zh) videos always sort in first, then sort Trailer, Teaser on top
      */
-    public void sortVideos() {
-        Collections.sort(video_list, getCustomVideoComparator());
+    public ArrayList<VideoData> sortVideos(ArrayList<VideoData> target) {
+        Collections.sort(target, getCustomVideoComparator());
+        return target;
     }
 
     /**
@@ -41,10 +42,23 @@ public class VideosResponse {
      * @param sourceSite ex: YouTube
      * @return List of VideoData
      */
-    public ArrayList<VideoData> getVideosBySourceSite(String sourceSite) {
-        return new ArrayList<VideoData>(Collections2.filter(video_list, input -> {
+    public ArrayList<VideoData> getVideosBySourceSite(ArrayList<VideoData> target, String sourceSite) {
+        return new ArrayList<VideoData>(Collections2.filter(target, input -> {
             Pattern pattern = Pattern.compile(sourceSite);
             return pattern.matcher(input.getSourceSite()).find();
+        }));
+    }
+
+    /**
+     * Filter Videos By VideoType
+     *
+     * @param videoType Define in StaticParameter.VideoType ex: Trailer
+     * @return List of VideoData
+     */
+    public ArrayList<VideoData> getVideosByVideoType(ArrayList<VideoData> target, String videoType) {
+        return new ArrayList<VideoData>(Collections2.filter(target, input -> {
+            Pattern pattern = Pattern.compile(videoType);
+            return pattern.matcher(input.getVideoType()).find();
         }));
     }
 

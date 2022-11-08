@@ -74,8 +74,11 @@ dependencies {
     // Guava - In order to check string isNullOrEmpty easily
     implementation("com.google.guava:guava:31.1-android")
 
-    // Youtube Player Api lib
+    // Google official Youtube Player Api lib
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
+
+    // PierfrancescoSoffritti/android-youtube-player - https://github.com/PierfrancescoSoffritti/android-youtube-player (A opensource lib that depends on Youtube IFrame Player API, we use this just for let some views overlay on yt player, cuz official one not support this)
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0'
 
     // Shimmer - Content Placeholder Animation provided by facebook
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
