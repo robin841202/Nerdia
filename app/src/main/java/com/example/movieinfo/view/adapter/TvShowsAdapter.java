@@ -60,10 +60,10 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
 
 
     public void appendTvShows(ArrayList<TvShowData> tvShows) {
-        tvShow_list.addAll(tvShows);
         int startPosition = tvShow_list.size();
+        tvShow_list.addAll(tvShows);
         // refresh partially
-        notifyItemRangeInserted(startPosition, tvShows.size() - 1);
+        notifyItemRangeInserted(startPosition, tvShows.size());
     }
 
     public void removeAllTvShows() {

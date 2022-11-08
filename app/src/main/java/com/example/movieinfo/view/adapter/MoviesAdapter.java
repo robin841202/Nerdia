@@ -62,10 +62,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
 
     public void appendMovies(ArrayList<MovieData> movies) {
-        movie_list.addAll(movies);
         int startPosition = movie_list.size();
+        movie_list.addAll(movies);
         // refresh partially
-        notifyItemRangeInserted(startPosition, movies.size() - 1);
+        notifyItemRangeInserted(startPosition, movies.size());
     }
 
     public void removeAllMovies() {

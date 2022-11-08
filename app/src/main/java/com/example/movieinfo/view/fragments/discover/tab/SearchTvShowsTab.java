@@ -153,30 +153,36 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
             mShimmer.stopShimmer();
             mShimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            tvShowsAdapter.appendTvShows(tvShows);
-            // attach onScrollListener to RecyclerView
-            mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            if (tvShows.size() > 0){
+                // append data to adapter
+                tvShowsAdapter.appendTvShows(tvShows);
 
-                    // get the number of all items in recyclerView
-                    int totalItemCount = mLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = mLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = mLayoutMgr.findFirstVisibleItemPosition();
+                // attach onScrollListener to RecyclerView
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        mRcView.removeOnScrollListener(this);
+                        // when scrolling up
+                        if(dy > 0){
+                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                        // append nextPage data to recyclerView
-                        currentPage++;
-                        searchTvShows(currentKeyword, currentPage);
+                            // get the number of all items in recyclerView
+                            int totalItemCount = mLayoutMgr.getItemCount();
+                            // get the last visible item's position
+                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
+
+                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                // detach current OnScrollListener
+                                mRcView.removeOnScrollListener(this);
+
+                                // append nextPage data to recyclerView
+                                currentPage++;
+                                searchTvShows(currentKeyword, currentPage);
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
 
             Log.d(LOG_TAG, "tvShows: data fetched successfully");
         };
