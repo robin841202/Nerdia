@@ -27,6 +27,7 @@ import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
+import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
@@ -49,7 +50,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
 
     // Define subRequest type
-    private final String SUB_REQUEST_TYPE = "videos,images";
+    private final String SUB_REQUEST_TYPE = "videos,images,credits";
 
     // Define video languages
     private final String[] videoLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage()};
@@ -497,6 +498,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new MovieDetails_AboutTab(), getString(R.string.label_about));
+        pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.MOVIE), getString(R.string.label_cast));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
@@ -523,6 +525,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new TvShowDetails_AboutTab(), getString(R.string.label_about));
+        pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.TV), getString(R.string.label_cast));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together

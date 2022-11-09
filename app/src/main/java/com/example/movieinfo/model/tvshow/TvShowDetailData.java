@@ -3,6 +3,7 @@ package com.example.movieinfo.model.tvshow;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.movieinfo.model.CreditsResponse;
 import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.ProductionCompany;
@@ -64,6 +65,9 @@ public class TvShowDetailData {
 
     @SerializedName("images")
     private ImagesResponse imagesResponse;
+
+    @SerializedName("credits")
+    private CreditsResponse creditsResponse;
 
 
     /**
@@ -220,4 +224,11 @@ public class TvShowDetailData {
     public ImagesResponse getImagesResponse() {
         return imagesResponse;
     }
+
+    /**
+     * Get Credits Response
+     *
+     * @return
+     */
+    public CreditsResponse getCreditsResponse() {return creditsResponse;}
 }

@@ -70,6 +70,13 @@ public class StaticParameter {
         public static final String ORIGINAL = "original";
     }
 
+    public static class ProfileSize{
+        public static final String W45 = "w45";
+        public static final String W185 = "w185";
+        public static final String H632 = "h632";
+        public static final String ORIGINAL = "original";
+    }
+
     /**
      * Get TMDB Image Full Url
      * @param size Define in StaticParameter.BackdropSize or .PosterSize ex: w1280

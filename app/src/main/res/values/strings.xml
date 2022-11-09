@@ -23,6 +23,7 @@
     <string name="label_title_discover">探索</string>
     <string name="label_search_movies_tvshows">搜尋電影, 影集</string>
     <string name="label_about">關於</string>
+    <string name="label_cast">演員</string>
     <string name="label_genre">類別</string>
     <string name="label_read_more">更多</string>
     <string name="label_other_info">其他相關資訊</string>
@@ -38,4 +39,7 @@
     <string name="label_videos">相關影音</string>
     <string name="label_youtube_player">Youtube Player</string>
     <string name="label_youtube_player_error_display">影片播放器初始化發生錯誤!</string>
+    <string name="label_profile_main_name">主名稱</string>
+    <string name="label_profile_sub_name">副名稱</string>
+    <string name="label_profile_img">頭像</string>
 </resources>
