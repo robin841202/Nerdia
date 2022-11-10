@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.CreditsResponse;
@@ -30,6 +31,7 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
 
     private final String LOG_TAG = "CastTab";
 
+    private final String peopleCountFormatText = "%d 位";
     private Context context;
 
     private MovieDetailViewModel movieDetailViewModel;
@@ -37,6 +39,7 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
 
     private String mediaType;
 
+    private TextView countTextView;
     private RecyclerView cast_RcView;
     private CastsAdapter castAdapter;
 
@@ -85,17 +88,21 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
 
         // Initialize Views
         cast_RcView = view.findViewById(R.id.recycler_cast);
+        countTextView = view.findViewById(R.id.text_count);
 
         // Initialize Recycler Adapter
         castAdapter = new CastsAdapter(this);
 
         // Set adapter
         cast_RcView.setAdapter(castAdapter);
-        cast_RcView.setNestedScrollingEnabled(true);;
+        cast_RcView.setNestedScrollingEnabled(true);
+        ;
 
         // Set layoutManager
         cast_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
+        // Set default people count text
+        countTextView.setText(String.format(peopleCountFormatText, 0));
     }
 
 
@@ -131,6 +138,8 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
         if (creditsResponse != null) {
             ArrayList<CreditsResponse.CastData> casts = creditsResponse.getCast_list();
             castAdapter.setCasts(casts);
+            // Set people count text
+            countTextView.setText(String.format(peopleCountFormatText, casts.size()));
         }
     }
 
@@ -146,6 +155,8 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
         if (creditsResponse != null) {
             ArrayList<CreditsResponse.CastData> casts = creditsResponse.getCast_list();
             castAdapter.setCasts(casts);
+            // Set people count text
+            countTextView.setText(String.format(peopleCountFormatText, casts.size()));
         }
     }
 
