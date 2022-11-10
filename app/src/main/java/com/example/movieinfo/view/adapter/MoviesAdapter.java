@@ -19,12 +19,13 @@ import com.example.movieinfo.model.movie.MovieData;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 
+import org.checkerframework.checker.units.qual.A;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
-    private final ArrayList<MovieData> movie_list;
+    private ArrayList<MovieData> movie_list;
     private final IMovieListener listener;
 
     public interface IMovieListener {
@@ -35,8 +36,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
 
-    public MoviesAdapter(ArrayList<MovieData> movie_list, IMovieListener listener) {
-        this.movie_list = movie_list;
+    public MoviesAdapter(IMovieListener listener) {
+        this.movie_list = new ArrayList<>();
         this.listener = listener;
     }
 
@@ -60,6 +61,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return movie_list.size();
     }
 
+
+    public void setMovies(ArrayList<MovieData> movies) {
+        movie_list = movies;
+        notifyDataSetChanged();
+    }
 
     public void appendMovies(ArrayList<MovieData> movies) {
         int startPosition = movie_list.size();

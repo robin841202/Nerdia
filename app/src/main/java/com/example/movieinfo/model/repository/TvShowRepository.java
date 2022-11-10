@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.BuildConfig;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.ITvShowService;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
@@ -267,6 +268,30 @@ public class TvShowRepository {
     }
 
     /**
+     * Search TvShows By Keyword (using LiveData)
+     *
+     * @param keyWord keyword for searching
+     * @param page    target page
+     */
+    public void searchTvShows(String keyWord, int page) {
+        Call<TvShowsResponse> call = service.searchTvShows(apiKey, keyWord, page, language, region);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
+     * Get Similar TvShows (using LiveData)
+     *
+     * @param tvShowId TvShow Id
+     * @param page     target page
+     */
+    public void getSimilarTvShows(long tvShowId, int page) {
+        Call<TvShowsResponse> call = service.getSimilarTvShows(tvShowId, apiKey, page, language);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
      * (private) Get Request Handler (using LiveData)
      *
      * @param tvShowsLiveData live data
@@ -292,18 +317,6 @@ public class TvShowRepository {
                 Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
             }
         };
-    }
-
-    /**
-     * Search TvShows By Keyword (using LiveData)
-     *
-     * @param keyWord keyword for searching
-     * @param page    target page
-     */
-    public void searchTvShows(String keyWord, int page) {
-        Call<TvShowsResponse> call = service.searchTvShows(apiKey, keyWord, page, language, region);
-        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
-        call.enqueue(requestHandler);
     }
 
 

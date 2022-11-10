@@ -113,4 +113,26 @@ public interface ITvShowService {
                     String region
     );
 
+
+    /**
+     * Get Similar TvShows By TvShow Id
+     *
+     * @param id       TvShow Id
+     * @param apiKey   TMDB API Key
+     * @param page     target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @return
+     */
+    @GET("tv/{tv_id}/similar")
+    Call<TvShowsResponse> getSimilarTvShows(
+            @Path("tv_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language
+    );
+
 }

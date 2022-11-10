@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 
@@ -150,6 +151,28 @@ public interface IMovieService {
                     String language,
             @Query("region")
                     String region
+    );
+
+
+    /**
+     * Get Similar Movies By Movie Id
+     *
+     * @param id       Movie Id
+     * @param apiKey   TMDB API Key
+     * @param page     target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @return
+     */
+    @GET("movie/{movie_id}/similar")
+    Call<MoviesResponse> getSimilarMovies(
+            @Path("movie_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language
     );
 
 }

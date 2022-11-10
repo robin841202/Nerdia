@@ -19,10 +19,12 @@ import com.example.movieinfo.model.tvshow.TvShowData;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 
 public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsViewHolder> {
-    private final ArrayList<TvShowData> tvShow_list;
+    private ArrayList<TvShowData> tvShow_list;
     private final ITvShowListener listener;
 
     public interface ITvShowListener {
@@ -33,8 +35,8 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
     }
 
 
-    public TvShowsAdapter(ArrayList<TvShowData> tvShow_list, ITvShowListener listener) {
-        this.tvShow_list = tvShow_list;
+    public TvShowsAdapter(ITvShowListener listener) {
+        this.tvShow_list = new ArrayList<>();
         this.listener = listener;
     }
 
@@ -58,6 +60,11 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         return tvShow_list.size();
     }
 
+
+    public void setTvShows(ArrayList<TvShowData> tvShows) {
+        tvShow_list = tvShows;
+        notifyDataSetChanged();
+    }
 
     public void appendTvShows(ArrayList<TvShowData> tvShows) {
         int startPosition = tvShow_list.size();

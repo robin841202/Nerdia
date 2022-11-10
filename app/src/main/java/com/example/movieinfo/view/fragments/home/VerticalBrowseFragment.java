@@ -188,8 +188,8 @@ public class VerticalBrowseFragment extends Fragment implements MoviesAdapter.IM
         toolBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
         // Initialize Adapter
-        verticalBrowseAdapter_movie = new MoviesAdapter(new ArrayList<>(), this);
-        verticalBrowseAdapter_tv = new TvShowsAdapter(new ArrayList<>(), this);
+        verticalBrowseAdapter_movie = new MoviesAdapter(this);
+        verticalBrowseAdapter_tv = new TvShowsAdapter(this);
 
         // Initialize gridLayoutManager
         verticalBrowseLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);

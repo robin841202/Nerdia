@@ -344,6 +344,19 @@ public class MovieRepository {
     }
 
     /**
+     * Get Similar Movies (using LiveData)
+     *
+     * @param movieId Movie Id
+     * @param page    target page
+     */
+    public void getSimilarMovies(long movieId, int page) {
+        Call<MoviesResponse> call = service.getSimilarMovies(movieId, apiKey, page, language);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+
+    /**
      * (private) Get Request Handler (using LiveData)
      *
      * @param moviesLiveData live data

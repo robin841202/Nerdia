@@ -29,6 +29,7 @@ import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
 import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
+import com.example.movieinfo.view.tab.SimilarTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
@@ -109,11 +110,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
 
-                // Create and bind tabs and viewpager together (movie)
-                createMovieTabContents(customPagerAdapter, viewPager, tabLayoutDetails);
-
                 // get movie id from intent
                 long movieId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, 0);
+
+                // Create and bind tabs and viewpager together (movie)
+                createMovieTabContents(customPagerAdapter, viewPager, tabLayoutDetails, movieId);
+
                 //  if data exists, get detail and populate in Views
                 if (movieId > 0) {
                     // Initialize viewModel, data only survive this activity lifecycle
@@ -128,11 +130,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                 break;
             case StaticParameter.MediaType.TV:
 
-                // Create and bind tabs and viewpager together (tvShow)
-                createTvShowTabContents(customPagerAdapter, viewPager, tabLayoutDetails);
-
                 // get tvShow id from intent
                 long tvShowId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, 0);
+
+                // Create and bind tabs and viewpager together (tvShow)
+                createTvShowTabContents(customPagerAdapter, viewPager, tabLayoutDetails, tvShowId);
+
                 //  if data exists, get detail and populate in Views
                 if (tvShowId > 0) {
                     // Initialize viewModel, data only survive this activity lifecycle
@@ -492,13 +495,14 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Create and bind tabs and viewpager together (For Movie)
      */
-    private void createMovieTabContents(CustomPagerAdapter pagerAdapter, ViewPager2 viewPager, TabLayout tabLayout) {
+    private void createMovieTabContents(CustomPagerAdapter pagerAdapter, ViewPager2 viewPager, TabLayout tabLayout, long movieId) {
         /*
         Use custom CustomPagerAdapter class to manage page views in fragments.
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new MovieDetails_AboutTab(), getString(R.string.label_about));
         pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.MOVIE), getString(R.string.label_cast));
+        pagerAdapter.addFragment(new SimilarTab(StaticParameter.MediaType.MOVIE, movieId), getString(R.string.label_similar));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
@@ -519,13 +523,14 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Create and bind tabs and viewpager together (For TvShow)
      */
-    private void createTvShowTabContents(CustomPagerAdapter pagerAdapter, ViewPager2 viewPager, TabLayout tabLayout) {
+    private void createTvShowTabContents(CustomPagerAdapter pagerAdapter, ViewPager2 viewPager, TabLayout tabLayout, long tvShowId) {
         /*
         Use custom CustomPagerAdapter class to manage page views in fragments.
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new TvShowDetails_AboutTab(), getString(R.string.label_about));
         pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.TV), getString(R.string.label_cast));
+        pagerAdapter.addFragment(new SimilarTab(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_similar));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
@@ -596,7 +601,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Play youtube video in new activity
      */
-    private void playVideoInNewActivity(String videoId){
+    private void playVideoInNewActivity(String videoId) {
         Intent intent = new Intent(context, YoutubePlayerActivity.class);
         intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, videoId);
         startActivity(intent);

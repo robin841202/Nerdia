@@ -86,7 +86,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
-        movieAdapter = new MoviesAdapter(new ArrayList<>(), this);
+        movieAdapter = new MoviesAdapter(this);
 
         // Initialize gridLayoutManager
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);

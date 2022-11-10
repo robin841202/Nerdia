@@ -143,12 +143,12 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         pullToRefresh = root.findViewById(R.id.swiperefresh);
 
         // Initialize Adapter
-        upcomingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
-        nowPlayingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
-        trendingMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
-        popularMoviesAdapter = new MoviesAdapter(new ArrayList<>(), this);
-        popularTvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
-        trendingTvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
+        upcomingMoviesAdapter = new MoviesAdapter(this);
+        nowPlayingMoviesAdapter = new MoviesAdapter(this);
+        trendingMoviesAdapter = new MoviesAdapter(this);
+        popularMoviesAdapter = new MoviesAdapter(this);
+        popularTvShowsAdapter = new TvShowsAdapter(this);
+        trendingTvShowsAdapter = new TvShowsAdapter(this);
 
         // Initialize linearLayoutManager
         upcomingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

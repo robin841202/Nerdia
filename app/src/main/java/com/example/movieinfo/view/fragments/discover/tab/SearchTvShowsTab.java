@@ -86,7 +86,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
-        tvShowsAdapter = new TvShowsAdapter(new ArrayList<>(), this);
+        tvShowsAdapter = new TvShowsAdapter(this);
 
         // Initialize gridLayoutManager
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
