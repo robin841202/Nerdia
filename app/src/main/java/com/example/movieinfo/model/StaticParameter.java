@@ -2,6 +2,8 @@ package com.example.movieinfo.model;
 
 public class StaticParameter {
 
+    public static final String TmdbApiBaseUrl = "https://api.themoviedb.org/3/";
+    public static final String OmdbApiBaseUrl = "https://www.omdbapi.com/";
     private static final String ImageBaseUrl = "https://image.tmdb.org/t/p/";
     private static final String YoutubeThumbnailBaseUrl = "https://img.youtube.com/vi/";
 
@@ -14,6 +16,12 @@ public class StaticParameter {
         public static final String EXTRA_DATA_TVSHOW_ID_KEY = "EXTRA_DATA_TVSHOW_ID";
         public static final String EXTRA_DATA_VERTICAL_BROWSE_KEY = "EXTRA_DATA_VERTICAL_BROWSE";
         public static final String EXTRA_DATA_VIDEO_ID_KEY = "EXTRA_DATA_VIDEO_ID";
+    }
+
+    public static class OmdbSourceName{
+        public static final String IMDB = "Internet Movie Database";
+        public static final String ROTTEN_TOMATOES = "Rotten Tomatoes";
+        public static final String METACRETIC = "Metacritic";
     }
 
     public static class MediaType{

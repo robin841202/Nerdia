@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.movieinfo.model.CreditsResponse;
+import com.example.movieinfo.model.ExternalIdResponse;
 import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.ProductionCompany;
@@ -72,6 +73,9 @@ public class MovieDetailData {
 
     @SerializedName("credits")
     private CreditsResponse creditsResponse;
+
+    @SerializedName("external_ids")
+    private ExternalIdResponse externalIdResponse;
 
     /**
      * Get IsAdult or not
@@ -242,5 +246,14 @@ public class MovieDetailData {
      *
      * @return
      */
-    public CreditsResponse getCreditsResponse() {return creditsResponse;}
+    public CreditsResponse getCreditsResponse() {
+        return creditsResponse;
+    }
+
+    /**
+     * Get ExternalId Response
+     *
+     * @return
+     */
+    public ExternalIdResponse getExternalIdResponse() {return externalIdResponse;}
 }

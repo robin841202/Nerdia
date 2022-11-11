@@ -17,6 +17,7 @@ android {
         // build api keys field to allow used in repository, actual value is set in gradle.properties
         buildConfigField("String", "YOUTUBE_API_KEY", YOUTUBE_API_KEY)
         buildConfigField("String", "TMDB_API_KEY", TMDB_API_KEY)
+        buildConfigField("String", "OMDB_API_KEY", OMDB_API_KEY)
     }
 
     buildTypes {
@@ -50,7 +51,7 @@ dependencies {
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
 
-    // Material Components - In order to use "BottomNavigationView" in this project
+    // Material Components - In order to use "BottomNavigationView" & "Bottom Sheets" in this project
     implementation 'com.google.android.material:material:1.6.1'
 
     // Legacy Support Library - In order to use "NestedScrollView" in this project

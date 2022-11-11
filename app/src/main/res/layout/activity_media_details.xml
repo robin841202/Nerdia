@@ -93,7 +93,7 @@
                     app:layout_constraintStart_toStartOf="@+id/text_movie_title"
                     app:layout_constraintTop_toBottomOf="@+id/text_movie_title" />
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/group_vote"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -108,7 +108,17 @@
                         style="@style/Widget.AppCompat.RatingBar.Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/text_score" />
+                        android:layout_alignBottom="@+id/text_score"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:layout_width="55dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_tmdb_logo_alt"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ratingBar_movie_rating" />
 
                     <TextView
                         android:id="@+id/text_score"
@@ -117,9 +127,13 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="2dp"
                         android:gravity="bottom"
+                        android:text="90%"
                         android:textColor="?attr/colorPrimaryVariant"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/ratingBar_movie_rating"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/text_vote_count"
@@ -128,9 +142,13 @@
                         android:layout_alignBottom="@+id/img_icon_people"
                         android:layout_marginEnd="2dp"
                         android:layout_toStartOf="@+id/img_icon_people"
+                        android:text="123"
                         android:textColor="?attr/colorPrimaryVariant"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/img_icon_people"
+                        app:layout_constraintTop_toBottomOf="@+id/text_score" />
 
                     <ImageView
                         android:id="@+id/img_icon_people"
@@ -138,8 +156,11 @@
                         android:layout_height="16dp"
                         android:layout_below="@+id/text_score"
                         android:layout_alignParentEnd="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_score"
                         app:srcCompat="@drawable/ic_people" />
-                </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier_movie_poster"

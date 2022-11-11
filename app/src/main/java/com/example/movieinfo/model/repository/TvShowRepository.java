@@ -54,7 +54,7 @@ public class TvShowRepository {
         initLiveData();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/")
+                .baseUrl(StaticParameter.TmdbApiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(ITvShowService.class);

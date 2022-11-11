@@ -8,10 +8,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -19,7 +22,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.ExternalIdResponse;
 import com.example.movieinfo.model.ImagesResponse;
+import com.example.movieinfo.model.OmdbData;
 import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
@@ -27,6 +32,7 @@ import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
+import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.SimilarTab;
@@ -35,8 +41,10 @@ import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -47,11 +55,13 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
 
+    private String mediaType;
+
     // Define extra data key for passing data to other activities or fragments
     public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
 
     // Define subRequest type
-    private final String SUB_REQUEST_TYPE = "videos,images,credits";
+    private final String SUB_REQUEST_TYPE = "videos,images,credits,external_ids";
 
     // Define video languages
     private final String[] videoLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage()};
@@ -69,9 +79,11 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private TextView scoreText;
     private RatingBar ratingBar;
     private TextView voteCount;
+    private ViewGroup ratingGroup;
 
     private MovieDetailViewModel movieDetailViewModel;
     private TvShowDetailViewModel tvShowDetailViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +99,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         scoreText = findViewById(R.id.text_score);
         ratingBar = findViewById(R.id.ratingBar_movie_rating);
         voteCount = findViewById(R.id.text_vote_count);
+        ratingGroup = findViewById(R.id.group_vote);
         ViewPager2 viewPager = findViewById(R.id.viewpager_details);
         TabLayout tabLayoutDetails = findViewById(R.id.tabLayout_details);
         ViewPager2 slideshowViewPager2 = findViewById(R.id.viewpager_slideshow);
@@ -104,7 +117,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
         // Get mediaType from intent
         Intent intent = getIntent();
-        String mediaType = intent.getStringExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
+        mediaType = intent.getStringExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
 
         // Get Detail Data depends on mediaType
         switch (mediaType) {
@@ -328,6 +341,15 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set vote count
         voteCount.setText(String.valueOf(movieDetail.getVoteCount()));
 
+        // set rating click event
+        ratingGroup.setOnClickListener(v -> {
+            ExternalIdResponse externalIdResponse = movieDetail.getExternalIdResponse();
+            if (externalIdResponse != null) {
+                String imdbId = externalIdResponse.getImdbId();
+                showRatingBottomSheet(imdbId, score);
+            }
+        });
+
         Log.d(LOG_TAG, "movie detail: data populate to UI successfully");
     }
 
@@ -485,6 +507,15 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
         // set vote count
         voteCount.setText(String.valueOf(tvShowDetail.getVoteCount()));
+
+        // set rating click event
+        ratingGroup.setOnClickListener(v -> {
+            ExternalIdResponse externalIdResponse = tvShowDetail.getExternalIdResponse();
+            if (externalIdResponse != null) {
+                String imdbId = externalIdResponse.getImdbId();
+                showRatingBottomSheet(imdbId, score);
+            }
+        });
     }
 
     // endregion
@@ -607,5 +638,14 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         startActivity(intent);
         // set the custom transition animation
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+
+    /**
+     * Show Rating Bottom Sheet Modal
+     */
+    private void showRatingBottomSheet(String imdbId, double tmdbRating) {
+        RatingBottomSheet blankFragment = new RatingBottomSheet(mediaType, imdbId, tmdbRating);
+        blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
     }
 }
