@@ -20,7 +20,7 @@
             android:layout_width="@dimen/logo"
             android:layout_height="@dimen/logo"
             android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="4dp">
 
             <ImageView
@@ -53,7 +53,7 @@
             android:layout_width="@dimen/logo"
             android:layout_height="@dimen/logo"
             android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="4dp">
 
             <ImageView
@@ -86,7 +86,7 @@
             android:layout_width="@dimen/logo"
             android:layout_height="@dimen/logo"
             android:layout_gravity="center"
-            android:background="?android:attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="4dp">
 
             <ImageView

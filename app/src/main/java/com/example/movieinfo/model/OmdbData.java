@@ -21,6 +21,9 @@ public class OmdbData {
     @SerializedName("Ratings")
     private ArrayList<Rating> ratings;
 
+    @SerializedName("tomatoURL")
+    private String tomatoWebUrl;
+
     public String getImdbId() {
         return imdbId;
     }
@@ -36,6 +39,8 @@ public class OmdbData {
     public ArrayList<Rating> getRatings() {
         return ratings;
     }
+
+    public String getTomatoWebUrl() {return tomatoWebUrl;}
 
     public static class Rating {
         @SerializedName("Source")

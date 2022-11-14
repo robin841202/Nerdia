@@ -3,12 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.movieinfo">
 
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
-    <queries>
+    <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
+    <queries>
         <!-- Youtube Api -->
         <intent>
             <action android:name="com.google.android.youtube.api.service.START" />
+        </intent>
+
+        <!-- Browser -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
         </intent>
     </queries>
 

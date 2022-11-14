@@ -59,7 +59,7 @@ public class OmdbRepository {
      * @param imdbId IMDB Id
      */
     public void getDataByImdbId(String imdbId) {
-        Call<OmdbData> call = service.getDataByImdbId(apiKey, imdbId);
+        Call<OmdbData> call = service.getDataByImdbId(apiKey, imdbId, true);
         call.enqueue(new Callback<OmdbData>() {
             @Override
             public void onResponse(@NonNull Call<OmdbData> call, @NonNull Response<OmdbData> response) {

@@ -343,11 +343,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
         // set rating click event
         ratingGroup.setOnClickListener(v -> {
-            ExternalIdResponse externalIdResponse = movieDetail.getExternalIdResponse();
-            if (externalIdResponse != null) {
-                String imdbId = externalIdResponse.getImdbId();
-                showRatingBottomSheet(imdbId, score);
-            }
+            showRatingBottomSheet();
         });
 
         Log.d(LOG_TAG, "movie detail: data populate to UI successfully");
@@ -510,11 +506,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
         // set rating click event
         ratingGroup.setOnClickListener(v -> {
-            ExternalIdResponse externalIdResponse = tvShowDetail.getExternalIdResponse();
-            if (externalIdResponse != null) {
-                String imdbId = externalIdResponse.getImdbId();
-                showRatingBottomSheet(imdbId, score);
-            }
+            showRatingBottomSheet();
         });
     }
 
@@ -644,8 +636,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Show Rating Bottom Sheet Modal
      */
-    private void showRatingBottomSheet(String imdbId, double tmdbRating) {
-        RatingBottomSheet blankFragment = new RatingBottomSheet(mediaType, imdbId, tmdbRating);
+    private void showRatingBottomSheet() {
+        RatingBottomSheet blankFragment = new RatingBottomSheet(mediaType);
         blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
     }
 }

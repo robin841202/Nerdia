@@ -23,7 +23,9 @@ public interface IOmdbService {
             @Query("apikey")
                     String apiKey,
             @Query("i")
-                    String imdbId
+                    String imdbId,
+            @Query("tomatoes")
+                    boolean includeTomatoes
     );
 
 }

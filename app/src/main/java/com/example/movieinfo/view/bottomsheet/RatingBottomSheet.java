@@ -1,10 +1,15 @@
 package com.example.movieinfo.view.bottomsheet;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,8 +18,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.movieinfo.R;
 
+import com.example.movieinfo.model.ExternalIdResponse;
 import com.example.movieinfo.model.OmdbData;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.movie.MovieDetailData;
+import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -25,7 +33,9 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 
 public class RatingBottomSheet extends BottomSheetDialogFragment {
+    private final String LOG_TAG = "RatingBottomSheet";
 
+    private Context context;
 
     private View tmdbCard;
     private View imdbCard;
@@ -34,37 +44,40 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
     private TextView imdbRatingText;
     private TextView tomatoRatingText;
 
-    private String imdbId;
-    private double tmdbRating;
-
     private String mediaType;
 
     private MovieDetailViewModel movieDetailViewModel;
     private TvShowDetailViewModel tvShowDetailViewModel;
 
-    public RatingBottomSheet(String mediaType, String imdbId, double tmdbRating) {
+    public RatingBottomSheet(String mediaType) {
         this.mediaType = mediaType;
-        this.imdbId = imdbId;
-        this.tmdbRating = tmdbRating;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        switch (mediaType){
+        context = getContext();
+
+        switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
-                // Initialize viewModel, data only survive this activity lifecycle
-                movieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
-                movieDetailViewModel.init();
+                // Get the same viewModel that created in parent activity, in order to share the data
+                movieDetailViewModel = new ViewModelProvider(getActivity()).get(MovieDetailViewModel.class);
+                //movieDetailViewModel.init();
+
+                // Set movieDetailData observer
+                movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
                 // Set omdbData observer
                 movieDetailViewModel.getOmdbLiveData().observe(this, getOmdbObserver());
                 break;
             case StaticParameter.MediaType.TV:
-                // Initialize viewModel, data only survive this activity lifecycle
-                tvShowDetailViewModel = new ViewModelProvider(this).get(TvShowDetailViewModel.class);
-                tvShowDetailViewModel.init();
+                // Get the same viewModel that created in parent activity, in order to share the data
+                tvShowDetailViewModel = new ViewModelProvider(getActivity()).get(TvShowDetailViewModel.class);
+                //tvShowDetailViewModel.init();
+
+                // Set tvShowDetailData observer
+                tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
                 // Set omdbData observer
                 tvShowDetailViewModel.getOmdbLiveData().observe(this, getOmdbObserver());
@@ -91,42 +104,145 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
         tmdbRatingText = view.findViewById(R.id.text_rating_tmdb);
         imdbRatingText = view.findViewById(R.id.text_rating_imdb);
         tomatoRatingText = view.findViewById(R.id.text_rating_tomato);
-        /*View bottomSheet = view.findViewById(R.id.rating_bottom_sheet);
-        BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(bottomSheet);
-        behavior.setPeekHeight(62);*/
-
-        // Set TMDB rating in bottom sheet
-        String scoreInPercent = String.format("%.0f %%", tmdbRating * 10);
-        tmdbRatingText.setText(scoreInPercent);
-
-        // Start getting data
-        getOmdbByImdbId(mediaType, imdbId);
     }
 
-    // region Get OMDB Data (MVVM using LiveData)
 
     /**
-     * Get Data By IMDB Id
-     *
-     * @param mediaType media Type
-     * @param imdbId    IMDB Id
+     * Observe when MovieDetail LiveData changed
      */
-    public void getOmdbByImdbId(String mediaType, String imdbId) {
-        switch (mediaType) {
-            case StaticParameter.MediaType.MOVIE:
+    public Observer<MovieDetailData> getMovieDetailObserver() {
+        return movieDetailData -> {
+            // Set TMDB rating in bottom sheet
+            double score = movieDetailData.getRating();
+            String scoreInPercent = String.format("%.0f %%", score * 10);
+            tmdbRatingText.setText(scoreInPercent);
+
+            // Set TMDB web page link on click
+            tmdbCard.setOnClickListener(v -> {
+                String tmdbWebUrl = StaticParameter.getTmdbWebUrl(mediaType, movieDetailData.getId());
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tmdbWebUrl));
+                /*
+                Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
+                Make sure there is at least one Activity can handle your request.
+                Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
+                 */
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "no Activity on this device can handle this action!");
+                }
+            });
+
+            // Get IMDB ID
+            ExternalIdResponse externalIdResponse = movieDetailData.getExternalIdResponse();
+            if (externalIdResponse != null) {
+                String imdbId = externalIdResponse.getImdbId();
+
+                // Set IMDB web page link on click
+                imdbCard.setOnClickListener(v -> {
+                    String imdbWebUrl = StaticParameter.getImdbWebUrl(imdbId);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imdbWebUrl));
+                    /*
+                    Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
+                    Make sure there is at least one Activity can handle your request.
+                    Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
+                     */
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Log.d(LOG_TAG, "no Activity on this device can handle this action!");
+                    }
+                });
+
+                // Start getting omdb data
                 movieDetailViewModel.getDataByImdbId(imdbId);
-                break;
-            case StaticParameter.MediaType.TV:
-                tvShowDetailViewModel.getDataByImdbId(imdbId);
-                break;
-        }
+            }
+        };
     }
+
+    /**
+     * Observe when TvShowDetail LiveData changed
+     */
+    public Observer<TvShowDetailData> getTvShowDetailObserver() {
+        return tvShowDetailData -> {
+            // Set TMDB rating in bottom sheet
+            double score = tvShowDetailData.getRating();
+            String scoreInPercent = String.format("%.0f %%", score * 10);
+            tmdbRatingText.setText(scoreInPercent);
+
+            // Set TMDB web page link on click
+            tmdbCard.setOnClickListener(v -> {
+                String tmdbWebUrl = StaticParameter.getTmdbWebUrl(mediaType, tvShowDetailData.getId());
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tmdbWebUrl));
+                /*
+                Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
+                Make sure there is at least one Activity can handle your request.
+                Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
+                 */
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "no Activity on this device can handle this action!");
+                }
+            });
+
+            // Get IMDB ID
+            ExternalIdResponse externalIdResponse = tvShowDetailData.getExternalIdResponse();
+            if (externalIdResponse != null) {
+                String imdbId = externalIdResponse.getImdbId();
+
+                // Set IMDB web page link on click
+                imdbCard.setOnClickListener(v -> {
+                    String imdbWebUrl = StaticParameter.getImdbWebUrl(imdbId);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imdbWebUrl));
+                    /*
+                    Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
+                    Make sure there is at least one Activity can handle your request.
+                    Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
+                     */
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Log.d(LOG_TAG, "no Activity on this device can handle this action!");
+                    }
+                });
+
+                // Start getting omdb data
+                tvShowDetailViewModel.getDataByImdbId(imdbId);
+            }
+        };
+    }
+
+
+    // region Get OMDB Data (MVVM using LiveData)
 
     /**
      * Observe when OMDB LiveData changed
      */
     public Observer<OmdbData> getOmdbObserver() {
         return omdbData -> {
+
+            // Set RottenTomatoes web page link on click
+            rottenTomatoesCard.setOnClickListener(v -> {
+                String tomatoWebUrl = omdbData.getTomatoWebUrl();
+                if (!Strings.isNullOrEmpty(tomatoWebUrl) && !tomatoWebUrl.equalsIgnoreCase("N/A")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tomatoWebUrl));
+                    /*
+                    Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
+                    Make sure there is at least one Activity can handle your request.
+                    Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
+                     */
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Log.d(LOG_TAG, "no Activity on this device can handle this action!");
+                    }
+                }else{
+                    Toast.makeText(context, R.string.toastMsg_link_not_exist, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            // region Retrieve ratings and populate in views
             ArrayList<OmdbData.Rating> omdbRating_list = omdbData.getRatings();
             String imdbRating = null;
             String tomatoRating = null;
@@ -154,8 +270,12 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
             } else {
                 tomatoRatingText.setText(" - ");
             }
+            // endregion
+
         };
     }
 
     // endregion
+
+
 }
