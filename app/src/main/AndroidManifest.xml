@@ -42,6 +42,10 @@
             android:name=".view.MediaDetailsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
+        <activity
+            android:name=".view.PersonDetailsActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
         <!-- Set "windowSoftInputMode" to "adjustPan" to avoid bottomNavigationView push up when keyboard show up -->
         <activity
             android:name=".view.MainActivity"

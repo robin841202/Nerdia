@@ -43,7 +43,7 @@ public class CreditsResponse {
          * Id
          */
         @SerializedName("id")
-        private int id;
+        private long id;
 
         /**
          * Cast Id
@@ -79,7 +79,7 @@ public class CreditsResponse {
             return order;
         }
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 

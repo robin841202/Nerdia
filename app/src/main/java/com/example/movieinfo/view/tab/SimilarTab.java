@@ -54,9 +54,17 @@ public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener
     private TvShowsAdapter tvShowsAdapter;
     private GridLayoutManager mLayoutMgr;
 
-    public SimilarTab(String mediaType, long id) {
-        this.mediaType = mediaType;
-        this.id = id;
+    public SimilarTab() {
+        // Required empty public constructor
+    }
+
+    public static SimilarTab newInstance(String mediaType, long id) {
+        Bundle args = new Bundle();
+        args.putString(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, mediaType);
+        args.putLong("id", id);
+        SimilarTab fragment = new SimilarTab();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -64,6 +72,12 @@ public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener
         super.onCreate(savedInstanceState);
 
         context = getContext();
+
+        // Get arguments from constructor
+        if (getArguments() != null) {
+            mediaType = getArguments().getString(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
+            id = getArguments().getLong("id");
+        }
 
         // set default page
         currentPage = 1;
@@ -121,7 +135,7 @@ public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
 
         // Set layoutManager
-        similar_RcView.setLayoutManager(new GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false));
+        similar_RcView.setLayoutManager(mLayoutMgr);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {

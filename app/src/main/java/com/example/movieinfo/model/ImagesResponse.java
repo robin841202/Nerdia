@@ -18,10 +18,14 @@ public class ImagesResponse {
     @SerializedName("posters")
     private ArrayList<ImageData> posters_list;
 
-    public ImagesResponse(ArrayList<ImageData> backdrops_list, ArrayList<ImageData> logos_list, ArrayList<ImageData> posters_list) {
+    @SerializedName("profiles")
+    private ArrayList<ImageData> profiles_list;
+
+    public ImagesResponse(ArrayList<ImageData> backdrops_list, ArrayList<ImageData> logos_list, ArrayList<ImageData> posters_list, ArrayList<ImageData> profiles_list) {
         this.backdrops_list = backdrops_list;
         this.logos_list = logos_list;
         this.posters_list = posters_list;
+        this.profiles_list = profiles_list;
     }
 
     public ArrayList<ImageData> getBackdrops_list() {
@@ -35,6 +39,8 @@ public class ImagesResponse {
     public ArrayList<ImageData> getPosters_list() {
         return posters_list;
     }
+
+    public ArrayList<ImageData> getProfiles_list() {return profiles_list;}
 
     /**
      * Individual Image Data

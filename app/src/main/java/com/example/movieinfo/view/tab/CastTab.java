@@ -1,6 +1,7 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,8 @@ import com.example.movieinfo.model.CreditsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
+import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.PersonDetailsActivity;
 import com.example.movieinfo.view.adapter.CastsAdapter;
 import com.example.movieinfo.viewmodel.MovieDetailViewModel;
 import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
@@ -43,8 +46,16 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
     private RecyclerView cast_RcView;
     private CastsAdapter castAdapter;
 
-    public CastTab(String mediaType) {
-        this.mediaType = mediaType;
+    public CastTab() {
+        // Required empty public constructor
+    }
+
+    public static CastTab newInstance(String mediaType) {
+        Bundle args = new Bundle();
+        args.putString(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, mediaType);
+        CastTab fragment = new CastTab();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -52,6 +63,11 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
         super.onCreate(savedInstanceState);
 
         context = getContext();
+
+        // Get arguments from constructor
+        if (getArguments() != null) {
+            mediaType = getArguments().getString(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
+        }
 
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
@@ -167,6 +183,10 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
      */
     @Override
     public void onCastClick(CreditsResponse.CastData cast) {
-
+        Intent intent = new Intent(getContext(), PersonDetailsActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_PERSON_ID_KEY, cast.getId());
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }

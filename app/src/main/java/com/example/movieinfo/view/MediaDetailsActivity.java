@@ -524,8 +524,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new MovieDetails_AboutTab(), getString(R.string.label_about));
-        pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.MOVIE), getString(R.string.label_cast));
-        pagerAdapter.addFragment(new SimilarTab(StaticParameter.MediaType.MOVIE, movieId), getString(R.string.label_similar));
+        pagerAdapter.addFragment(CastTab.newInstance(StaticParameter.MediaType.MOVIE), getString(R.string.label_cast));
+        pagerAdapter.addFragment(SimilarTab.newInstance(StaticParameter.MediaType.MOVIE, movieId), getString(R.string.label_similar));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
@@ -552,8 +552,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new TvShowDetails_AboutTab(), getString(R.string.label_about));
-        pagerAdapter.addFragment(new CastTab(StaticParameter.MediaType.TV), getString(R.string.label_cast));
-        pagerAdapter.addFragment(new SimilarTab(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_similar));
+        pagerAdapter.addFragment(CastTab.newInstance(StaticParameter.MediaType.TV), getString(R.string.label_cast));
+        pagerAdapter.addFragment(SimilarTab.newInstance(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_similar));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
