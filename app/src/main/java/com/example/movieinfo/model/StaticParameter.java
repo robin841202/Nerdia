@@ -19,6 +19,7 @@ public class StaticParameter {
         public static final String EXTRA_DATA_PERSON_ID_KEY = "EXTRA_DATA_PERSON_ID";
         public static final String EXTRA_DATA_VERTICAL_BROWSE_KEY = "EXTRA_DATA_VERTICAL_BROWSE";
         public static final String EXTRA_DATA_VIDEO_ID_KEY = "EXTRA_DATA_VIDEO_ID";
+        public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
     }
 
     public static class OmdbSourceName {

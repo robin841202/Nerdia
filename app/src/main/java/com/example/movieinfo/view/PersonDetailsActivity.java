@@ -44,9 +44,6 @@ public class PersonDetailsActivity extends AppCompatActivity {
     private final String LOG_TAG = "PersonDetailsActivity";
     private Context context;
 
-    // Define extra data key for passing data to other activities or fragments
-    public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
-
     // Define subRequest type
     private final String SUB_REQUEST_TYPE = "images,movie_credits,tv_credits";
 
@@ -237,7 +234,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
      */
     private void displayImageFullScreen(String imgFilePath) {
         Intent intent = new Intent(context, ImageDisplayActivity.class);
-        intent.putExtra(EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
         startActivity(intent);
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

@@ -50,4 +50,5 @@
     <string name="label_deathday">逝世</string>
     <string name="label_placeFrom">來自於</string>
     <string name="label_age">年紀</string>
+    <string name="label_images">圖片</string>
 </resources>

@@ -57,9 +57,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     private String mediaType;
 
-    // Define extra data key for passing data to other activities or fragments
-    public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
-
     // Define subRequest type
     private final String SUB_REQUEST_TYPE = "videos,images,credits,external_ids";
 
@@ -614,7 +611,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
      */
     private void displayImageFullScreen(String imgFilePath) {
         Intent intent = new Intent(context, ImageDisplayActivity.class);
-        intent.putExtra(EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
         startActivity(intent);
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

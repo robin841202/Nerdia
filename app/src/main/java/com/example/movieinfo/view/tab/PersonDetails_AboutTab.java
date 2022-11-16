@@ -1,6 +1,7 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,19 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.ImagesResponse;
+import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.person.PersonDetailData;
+import com.example.movieinfo.view.ImageDisplayActivity;
+import com.example.movieinfo.view.adapter.ProfileImageAdapter;
+import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
 import com.example.movieinfo.viewmodel.PersonDetailViewModel;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.common.base.Strings;
 
 import java.text.ParseException;
@@ -27,7 +37,7 @@ import java.util.Date;
 
 import io.github.giangpham96.expandabletextview.ExpandableTextView;
 
-public class PersonDetails_AboutTab extends Fragment {
+public class PersonDetails_AboutTab extends Fragment implements ProfileImageAdapter.IProfileImageListener {
 
     private final String LOG_TAG = "PersonDetails_AboutTab";
 
@@ -42,6 +52,10 @@ public class PersonDetails_AboutTab extends Fragment {
     private TextView deathdayTextView;
     private TextView placeFromTextView;
     private ViewGroup deathdayGroup;
+
+    private ShimmerFrameLayout prfileImage_Shimmer;
+    private RecyclerView profileImage_RcView;
+    private ProfileImageAdapter profileImageAdapter;
 
     public PersonDetails_AboutTab() {
         // Required empty public constructor
@@ -80,6 +94,21 @@ public class PersonDetails_AboutTab extends Fragment {
         deathdayTextView = view.findViewById(R.id.text_deathday);
         placeFromTextView = view.findViewById(R.id.text_placeFrom);
         deathdayGroup = view.findViewById(R.id.row_deathday);
+        profileImage_RcView = view.findViewById(R.id.recycler_profile_images);
+        prfileImage_Shimmer = view.findViewById(R.id.shimmer_profile_images);
+
+        // Initialize Recycler Adapter
+        profileImageAdapter = new ProfileImageAdapter(this);
+
+        // Set adapter
+        profileImage_RcView.setAdapter(profileImageAdapter);
+
+        // Set layoutManager
+        profileImage_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+
+        // show shimmer animation
+        prfileImage_Shimmer.startShimmer();
+        prfileImage_Shimmer.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -93,6 +122,10 @@ public class PersonDetails_AboutTab extends Fragment {
     }
 
     private void populateUI(PersonDetailData personDetail) {
+        // hide shimmer animation
+        prfileImage_Shimmer.stopShimmer();
+        prfileImage_Shimmer.setVisibility(View.GONE);
+
         // get all information
         String biography = Strings.isNullOrEmpty(personDetail.getBiography()) ? getString(R.string.label_empty) : personDetail.getBiography();
         ArrayList<String> otherNames_List = personDetail.getAlsoKnownAs();
@@ -142,6 +175,14 @@ public class PersonDetails_AboutTab extends Fragment {
             }
         }
 
+
+        // set profile images recyclerView
+        ImagesResponse imagesResponse = personDetail.getImagesResponse();
+        if (imagesResponse != null) {
+            ArrayList<ImagesResponse.ImageData> profiles = imagesResponse.getProfiles_list();
+            profileImageAdapter.setImages(profiles);
+        }
+
     }
 
     /**
@@ -161,5 +202,33 @@ public class PersonDetails_AboutTab extends Fragment {
         genreTextView.setText(name);
         group.addView(genreTextView);
     }
+
+
+    /**
+     * Display image in fullscreen on another activity
+     *
+     * @param imgFilePath image file path, not the full url
+     */
+    private void displayImageFullScreen(String imgFilePath) {
+        Intent intent = new Intent(context, ImageDisplayActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_IMAGE_PATH_KEY, imgFilePath);
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+
+    /**
+     * Callback when profile image item get clicked
+     *
+     * @param imageData image Data
+     */
+    @Override
+    public void onProfileImageClick(ImagesResponse.ImageData imageData) {
+        displayImageFullScreen(imageData.getFilePath());
+    }
+
+
+
 }
 

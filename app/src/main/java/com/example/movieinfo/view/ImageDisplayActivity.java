@@ -37,7 +37,7 @@ public class ImageDisplayActivity extends AppCompatActivity {
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         // get imgUrl from intent
-        String imgFilePath = getIntent().getStringExtra(MediaDetailsActivity.EXTRA_DATA_IMAGE_PATH_KEY);
+        String imgFilePath = getIntent().getStringExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_IMAGE_PATH_KEY);
         if (imgFilePath != null && !imgFilePath.isEmpty()) {
 
             // region Create image placeholder animation using shimmer
