@@ -7,6 +7,7 @@
     <string name="upcoming">即將上映</string>
     <string name="label_movies">電影</string>
     <string name="label_tvshows">影集</string>
+    <string name="label_people">人物</string>
     <string name="now_playing">現正熱映</string>
     <string name="trending">本週熱門</string>
     <string name="label_media_poster">海報</string>
@@ -21,7 +22,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_title_discover">探索</string>
-    <string name="label_search_movies_tvshows">搜尋電影, 影集</string>
+    <string name="label_search_movies_tvshows_people">搜尋電影, 影集, 人物</string>
     <string name="label_about">關於</string>
     <string name="label_cast">演員</string>
     <string name="label_genre">類別</string>

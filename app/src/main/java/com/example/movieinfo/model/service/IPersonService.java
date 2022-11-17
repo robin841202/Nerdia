@@ -1,7 +1,6 @@
 package com.example.movieinfo.model.service;
 
-import com.example.movieinfo.model.OmdbData;
-import com.example.movieinfo.model.movie.MovieDetailData;
+import com.example.movieinfo.model.person.PeopleResponse;
 import com.example.movieinfo.model.person.PersonDetailData;
 
 import retrofit2.Call;
@@ -33,6 +32,32 @@ public interface IPersonService {
                     String subRequestType,
             @Query("include_image_language")
                     String imageLanguages
+    );
+
+
+
+    /**
+     * Search People By Keyword
+     *
+     * @param apiKey   TMDB API Key
+     * @param keyWord  searching keyword
+     * @param page     target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region   ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @return
+     */
+    @GET("search/person")
+    Call<PeopleResponse> searchPeople(
+            @Query("api_key")
+                    String apiKey,
+            @Query("query")
+                    String keyWord,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("region")
+                    String region
     );
 
 }

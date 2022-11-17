@@ -12,8 +12,6 @@ import java.util.ArrayList;
 public class MoviesViewModel extends ViewModel {
     private MovieRepository repository;
 
-    private LiveData<ArrayList<MovieData>> moviesLiveData;
-
     // used when multiple liveData needs to observe different data in same activity or fragment
     private LiveData<ArrayList<MovieData>> upcomingMoviesLiveData;
     private LiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData;
@@ -25,7 +23,6 @@ public class MoviesViewModel extends ViewModel {
      */
     public void init() {
         repository = new MovieRepository();
-        moviesLiveData = repository.getMoviesLiveData();
         upcomingMoviesLiveData = repository.getUpcomingMoviesLiveData();
         nowPlayingMoviesLiveData = repository.getNowPlayingMoviesLiveData();
         trendingMoviesLiveData = repository.getTrendingMoviesLiveData();
@@ -116,26 +113,4 @@ public class MoviesViewModel extends ViewModel {
     }
     // endregion
 
-    // region Search Movies
-
-    /**
-     * Call repository to get searching movies and update to liveData
-     *
-     * @param keyword searching keyword
-     * @param page    target page
-     */
-    public void searchMovies(String keyword, int page) {
-        repository.searchMovies(keyword, page);
-    }
-
-    // endregion
-
-    /**
-     * Get the liveData to observe it
-     *
-     * @return
-     */
-    public LiveData<ArrayList<MovieData>> getMoviesLiveData() {
-        return moviesLiveData;
-    }
 }

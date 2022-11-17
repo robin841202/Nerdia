@@ -27,6 +27,7 @@ import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
+import com.example.movieinfo.viewmodel.SearchViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
 
     private final String LOG_TAG = "SearchMoviesTab";
 
-    private MoviesViewModel moviesViewModel;
+    private SearchViewModel searchViewModel;
 
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
@@ -62,11 +63,11 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         currentPage = 1;
 
         // Initialize viewModel, data only survive this fragment lifecycle
-        moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
-        moviesViewModel.init();
+        searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+        searchViewModel.init();
 
         // Set Observer
-        moviesViewModel.getMoviesLiveData().observe(this, getSearchMoviesObserver());
+        searchViewModel.getMoviesLiveData().observe(this, getSearchMoviesObserver());
     }
 
     @Override
@@ -138,7 +139,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
             // show shimmer animation
             mShimmer.startShimmer();
             mShimmer.setVisibility(View.VISIBLE);
-            moviesViewModel.searchMovies(keyword, page);
+            searchViewModel.searchMovies(keyword, page);
         }
     }
 

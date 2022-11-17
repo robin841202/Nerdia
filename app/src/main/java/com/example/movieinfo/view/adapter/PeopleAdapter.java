@@ -15,59 +15,67 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.CreditsResponse.CastData;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.movie.MovieData;
+import com.example.movieinfo.model.person.PersonData;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 
-public class CastsAdapter extends RecyclerView.Adapter<CastsAdapter.CastsViewHolder> {
-    private final String LOG_TAG = "CastsAdapter";
+public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder> {
+    private final String LOG_TAG = "PeopleAdapter";
 
-    private ArrayList<CastData> cast_list;
-    private final ICastListener listener;
+    private ArrayList<PersonData> people_list;
+    private final IPeopleListener listener;
 
-    public interface ICastListener {
+    public interface IPeopleListener {
         /**
-         * Cast item onClick Event
+         * Person item onClick Event
          */
-        void onCastClick(CastData cast);
+        void onPersonClick(PersonData person);
     }
 
 
-    public CastsAdapter(ICastListener listener) {
-        this.cast_list = new ArrayList<>();
+    public PeopleAdapter(IPeopleListener listener) {
+        this.people_list = new ArrayList<>();
         this.listener = listener;
     }
 
 
     @NonNull
     @Override
-    public CastsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PeopleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_person, parent, false);
-        return new CastsViewHolder(itemView, listener);
+        return new PeopleViewHolder(itemView, listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CastsViewHolder holder, int position) {
-        holder.bind(cast_list.get(position));
+    public void onBindViewHolder(@NonNull PeopleViewHolder holder, int position) {
+        holder.bind(people_list.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return cast_list.size();
+        return people_list.size();
     }
 
+    public void appendPeople(ArrayList<PersonData> people) {
+        int startPosition = people_list.size();
+        people_list.addAll(people);
+        // refresh partially
+        notifyItemRangeInserted(startPosition, people.size());
+    }
 
-    public void setCasts(ArrayList<CastData> casts) {
-        cast_list = casts;
+    public void setPeople(ArrayList<PersonData> people) {
+        people_list = people;
         notifyDataSetChanged();
     }
 
     public void removeAll() {
-        cast_list.clear();
+        people_list.clear();
         notifyDataSetChanged();
     }
 
@@ -75,18 +83,18 @@ public class CastsAdapter extends RecyclerView.Adapter<CastsAdapter.CastsViewHol
     /**
      * ViewHolder which set data to views in one itemView
      */
-    class CastsViewHolder extends RecyclerView.ViewHolder {
+    class PeopleViewHolder extends RecyclerView.ViewHolder {
         private final ImageView profile;
-        private final TextView castName;
-        private final TextView characterName;
-        private final ICastListener listener;
+        private final TextView title;
+        private final TextView subTitle;
+        private final IPeopleListener listener;
         private final ShimmerDrawable shimmerDrawable;
 
-        public CastsViewHolder(@NonNull View itemView, ICastListener listener) {
+        public PeopleViewHolder(@NonNull View itemView, IPeopleListener listener) {
             super(itemView);
             this.profile = itemView.findViewById(R.id.img_profile);
-            this.castName = itemView.findViewById(R.id.text_main_name);
-            this.characterName = itemView.findViewById(R.id.text_sub_name);
+            this.title = itemView.findViewById(R.id.text_main_name);
+            this.subTitle = itemView.findViewById(R.id.text_sub_name);
 
             this.listener = listener;
 
@@ -103,9 +111,9 @@ public class CastsAdapter extends RecyclerView.Adapter<CastsAdapter.CastsViewHol
             // endregion
         }
 
-        public void bind(CastData castData) {
-            if (!Strings.isNullOrEmpty(castData.getProfile_path())) {
-                String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, castData.getProfile_path());
+        public void bind(PersonData personData) {
+            if (!Strings.isNullOrEmpty(personData.getProfilePath())) {
+                String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, personData.getProfilePath());
                 // set profile image
                 Glide.with(itemView)
                         .load(imgUrl)
@@ -116,18 +124,18 @@ public class CastsAdapter extends RecyclerView.Adapter<CastsAdapter.CastsViewHol
                         .into(profile);
             }
 
-            // set cast name
-            castName.setText(castData.getName());
+            // set name
+            title.setText(personData.getName());
 
-            // set character name
-            characterName.setText(castData.getCharacterName());
+            // hide subTitle TextView
+            subTitle.setVisibility(View.GONE);
 
             // set item onClickListener
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // callback onCastClick method and pass castData
-                    listener.onCastClick(castData);
+                    // callback onPersonClick method and pass personData
+                    listener.onPersonClick(personData);
                 }
             });
 

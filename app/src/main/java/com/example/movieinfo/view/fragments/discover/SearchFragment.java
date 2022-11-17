@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.view.fragments.discover.tab.SearchMoviesTab;
+import com.example.movieinfo.view.fragments.discover.tab.SearchPeopleTab;
 import com.example.movieinfo.view.fragments.discover.tab.SearchTvShowsTab;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
@@ -83,7 +84,7 @@ public class SearchFragment extends Fragment {
                 searchView.setMaxWidth(Integer.MAX_VALUE);
 
                 // Set hint text
-                searchView.setQueryHint(getString(R.string.label_search_movies_tvshows));
+                searchView.setQueryHint(getString(R.string.label_search_movies_tvshows_people));
 
                 // Set initial search keyword if exists
                 String lastKeyword = searchKeywordViewModel.getKeyWord().getValue();
@@ -137,6 +138,7 @@ public class SearchFragment extends Fragment {
         */
         pagerAdapter.addFragment(new SearchMoviesTab(), getString(R.string.label_movies));
         pagerAdapter.addFragment(new SearchTvShowsTab(), getString(R.string.label_tvshows));
+        pagerAdapter.addFragment(new SearchPeopleTab(), getString(R.string.label_people));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together

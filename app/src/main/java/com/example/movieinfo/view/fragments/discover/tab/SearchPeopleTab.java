@@ -2,6 +2,10 @@ package com.example.movieinfo.view.fragments.discover.tab;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,39 +15,31 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.view.MediaDetailsActivity;
-import com.example.movieinfo.view.adapter.TvShowsAdapter;
+import com.example.movieinfo.model.person.PersonData;
+import com.example.movieinfo.view.PersonDetailsActivity;
+import com.example.movieinfo.view.adapter.PeopleAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.example.movieinfo.viewmodel.SearchViewModel;
-import com.example.movieinfo.viewmodel.TvShowsViewModel;
-import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShowListener {
+public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleListener {
 
-    private final String LOG_TAG = "SearchTvShowsTab";
 
+    private final String LOG_TAG = "SearchPeopleTab";
 
     private SearchViewModel searchViewModel;
 
-    private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
-    private TvShowsAdapter tvShowsAdapter;
-    private GridLayoutManager mLayoutMgr;
+    private PeopleAdapter peopleAdapter;
+    private LinearLayoutManager mLayoutMgr;
     private int currentPage;
 
     private SearchKeywordViewModel searchKeywordViewModel;
@@ -51,9 +47,10 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
 
     private NavController navController;
 
-    public SearchTvShowsTab() {
+    public SearchPeopleTab() {
         // Required empty public constructor
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,16 +63,15 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         searchViewModel.init();
 
         // Set Observer
-        searchViewModel.getTvShowsLiveData().observe(this, getSearchTvShowsObserver());
+        searchViewModel.getPeopleLiveData().observe(this, getSearchPeopleObserver());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_tv_shows_tab, container, false);
+        return inflater.inflate(R.layout.fragment_search_people_tab, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -84,22 +80,21 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         // Get Views
         mRcView = view.findViewById(R.id.recycler_search);
         pullToRefresh = view.findViewById(R.id.swiperefresh_search);
-        mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
-        tvShowsAdapter = new TvShowsAdapter(this);
+        peopleAdapter = new PeopleAdapter(this);
 
-        // Initialize gridLayoutManager
-        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+        // Initialize LayoutManager
+        mLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         // Set Adapter & LayoutManager to RecyclerView
-        mRcView.setAdapter(tvShowsAdapter);
+        mRcView.setAdapter(peopleAdapter);
         mRcView.setLayoutManager(mLayoutMgr);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
             clearResults();
-            searchTvShows(currentKeyword, currentPage);
+            searchPeople(currentKeyword, currentPage);
             Log.d(LOG_TAG, "onRefresh");
             pullToRefresh.setRefreshing(false);
         });
@@ -109,7 +104,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         NavBackStackEntry backStackEntry = navController.getCurrentBackStackEntry();
 
         if (backStackEntry != null) {
-            // Initialize keyword LiveData
+            // Initialize Keyword ViewModel
             searchKeywordViewModel = new ViewModelProvider(backStackEntry).get(SearchKeywordViewModel.class);
 
             // Keep monitoring search keyword changes
@@ -122,50 +117,41 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
                     currentKeyword = keyword;
 
                     // begin searching
-                    searchTvShows(currentKeyword, currentPage);
+                    searchPeople(currentKeyword, currentPage);
                 }
             });
         }
-
     }
 
     /**
-     * Searching TvShows
+     * Searching People
      *
      * @param keyword Searching keyword
      * @param page    result page
      */
-    private void searchTvShows(String keyword, int page) {
+    private void searchPeople(String keyword, int page) {
         if (keyword != null && !keyword.isEmpty()) {
-            // show shimmer animation
-            mShimmer.startShimmer();
-            mShimmer.setVisibility(View.VISIBLE);
-            searchViewModel.searchTvShows(keyword, page);
+            searchViewModel.searchPeople(keyword, page);
         }
     }
 
-
     /**
-     * Observe when TvShowData List LiveData changed
+     * Observe when MovieData List LiveData changed
      */
-    public Observer<ArrayList<TvShowData>> getSearchTvShowsObserver() {
-        return tvShows -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
+    public Observer<ArrayList<PersonData>> getSearchPeopleObserver() {
+        return people -> {
 
-            if (tvShows.size() > 0){
+            if (people.size() > 0){
                 // append data to adapter
-                tvShowsAdapter.appendTvShows(tvShows);
+                peopleAdapter.appendPeople(people);
 
                 // attach onScrollListener to RecyclerView
                 mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-
                         // when scrolling up
                         if(dy > 0){
-                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
+                            final int visibleThreshold = 5;
 
                             // get the number of all items in recyclerView
                             int totalItemCount = mLayoutMgr.getItemCount();
@@ -178,31 +164,15 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
 
                                 // append nextPage data to recyclerView
                                 currentPage++;
-                                searchTvShows(currentKeyword, currentPage);
+                                searchPeople(currentKeyword, currentPage);
                             }
                         }
                     }
                 });
             }
 
-            Log.d(LOG_TAG, "tvShows: data fetched successfully");
+            Log.d(LOG_TAG, "search people: data fetched successfully");
         };
-    }
-
-
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     /**
@@ -210,6 +180,20 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
      */
     private void clearResults() {
         currentPage = 1;
-        tvShowsAdapter.removeAllTvShows();
+        peopleAdapter.removeAll();
+    }
+
+    /**
+     * Callback when person item get clicked
+     *
+     * @param person person data
+     */
+    @Override
+    public void onPersonClick(PersonData person) {
+        Intent intent = new Intent(getContext(), PersonDetailsActivity.class);
+        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_PERSON_ID_KEY, person.getId());
+        startActivity(intent);
+        // set the custom transition animation
+        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 }

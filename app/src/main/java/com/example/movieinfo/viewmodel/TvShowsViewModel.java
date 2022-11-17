@@ -13,8 +13,6 @@ import java.util.ArrayList;
 public class TvShowsViewModel extends ViewModel {
     private TvShowRepository repository;
 
-    private LiveData<ArrayList<TvShowData>> tvShowsLiveData;
-
     // used when multiple liveData needs to observe different data in same activity or fragment
     private LiveData<ArrayList<TvShowData>> popularTvShowsLiveData;
     private LiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
@@ -24,7 +22,6 @@ public class TvShowsViewModel extends ViewModel {
      */
     public void init() {
         repository = new TvShowRepository();
-        tvShowsLiveData = repository.getTvShowsLiveData();
         trendingTvShowsLiveData = repository.getTrendingTvShowsLiveData();
         popularTvShowsLiveData = repository.getPopularTvShowsLiveData();
     }
@@ -71,28 +68,5 @@ public class TvShowsViewModel extends ViewModel {
         return trendingTvShowsLiveData;
     }
     // endregion
-
-    // region Search TvShows
-
-    /**
-     * Call repository to get searching tvShows and update to liveData
-     *
-     * @param keyword searching keyword
-     * @param page    target page
-     */
-    public void searchTvShows(String keyword, int page) {
-        repository.searchTvShows(keyword, page);
-    }
-
-    // endregion
-
-    /**
-     * Get the liveData to observe it
-     *
-     * @return
-     */
-    public LiveData<ArrayList<TvShowData>> getTvShowsLiveData() {
-        return tvShowsLiveData;
-    }
 
 }
