@@ -1,11 +1,8 @@
 package com.example.movieinfo.model.tvshow;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.example.movieinfo.model.CreditsResponse;
 import com.example.movieinfo.model.ExternalIdResponse;
-import com.example.movieinfo.model.Genre;
+import com.example.movieinfo.model.GenreData;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.ProductionCompany;
 import com.example.movieinfo.model.VideosResponse;
@@ -28,7 +25,7 @@ public class TvShowDetailData {
     private boolean isAdult;
 
     @SerializedName("genres")
-    private ArrayList<Genre> genres;
+    private ArrayList<GenreData> genres;
 
     @SerializedName("production_companies")
     private ArrayList<ProductionCompany> productionCompanies;
@@ -187,7 +184,7 @@ public class TvShowDetailData {
      *
      * @return
      */
-    public ArrayList<Genre> getGenres() {
+    public ArrayList<GenreData> getGenres() {
         return genres;
     }
 

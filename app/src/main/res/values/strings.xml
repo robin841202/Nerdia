@@ -52,4 +52,7 @@
     <string name="label_placeFrom">來自於</string>
     <string name="label_age">年紀</string>
     <string name="label_images">圖片</string>
+    <string name="label_tvShow_genres">影集分類</string>
+    <string name="label_movie_genres">電影分類</string>
+    <string name="title_genres">類別</string>
 </resources>

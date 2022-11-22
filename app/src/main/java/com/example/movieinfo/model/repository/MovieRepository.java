@@ -355,6 +355,18 @@ public class MovieRepository {
         call.enqueue(requestHandler);
     }
 
+    /**
+     * Discover Movies (using LiveData)
+     *
+     * @param page    target page
+     * @param includeGenres Comma separated value of genre ids that you want to include in the results.
+     */
+    public void discoverMovies(int page, String includeGenres) {
+        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, includeGenres);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
 
     /**
      * (private) Get Request Handler (using LiveData)

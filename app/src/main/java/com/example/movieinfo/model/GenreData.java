@@ -3,9 +3,9 @@ package com.example.movieinfo.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Genre Data Model, using @SerializedName to map to json key
+ * GenreData Data Model, using @SerializedName to map to json key
  */
-public class Genre {
+public class GenreData {
     @SerializedName("id")
     private int id;
 

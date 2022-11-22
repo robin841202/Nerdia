@@ -19,8 +19,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.movieinfo.R;
+import com.example.movieinfo.model.GenreData;
 import com.example.movieinfo.view.YoutubePlayerActivity;
-import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
@@ -122,7 +122,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
 
         // get all information
         String overView = Strings.isNullOrEmpty(movieDetail.getOverview()) ? getString(R.string.label_empty) : movieDetail.getOverview();
-        ArrayList<Genre> genre_List = movieDetail.getGenres();
+        ArrayList<GenreData> genre_List = movieDetail.getGenres();
         String status = Strings.isNullOrEmpty(movieDetail.getStatus()) ? getString(R.string.label_empty) : movieDetail.getStatus();
         int runtimeInMinutes = movieDetail.getRuntime();
         int budgetNum = movieDetail.getBudget();
@@ -134,10 +134,11 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         // set genres
         if (genre_List != null) {
             for (int i = 0; i < genre_List.size(); i++) {
-                Genre genre = genre_List.get(i);
-
-                // add a TextView dynamically
-                addGenreTextViewToGroup(genre.getName(), genresGroup);
+                GenreData genre = genre_List.get(i);
+                if (genre != null){
+                    // add a TextView dynamically
+                    addGenreTextViewToGroup(genre, genresGroup);
+                }
             }
         }
 
@@ -178,18 +179,18 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
     /**
      * Add a new TextView to Genres Group
      *
-     * @param name  Genre name
+     * @param genre  GenreData
      * @param group Container that contains multiple genre TextView
      */
-    private void addGenreTextViewToGroup(String name, ViewGroup group) {
+    private void addGenreTextViewToGroup(GenreData genre, ViewGroup group) {
         TextView genreTextView = new TextView(context);
         ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMarginEnd(8);
+        params.setMarginEnd(16);
         genreTextView.setLayoutParams(params);
         genreTextView.setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Small);
         genreTextView.setBackgroundResource(R.drawable.rounded_corner);
-        genreTextView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.lightGray));
-        genreTextView.setText(name);
+        genreTextView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.teal_700));
+        genreTextView.setText(genre.getName());
         group.addView(genreTextView);
     }
 

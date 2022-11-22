@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Important: fragment id must match bottomNavigation menu item's id -->
+<?xml version="1.0" encoding="utf-8"?><!-- Important: fragment id must match bottomNavigation menu item's id -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/home_navigation">
-    <navigation android:id="@+id/home_navigation"
+    <navigation
+        android:id="@+id/home_navigation"
         app:startDestination="@id/homeFragment">
         <fragment
             android:id="@+id/homeFragment"
@@ -26,11 +26,38 @@
                 android:id="@+id/action_verticalBrowseFragment_to_homeFragment"
                 app:destination="@id/homeFragment"
                 app:enterAnim="@anim/fade_in"
-                app:exitAnim="@anim/fade_out"/>
+                app:exitAnim="@anim/fade_out" />
         </fragment>
     </navigation>
-    <navigation android:id="@+id/discover_navigation"
+    <navigation
+        android:id="@+id/discover_navigation"
         app:startDestination="@id/discoverFragment">
+        <fragment
+            android:id="@+id/genreResultFragment"
+            android:name="com.example.movieinfo.view.fragments.discover.GenreResultsFragment"
+            tools:layout="@layout/fragment_genres_list">
+            <action
+                android:id="@+id/action_genreResultFragment_to_genresListFragment"
+                app:destination="@id/genresListFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
+        <fragment
+            android:id="@+id/genresListFragment"
+            android:name="com.example.movieinfo.view.fragments.discover.GenresListFragment"
+            android:label="@string/title_genres"
+            tools:layout="@layout/fragment_genres_list">
+            <action
+                android:id="@+id/action_genresListFragment_to_discoverFragment"
+                app:destination="@id/discoverFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+            <action
+                android:id="@+id/action_genresListFragment_to_genreResultFragment"
+                app:destination="@id/genreResultFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
         <fragment
             android:id="@+id/discoverFragment"
             android:name="com.example.movieinfo.view.fragments.discover.DiscoverFragment"
@@ -40,7 +67,12 @@
                 android:id="@+id/action_discoverFragment_to_searchFragment"
                 app:destination="@id/searchFragment"
                 app:enterAnim="@anim/fade_in"
-                app:exitAnim="@anim/fade_out"/>
+                app:exitAnim="@anim/fade_out" />
+            <action
+                android:id="@+id/action_discoverFragment_to_genresListFragment"
+                app:destination="@id/genresListFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
         </fragment>
         <fragment
             android:id="@+id/searchFragment"
@@ -51,7 +83,7 @@
                 android:id="@+id/action_searchFragment_to_discoverFragment"
                 app:destination="@id/discoverFragment"
                 app:enterAnim="@anim/fade_in"
-                app:exitAnim="@anim/fade_out"/>
+                app:exitAnim="@anim/fade_out" />
         </fragment>
     </navigation>
     <fragment

@@ -1,13 +1,6 @@
 package com.example.movieinfo.model.person;
 
-import android.util.Log;
-
-import com.example.movieinfo.model.CreditsResponse;
-import com.example.movieinfo.model.ExternalIdResponse;
-import com.example.movieinfo.model.Genre;
 import com.example.movieinfo.model.ImagesResponse;
-import com.example.movieinfo.model.ProductionCompany;
-import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.google.common.base.Strings;
@@ -17,7 +10,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;

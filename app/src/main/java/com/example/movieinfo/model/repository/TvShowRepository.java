@@ -292,6 +292,18 @@ public class TvShowRepository {
     }
 
     /**
+     * Discover TvShows (using LiveData)
+     *
+     * @param page    target page
+     * @param includeGenres Comma separated value of genre ids that you want to include in the results.
+     */
+    public void discoverTvShows(int page, String includeGenres) {
+        Call<TvShowsResponse> call = service.discoverTvShows(apiKey, page, language, region, includeGenres);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
      * (private) Get Request Handler (using LiveData)
      *
      * @param tvShowsLiveData live data

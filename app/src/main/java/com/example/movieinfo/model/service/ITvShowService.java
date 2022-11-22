@@ -135,4 +135,28 @@ public interface ITvShowService {
                     String language
     );
 
+    /**
+     * Discover TvShows By multiple filter
+     *
+     * @param apiKey        TMDB API Key
+     * @param page          target page
+     * @param language      ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region        ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param includeGenres Comma separated value of genre ids that you want to include in the results.
+     * @return
+     */
+    @GET("discover/tv")
+    Call<TvShowsResponse> discoverTvShows(
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("region")
+                    String region,
+            @Query("with_genres")
+                    String includeGenres
+    );
+
 }

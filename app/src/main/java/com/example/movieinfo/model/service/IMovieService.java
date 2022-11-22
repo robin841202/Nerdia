@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.GenresResponse;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
@@ -174,5 +175,30 @@ public interface IMovieService {
             @Query("language")
                     String language
     );
+
+    /**
+     * Discover Movies By multiple filter
+     *
+     * @param apiKey        TMDB API Key
+     * @param page          target page
+     * @param language      ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param region        ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param includeGenres Comma separated value of genre ids that you want to include in the results.
+     * @return
+     */
+    @GET("discover/movie")
+    Call<MoviesResponse> discoverMovies(
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("region")
+                    String region,
+            @Query("with_genres")
+                    String includeGenres
+    );
+
 
 }
