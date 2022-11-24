@@ -8,26 +8,26 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
-import com.example.movieinfo.model.ExternalIdResponse;
 import com.example.movieinfo.model.ImagesResponse;
-import com.example.movieinfo.model.OmdbData;
 import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
+import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
+import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
@@ -37,17 +37,17 @@ import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.SimilarTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
-import com.example.movieinfo.viewmodel.MovieDetailViewModel;
-import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 
 public class MediaDetailsActivity extends AppCompatActivity implements SlideShowAdapter.ISlideShowListener {
@@ -77,10 +77,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private RatingBar ratingBar;
     private TextView voteCount;
     private ViewGroup ratingGroup;
+    private ToggleButton watchlistToggleBtn;
 
-    private MovieDetailViewModel movieDetailViewModel;
-    private TvShowDetailViewModel tvShowDetailViewModel;
-
+    private MediaDetailViewModel mediaDetailViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +100,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         TabLayout tabLayoutDetails = findViewById(R.id.tabLayout_details);
         ViewPager2 slideshowViewPager2 = findViewById(R.id.viewpager_slideshow);
         TabLayout tabLayoutSlideshow = findViewById(R.id.tabLayout_slideshow);
+        watchlistToggleBtn = findViewById(R.id.toggleBtn_watchlist);
 
         // Initialize RecyclerView Adapter
         slideshowAdapter = new SlideShowAdapter(this, getLifecycle());
@@ -111,6 +111,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // Set slideshow Adapter
         initSlideshow(slideshowAdapter, slideshowViewPager2, tabLayoutSlideshow);
 
+        // Initialize viewModel, data only survive this activity lifecycle
+        mediaDetailViewModel = new ViewModelProvider(this).get(MediaDetailViewModel.class);
+        mediaDetailViewModel.init();
 
         // Get mediaType from intent
         Intent intent = getIntent();
@@ -128,15 +131,21 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
                 //  if data exists, get detail and populate in Views
                 if (movieId > 0) {
-                    // Initialize viewModel, data only survive this activity lifecycle
-                    movieDetailViewModel = new ViewModelProvider(this).get(MovieDetailViewModel.class);
-                    movieDetailViewModel.init();
 
                     // Set movieDetail observer
-                    movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
+                    mediaDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
+                    // Check and observe whether movie is already in local database watchlist or not
+                    mediaDetailViewModel.checkMovieExistInWatchlist(movieId).observe(this, aBoolean -> {
+                        // Set toggle button default status
+                        watchlistToggleBtn.setChecked(aBoolean);
+                    });
+
+                    // Start fetch data from api
                     getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+
                 }
+
                 break;
             case StaticParameter.MediaType.TV:
 
@@ -148,13 +157,17 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
                 //  if data exists, get detail and populate in Views
                 if (tvShowId > 0) {
-                    // Initialize viewModel, data only survive this activity lifecycle
-                    tvShowDetailViewModel = new ViewModelProvider(this).get(TvShowDetailViewModel.class);
-                    tvShowDetailViewModel.init();
 
                     // Set tvShowDetail observer
-                    tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
+                    mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
+                    // Check and observe whether movie is already in local database watchlist or not
+                    mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowId).observe(this, aBoolean -> {
+                        // Set toggle button default status
+                        watchlistToggleBtn.setChecked(aBoolean);
+                    });
+
+                    // Start fetch data from api
                     getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
                 }
                 break;
@@ -177,52 +190,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     }
 
 
-    // region Get Movie Detail (Deprecated)
-    /*
-
-     */
-/**
- * Get Movie Detail By Movie Id
- * @param id movie id
- *//*
-
-    public void getMovieDetail(long id) {
-        try {
-            Method onMovieDetailFetched = getClass().getMethod("onMovieDetailFetched", MovieDetailData.class);
-            Method onFetchDataError = getClass().getMethod("onFetchDataError");
-            movieRepository.getMovieDetail(id,null,this, onMovieDetailFetched, onFetchDataError);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
-
-    */
-/**
- * Callback when get movie detail successfully
- *
- * @param movieDetail movie detail data
- *//*
-
-    public void onMovieDetailFetched(MovieDetailData movieDetail) {
-
-        // populate data in views
-        populateDetails(movieDetail);
-
-        Log.d(LOG_TAG, "movie detail: data fetched successfully");
-    }
-
-    */
-/**
- * Callback when data fetched fail
- *//*
-
-    public void onFetchDataError() {
-        Log.d(LOG_TAG, "data fetched fail");
-    }
-*/
-
-
-    // endregion
+    // region Movie
 
     // region Get Movie Detail (MVVM using LiveData)
 
@@ -235,7 +203,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
      * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
     public void getMovieDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
-        movieDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages, imageLanguages);
+        mediaDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
@@ -245,6 +213,20 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         return movieDetailData -> {
             // populate data to UI
             populateDetails(movieDetailData);
+
+            // region Set toggle button onChange listener
+            watchlistToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) { // INSERT
+                        insertMovieToWatchlist(movieDetailData);
+                    } else { // DELETE
+                        deleteMovieFromWatchlist(movieDetailData);
+                    }
+                }
+            });
+            // endregion
+
         };
     }
 
@@ -348,44 +330,50 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     // endregion
 
-
-    // region Get TvShow Detail (Deprecated)
-    /*
-
+    // region Movie Watchlist
+    /**
+     * Insert movie to watchlist
+     * @param movieDetailData
      */
-/**
- * Get TvShow Detail By TvShow Id
- *
- * @param id tvShow id
- *//*
-
-    public void getTvShowDetail(long id) {
+    private void insertMovieToWatchlist(MovieDetailData movieDetailData){
+        MovieWatchlistEntity newEntity = new MovieWatchlistEntity(
+                movieDetailData.getId(),
+                movieDetailData.getTitle(),
+                movieDetailData.getPosterPath(),
+                movieDetailData.getRating(),
+                movieDetailData.getIsAdult(),
+                Calendar.getInstance().getTime());
         try {
-            Method onTvShowDetailFetched = getClass().getMethod("onTvShowDetailFetched", TvShowDetailData.class);
-            Method onFetchDataError = getClass().getMethod("onFetchDataError");
-            tvShowRepository.getTvShowDetail(id, null, this, onTvShowDetailFetched, onFetchDataError);
-        } catch (NoSuchMethodException e) {
+            String msg = mediaDetailViewModel.insertMovieWatchlist(newEntity).get() != null ? getString(R.string.msg_saved_to_watchlist) : getString(R.string.msg_operation_error);
+            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getColor(R.color.teal_200))
+                    .show();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    */
-/**
- * Callback when get tvShow detail successfully
- *
- * @param tvShowDetail tvShow detail data
- *//*
-
-    public void onTvShowDetailFetched(TvShowDetailData tvShowDetail) {
-
-        // populate data in views
-        populateDetails(tvShowDetail);
-
-        Log.d(LOG_TAG, "tvShow detail: data fetched successfully");
+    /**
+     * Delete movie from watchlist
+     * @param movieDetailData
+     */
+    private void deleteMovieFromWatchlist(MovieDetailData movieDetailData){
+        try {
+            String msg = mediaDetailViewModel.deleteMovieWatchlistById(movieDetailData.getId()).get() != null ? getString(R.string.msg_removed_from_watchlist) : getString(R.string.msg_operation_error);
+            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getColor(R.color.teal_200))
+                    .show();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-*/
 
     // endregion
+
+    // endregion
+
+
+    // region TvShow
 
     // region Get TvShow Detail (MVVM using LiveData)
 
@@ -398,7 +386,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
      * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
     public void getTvShowDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
-        tvShowDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages, imageLanguages);
+        mediaDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
@@ -408,6 +396,19 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         return tvShowDetailData -> {
             // populate data to UI
             populateDetails(tvShowDetailData);
+
+            // region Set toggle button onChange listener
+            watchlistToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) { // INSERT
+                        insertTvShowToWatchlist(tvShowDetailData);
+                    } else { // DELETE
+                        deleteTvShowFromWatchlist(tvShowDetailData);
+                    }
+                }
+            });
+            // endregion
         };
     }
 
@@ -509,6 +510,49 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     // endregion
 
+    // region TvShow Watchlist
+    /**
+     * Insert tvShow to watchlist
+     * @param tvShowDetailData
+     */
+    private void insertTvShowToWatchlist(TvShowDetailData tvShowDetailData){
+        TvShowWatchlistEntity newEntity = new TvShowWatchlistEntity(
+                tvShowDetailData.getId(),
+                tvShowDetailData.getTitle(),
+                tvShowDetailData.getPosterPath(),
+                tvShowDetailData.getRating(),
+                tvShowDetailData.getIsAdult(),
+                Calendar.getInstance().getTime());
+        try {
+            String msg = mediaDetailViewModel.insertTvShowWatchlist(newEntity).get() != null ? getString(R.string.msg_saved_to_watchlist) : getString(R.string.msg_operation_error);
+            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getColor(R.color.teal_200))
+                    .show();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Delete tvShow from watchlist
+     * @param tvShowDetailData
+     */
+    private void deleteTvShowFromWatchlist(TvShowDetailData tvShowDetailData){
+        try {
+            String msg = mediaDetailViewModel.deleteTvShowWatchlistById(tvShowDetailData.getId()).get() != null ? getString(R.string.msg_removed_from_watchlist) : getString(R.string.msg_operation_error);
+            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getColor(R.color.teal_200))
+                    .show();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // endregion
+
+    // endregion
+
+
 
     // region Create Tabs & Contents
 
@@ -569,7 +613,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     // endregion
 
-
     // region Backdrop Slideshow
 
     /**
@@ -602,7 +645,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     }
 
     // endregion
-
 
     /**
      * Display image in fullscreen on another activity

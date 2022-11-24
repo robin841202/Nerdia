@@ -23,10 +23,7 @@ import com.example.movieinfo.model.OmdbData;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
-import com.example.movieinfo.viewmodel.MovieDetailViewModel;
-import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.base.Strings;
 
@@ -46,8 +43,7 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
 
     private String mediaType;
 
-    private MovieDetailViewModel movieDetailViewModel;
-    private TvShowDetailViewModel tvShowDetailViewModel;
+    private MediaDetailViewModel mediaDetailViewModel;
 
     public RatingBottomSheet(String mediaType) {
         this.mediaType = mediaType;
@@ -59,30 +55,24 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
 
         context = getContext();
 
+        // Get the same viewModel that created in parent activity, in order to share the data
+        mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
+        //mediaDetailViewModel.init();
+
+        // Set omdbData observer
+        mediaDetailViewModel.getOmdbLiveData().observe(this, getOmdbObserver());
+
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
-                // Get the same viewModel that created in parent activity, in order to share the data
-                movieDetailViewModel = new ViewModelProvider(getActivity()).get(MovieDetailViewModel.class);
-                //movieDetailViewModel.init();
-
                 // Set movieDetailData observer
-                movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
-
-                // Set omdbData observer
-                movieDetailViewModel.getOmdbLiveData().observe(this, getOmdbObserver());
+                mediaDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
                 break;
             case StaticParameter.MediaType.TV:
-                // Get the same viewModel that created in parent activity, in order to share the data
-                tvShowDetailViewModel = new ViewModelProvider(getActivity()).get(TvShowDetailViewModel.class);
-                //tvShowDetailViewModel.init();
-
                 // Set tvShowDetailData observer
-                tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
-
-                // Set omdbData observer
-                tvShowDetailViewModel.getOmdbLiveData().observe(this, getOmdbObserver());
+                mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
                 break;
         }
+
     }
 
     @Override
@@ -155,7 +145,7 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
                 });
 
                 // Start getting omdb data
-                movieDetailViewModel.getDataByImdbId(imdbId);
+                mediaDetailViewModel.getDataByImdbId(imdbId);
             }
         };
     }
@@ -208,7 +198,7 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
                 });
 
                 // Start getting omdb data
-                tvShowDetailViewModel.getDataByImdbId(imdbId);
+                mediaDetailViewModel.getDataByImdbId(imdbId);
             }
         };
     }

@@ -22,11 +22,9 @@ import com.example.movieinfo.model.CreditsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
-import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.PersonDetailsActivity;
 import com.example.movieinfo.view.adapter.CastsAdapter;
-import com.example.movieinfo.viewmodel.MovieDetailViewModel;
-import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 
 import java.util.ArrayList;
 
@@ -37,8 +35,7 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
     private final String peopleCountFormatText = "%d 位";
     private Context context;
 
-    private MovieDetailViewModel movieDetailViewModel;
-    private TvShowDetailViewModel tvShowDetailViewModel;
+    private MediaDetailViewModel mediaDetailViewModel;
 
     private String mediaType;
 
@@ -64,6 +61,9 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
 
         context = getContext();
 
+        // Get the same viewModel that created in parent activity, in order to share the data
+        mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
+
         // Get arguments from constructor
         if (getArguments() != null) {
             mediaType = getArguments().getString(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY);
@@ -71,18 +71,12 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
 
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
-                // Get the same viewModel that created in parent activity, in order to share the data
-                movieDetailViewModel = new ViewModelProvider(getActivity()).get(MovieDetailViewModel.class);
-
                 // Set movieDetail observer
-                movieDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDataObserver());
+                mediaDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDataObserver());
                 break;
             case StaticParameter.MediaType.TV:
-                // Get the same viewModel that created in parent activity, in order to share the data
-                tvShowDetailViewModel = new ViewModelProvider(getActivity()).get(TvShowDetailViewModel.class);
-
-                // Set movieDetail observer
-                tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDataObserver());
+                // Set tvShowDetail observer
+                mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDataObserver());
                 break;
             default:
                 // do nothing

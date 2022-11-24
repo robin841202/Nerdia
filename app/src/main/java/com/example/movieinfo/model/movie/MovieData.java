@@ -11,35 +11,40 @@ import com.google.gson.annotations.SerializedName;
 public class MovieData implements Parcelable {
 
     @SerializedName("id")
-    private final long id;
+    private long id;
 
     @SerializedName("title")
-    private final String title;
+    private String title;
 
     @SerializedName("overview")
-    private final String overview;
+    private String overview;
 
     @SerializedName("poster_path")
-    private final String posterPath;
+    private String posterPath;
 
     @SerializedName("backdrop_path")
-    private final String backdropPath;
+    private String backdropPath;
 
     @SerializedName("vote_average")
     private double rating;
 
     @SerializedName("release_date")
-    private final String releaseDate;
+    private String releaseDate;
 
     @SerializedName("vote_count")
-    private final int voteCount;
+    private int voteCount;
+
+    public MovieData(long id, String title, String posterPath, double rating) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.rating = rating;
+    }
 
     public MovieData(long id, String title, String overview, String posterPath, String backdropPath, double rating, String releaseDate, int voteCount) {
         this.id = id;
         this.title = title;
         this.overview = overview;
-
-
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.rating = rating;

@@ -25,7 +25,7 @@ import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
-import com.example.movieinfo.viewmodel.TvShowDetailViewModel;
+import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.common.base.Strings;
 
@@ -39,7 +39,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
 
     private Context context;
 
-    private TvShowDetailViewModel tvShowDetailViewModel;
+    private MediaDetailViewModel mediaDetailViewModel;
 
     private ExpandableTextView overViewTextView;
     private ViewGroup genresGroup;
@@ -64,10 +64,10 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         context = getContext();
 
         // Get the same viewModel that created in parent activity, in order to share the data
-        tvShowDetailViewModel = new ViewModelProvider(getActivity()).get(TvShowDetailViewModel.class);
+        mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
 
-        // Set movieDetail observer
-        tvShowDetailViewModel.getTvShowDetailLiveData().observe(this, getDataObserver());
+        // Set tvShowDetail observer
+        mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getDataObserver());
     }
 
     @Override
@@ -136,7 +136,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         if (genre_List != null) {
             for (int i = 0; i < genre_List.size(); i++) {
                 GenreData genre = genre_List.get(i);
-                if (genre !=  null){
+                if (genre != null) {
                     // add a TextView dynamically
                     addGenreTextViewToGroup(genre, genresGroup);
                 }
@@ -171,7 +171,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
     /**
      * Add a new TextView to Genres Group
      *
-     * @param genre  GenreData
+     * @param genre GenreData
      * @param group Container that contains multiple genre TextView
      */
     private void addGenreTextViewToGroup(GenreData genre, ViewGroup group) {

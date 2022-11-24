@@ -26,6 +26,8 @@
     <string name="label_about">關於</string>
     <string name="label_cast">演員</string>
     <string name="label_genre">類別</string>
+    <string name="label_watchlist">待觀看</string>
+    <string name="label_history">已觀看</string>
     <string name="label_read_more">更多</string>
     <string name="label_other_info">其他相關資訊</string>
     <string name="label_status">狀態</string>
@@ -55,4 +57,7 @@
     <string name="label_tvShow_genres">影集分類</string>
     <string name="label_movie_genres">電影分類</string>
     <string name="title_genres">類別</string>
+    <string name="msg_saved_to_watchlist">已儲存至待觀看清單</string>
+    <string name="msg_removed_from_watchlist">已從待觀看清單中移除</string>
+    <string name="msg_operation_error">資料存取發生錯誤</string>
 </resources>

@@ -7,3 +7,29 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext{
+    navigationVersion = '2.5.2'
+    cardViewVersion = '1.0.0'
+    swipeRefreshLayoutVersion = '1.1.0'
+    gridLayoutVersion = '1.0.0'
+
+    materialVersion = '1.6.1'
+
+    legacySupportLibVersion = '1.0.0'
+
+    retrofitVersion = '2.9.0'
+    gsonVersion = '2.9.1'
+
+    glideVersion = '4.13.2'
+
+    expandableTextViewVersion = '1.0.2'
+
+    guavaVersion = '31.1-android'
+
+    nonOfficialYoutubePlayerVersion = '11.1.0'
+
+    shimmerVersion = '0.5.0'
+
+    roomVersion = '2.4.3'
+}

@@ -25,7 +25,7 @@ import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.view.adapter.ThumbnailsAdapter;
-import com.example.movieinfo.viewmodel.MovieDetailViewModel;
+import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.common.base.Strings;
 
@@ -39,7 +39,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
 
     private Context context;
 
-    private MovieDetailViewModel movieDetailViewModel;
+    private MediaDetailViewModel mediaDetailViewModel;
 
     private ExpandableTextView overViewTextView;
     private ViewGroup genresGroup;
@@ -63,10 +63,10 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         context = getContext();
 
         // Get the same viewModel that created in parent activity, in order to share the data
-        movieDetailViewModel = new ViewModelProvider(getActivity()).get(MovieDetailViewModel.class);
+        mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
 
         // Set movieDetail observer
-        movieDetailViewModel.getMovieDetailLiveData().observe(this, getDataObserver());
+        mediaDetailViewModel.getMovieDetailLiveData().observe(this, getDataObserver());
     }
 
     @Override

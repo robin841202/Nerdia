@@ -70,6 +70,8 @@ public class TvShowDetailData {
     @SerializedName("external_ids")
     private ExternalIdResponse externalIdResponse;
 
+
+
     /**
      * Get Id
      *
@@ -175,7 +177,7 @@ public class TvShowDetailData {
      *
      * @return
      */
-    public boolean isAdult() {
+    public boolean getIsAdult() {
         return isAdult;
     }
 

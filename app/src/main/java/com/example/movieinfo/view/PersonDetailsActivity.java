@@ -69,7 +69,6 @@ public class PersonDetailsActivity extends AppCompatActivity {
         profile = findViewById(R.id.img_profile);
         name = findViewById(R.id.text_name);
         knownForDepartment = findViewById(R.id.text_known_for_department);
-
         ViewPager2 viewPager = findViewById(R.id.viewpager_details);
         TabLayout tabLayoutDetails = findViewById(R.id.tabLayout_details);
 

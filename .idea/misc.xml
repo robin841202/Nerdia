@@ -5,6 +5,9 @@
       <map>
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable-anydpi/ic_image_not_found.xml" value="0.3585" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable-hdpi/custom_fg.xml" value="0.4905" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable-hdpi/watchlist_toggle_btn.xml" value="0.492" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable-hdpi/watchlist_toggle_btn_off.xml" value="0.492" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable-hdpi/watchlist_toggle_btn_on.xml" value="0.492" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/ic_tmdb_logo_alt.xml" value="0.3585" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/infinitive_progressbar.xml" value="0.3585" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/rounded_corner.xml" value="0.3575" />
@@ -27,9 +30,10 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_discover.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_genre_results.xml" value="0.5057291666666667" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_genres_list.xml" value="0.33" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_home.xml" value="0.33" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_movie_details_about_tab.xml" value="0.33" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_about_tab.xml" value="0.353125" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_history_tab.xml" value="0.353125" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_home.xml" value="0.31756440281030446" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_movie_details_about_tab.xml" value="0.31756440281030446" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_about_tab.xml" value="0.29671772428884025" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_movie_tab.xml" value="0.353125" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_tv_tab.xml" value="0.29739583333333336" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_search.xml" value="0.3006774361646691" />
@@ -39,7 +43,11 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_similar_tab.xml" value="0.24495459132189706" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_tv_show_details_about_tab.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_vertical_browse.xml" value="0.18" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watch_list.xml" value="0.12916246215943492" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watch_list.xml" value="0.16" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_movie_tab.xml" value="0.1710393541876892" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tab.xml" value="0.1710393541876892" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tvShow_tab.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tv_show_tab.xml" value="0.24495459132189706" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragments/fragment_watch_list.xml" value="0.30052083333333335" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_genre.xml" value="0.5057291666666667" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_media.xml" value="0.33" />

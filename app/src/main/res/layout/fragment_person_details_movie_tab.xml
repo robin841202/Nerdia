@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_media"/>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer"

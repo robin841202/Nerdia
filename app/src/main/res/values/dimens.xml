@@ -2,5 +2,6 @@
 <resources>
     <dimen name="default_indicator_size">3dp</dimen>
     <dimen name="selectedindicator_size">4dp</dimen>
+    <dimen name="toggleBtn_size">40dp</dimen>
     <dimen name="logo">60dp</dimen>
 </resources>

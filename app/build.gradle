@@ -27,6 +27,10 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        // Sets Java compatibility to Java 8
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -41,48 +45,58 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Support - Navigation
-    implementation "androidx.navigation:navigation-fragment:2.5.2"
-    implementation "androidx.navigation:navigation-ui:2.5.2"
+    implementation "androidx.navigation:navigation-fragment:$rootProject.navigationVersion"
+    implementation "androidx.navigation:navigation-ui:$rootProject.navigationVersion"
     // Support - CardView
-    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.cardview:cardview:$rootProject.cardViewVersion"
     // Support - SwipeRefreshLayout
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$rootProject.swipeRefreshLayoutVersion"
     // Support - GridLayout
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation "androidx.gridlayout:gridlayout:$rootProject.gridLayoutVersion"
 
 
     // Material Components - In order to use "BottomNavigationView" & "Bottom Sheets" in this project
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
 
     // Legacy Support Library - In order to use "NestedScrollView" in this project
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.legacy:legacy-support-v4:$rootProject.legacySupportLibVersion"
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     // Retrofit Gson Converter - In order to convert dataModel object into Json representation or in another way
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
 
     // Gson - In order to convert dataModel object into Json representation or in another way
-    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:4.13.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
 
     // ExpandableTextView - In order to expand or collapse textView
-    implementation 'com.github.giangpham96:ExpandableTextView:1.0.2'
+    implementation "com.github.giangpham96:ExpandableTextView:$rootProject.expandableTextViewVersion"
 
     // Guava - In order to check string isNullOrEmpty easily
-    implementation("com.google.guava:guava:31.1-android")
+    implementation("com.google.guava:guava:$rootProject.guavaVersion")
 
     // Google official Youtube Player Api lib
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
 
     // PierfrancescoSoffritti/android-youtube-player - https://github.com/PierfrancescoSoffritti/android-youtube-player (A opensource lib that depends on Youtube IFrame Player API, we use this just for let some views overlay on yt player, cuz official one not support this)
-    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0'
+    implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:$rootProject.nonOfficialYoutubePlayerVersion"
 
     // Shimmer - Content Placeholder Animation provided by facebook
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation "com.facebook.shimmer:shimmer:$rootProject.shimmerVersion"
+
+    // Room - local database library
+    implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
+
+    // Guava support for Room - including Optional and ListenableFuture (enable to easily handle dao process callback)
+    implementation "androidx.room:room-guava:$rootProject.roomVersion"
+
+    // Enable to use Java 8 while minSDK < 24 - https://developer.android.com/studio/write/java8-support#groovy
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
