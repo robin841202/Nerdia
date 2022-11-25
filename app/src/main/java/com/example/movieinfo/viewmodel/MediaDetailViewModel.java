@@ -21,7 +21,7 @@ public class MediaDetailViewModel extends AndroidViewModel {
     private MovieRepository movieRepository;
     private TvShowRepository tvShowRepository;
     private OmdbRepository omdbRepository;
-    private WatchlistRepository watchlistRepository;
+    private final WatchlistRepository watchlistRepository;
     private LiveData<MovieDetailData> movieDetailLiveData;
     private LiveData<TvShowDetailData> tvShowDetailLiveData;
     private LiveData<OmdbData> omdbLiveData;

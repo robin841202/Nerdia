@@ -1,5 +1,6 @@
 package com.example.movieinfo.view.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,32 +16,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 
 public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsViewHolder> {
     private ArrayList<TvShowData> tvShow_list;
-    private final ITvShowListener listener;
+    private final AppCompatActivity context;
 
-    public interface ITvShowListener {
-        /**
-         * TvShow item onClick Event
-         */
-        void onTvShowClick(TvShowData tvShow);
-    }
-
-
-    public TvShowsAdapter(ITvShowListener listener) {
+    public TvShowsAdapter(AppCompatActivity context) {
         this.tvShow_list = new ArrayList<>();
-        this.listener = listener;
+        this.context = context;
     }
-
 
     @NonNull
     @Override
@@ -47,7 +39,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_media, parent, false);
-        return new TvShowsViewHolder(itemView, listener);
+        return new TvShowsViewHolder(itemView, context);
     }
 
     @Override
@@ -88,23 +80,23 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         private final View itemView;
         private final TextView rating;
 
-        private final ITvShowListener listener;
         private final ShimmerDrawable shimmerDrawable;
+        private final AppCompatActivity context;
 
-        public TvShowsViewHolder(@NonNull View itemView, ITvShowListener listener) {
+        public TvShowsViewHolder(@NonNull View itemView, AppCompatActivity context) {
             super(itemView);
             this.itemView = itemView;
             this.poster = itemView.findViewById(R.id.img_item_media_poster);
             this.title = itemView.findViewById(R.id.text_item_media_title);
             this.rating = itemView.findViewById(R.id.text_item_media_rating);
 
-            this.listener = listener;
+            this.context = context;
 
             // region Create image placeholder animation using shimmer
             Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
-                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseColor(ContextCompat.getColor(context, R.color.gray))
                     .setBaseAlpha(1)
-                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightColor(ContextCompat.getColor(context, R.color.lightGray))
                     .setHighlightAlpha(1)
                     .setDropoff(50)
                     .build();
@@ -141,14 +133,32 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
             }
 
             // set item onClickListener
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // callback onTvShowClick method and pass tvShowData
-                    listener.onTvShowClick(tvShowData);
-                }
+            itemView.setOnClickListener(v -> {
+                // navigate to MediaDetails
+                navigateToDetailsPage(tvShowData.getId());
             });
 
+            // set item onLongClickListener
+            itemView.setOnLongClickListener(v -> {
+                // Show OperateMedia bottom sheet dialog
+                OperateMediaBottomSheet fragment = new OperateMediaBottomSheet(StaticParameter.MediaType.TV, tvShowData);
+                fragment.show(context.getSupportFragmentManager(), fragment.getTag());
+                return true;
+            });
+
+        }
+
+        /**
+         * Navigate to MediaDetails
+         * @param id tvShow Id
+         */
+        private void navigateToDetailsPage(long id){
+            Intent intent = new Intent(context, MediaDetailsActivity.class);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, id);
+            context.startActivity(intent);
+            // set the custom transition animation
+            context.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
 
     }

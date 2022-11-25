@@ -25,12 +25,13 @@ import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.example.movieinfo.viewmodel.DiscoverViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class GenreResultsFragment extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
+public class GenreResultsFragment extends Fragment{
     private final String LOG_TAG = "GenreResultsFragment";
 
     private DiscoverViewModel viewModel;
@@ -112,7 +113,7 @@ public class GenreResultsFragment extends Fragment implements MoviesAdapter.IMov
             case StaticParameter.MediaType.MOVIE:
 
                 // Initialize Recycler Adapter
-                moviesAdapter = new MoviesAdapter(this);
+                moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
 
                 // Set Adapter
                 mRcView.setAdapter(moviesAdapter);
@@ -120,7 +121,7 @@ public class GenreResultsFragment extends Fragment implements MoviesAdapter.IMov
             case StaticParameter.MediaType.TV:
 
                 // Initialize Recycler Adapter
-                tvShowsAdapter = new TvShowsAdapter(this);
+                tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
 
                 // Set Adapter
                 mRcView.setAdapter(tvShowsAdapter);
@@ -271,36 +272,6 @@ public class GenreResultsFragment extends Fragment implements MoviesAdapter.IMov
                 break;
         }
 
-    }
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }

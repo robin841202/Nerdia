@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,6 +26,7 @@ import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.example.movieinfo.viewmodel.SearchViewModel;
@@ -32,7 +34,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieListener {
+public class SearchMoviesTab extends Fragment{
 
 
     private final String LOG_TAG = "SearchMoviesTab";
@@ -87,7 +89,7 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
         mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
-        movieAdapter = new MoviesAdapter(this);
+        movieAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
 
         // Initialize gridLayoutManager
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
@@ -184,21 +186,6 @@ public class SearchMoviesTab extends Fragment implements MoviesAdapter.IMovieLis
 
             Log.d(LOG_TAG, "search movies: data fetched successfully");
         };
-    }
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     /**

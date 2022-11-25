@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Watchlist_TvShowTab extends Fragment implements TvShowsAdapter.ITvShowListener {
+public class Watchlist_TvShowTab extends Fragment{
 
     private final String LOG_TAG = "Watchlist_TvShowTab";
 
@@ -84,7 +85,7 @@ public class Watchlist_TvShowTab extends Fragment implements TvShowsAdapter.ITvS
         mShimmer.setVisibility(View.VISIBLE);
 
         // Initialize Recycler Adapter
-        tvShowsAdapter = new TvShowsAdapter(this);
+        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
 
         // Set adapter
         mRcView.setAdapter(tvShowsAdapter);
@@ -111,36 +112,18 @@ public class Watchlist_TvShowTab extends Fragment implements TvShowsAdapter.ITvS
             mShimmer.stopShimmer();
             mShimmer.setVisibility(View.GONE);
 
-            if (tvShowWatchlist.size() > 0) {
-                // Mapping "TvShowWatchlistEntity" object to "TvShowData" object
-                ArrayList<TvShowData> tvShowData_list = tvShowWatchlist.stream().map(data -> new TvShowData(
-                        data.getTvShowId(),
-                        data.getTitle(),
-                        data.getPosterPath(),
-                        data.getRating())).collect(Collectors.toCollection(ArrayList::new));
+            // Mapping "TvShowWatchlistEntity" object to "TvShowData" object
+            ArrayList<TvShowData> tvShowData_list = tvShowWatchlist.stream().map(data -> new TvShowData(
+                    data.getTvShowId(),
+                    data.getTitle(),
+                    data.getPosterPath(),
+                    data.getRating())).collect(Collectors.toCollection(ArrayList::new));
 
-                // append data to adapter
-                tvShowsAdapter.setTvShows(tvShowData_list);
-            }
+            // append data to adapter
+            tvShowsAdapter.setTvShows(tvShowData_list);
 
             Log.d(LOG_TAG, "watchlist tvShows: data loaded successfully");
         };
-    }
-
-
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }

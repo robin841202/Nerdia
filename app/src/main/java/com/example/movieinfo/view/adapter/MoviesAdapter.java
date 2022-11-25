@@ -1,6 +1,6 @@
 package com.example.movieinfo.view.adapter;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,31 +17,21 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
+import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
-
-import org.checkerframework.checker.units.qual.A;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
     private ArrayList<MovieData> movie_list;
-    private final IMovieListener listener;
+    private final AppCompatActivity context;
 
-    public interface IMovieListener {
-        /**
-         * Movie item onClick Event
-         */
-        void onMovieClick(MovieData movie);
-    }
-
-
-    public MoviesAdapter(IMovieListener listener) {
+    public MoviesAdapter(AppCompatActivity context) {
         this.movie_list = new ArrayList<>();
-        this.listener = listener;
+        this.context = context;
     }
-
 
     @NonNull
     @Override
@@ -48,7 +39,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         View itemView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_media, parent, false);
-        return new MoviesViewHolder(itemView, listener);
+        return new MoviesViewHolder(itemView, context);
     }
 
     @Override
@@ -89,23 +80,23 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         private final View itemView;
         private final TextView rating;
 
-        private final IMovieListener listener;
         private final ShimmerDrawable shimmerDrawable;
+        private final AppCompatActivity context;
 
-        public MoviesViewHolder(@NonNull View itemView, IMovieListener listener) {
+        public MoviesViewHolder(@NonNull View itemView, AppCompatActivity context) {
             super(itemView);
             this.itemView = itemView;
             this.poster = itemView.findViewById(R.id.img_item_media_poster);
             this.title = itemView.findViewById(R.id.text_item_media_title);
             this.rating = itemView.findViewById(R.id.text_item_media_rating);
 
-            this.listener = listener;
+            this.context = context;
 
             // region Create image placeholder animation using shimmer
             Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
-                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseColor(ContextCompat.getColor(context, R.color.gray))
                     .setBaseAlpha(1)
-                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightColor(ContextCompat.getColor(context, R.color.lightGray))
                     .setHighlightAlpha(1)
                     .setDropoff(50)
                     .build();
@@ -142,14 +133,33 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             }
 
             // set item onClickListener
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // callback onMovieClick method and pass movieData
-                    listener.onMovieClick(movieData);
-                }
+            itemView.setOnClickListener(v -> {
+                // navigate to MediaDetails
+                navigateToDetailsPage(movieData.getId());
             });
 
+            // set item onLongClickListener
+            itemView.setOnLongClickListener(v -> {
+                // Show OperateMedia bottom sheet dialog
+                OperateMediaBottomSheet fragment = new OperateMediaBottomSheet(StaticParameter.MediaType.MOVIE, movieData);
+                fragment.show(context.getSupportFragmentManager(), fragment.getTag());
+                return true;
+            });
+
+        }
+
+        /**
+         * Navigate to MediaDetails
+         *
+         * @param id movie Id
+         */
+        private void navigateToDetailsPage(long id) {
+            Intent intent = new Intent(context, MediaDetailsActivity.class);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, id);
+            context.startActivity(intent);
+            // set the custom transition animation
+            context.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
 
     }

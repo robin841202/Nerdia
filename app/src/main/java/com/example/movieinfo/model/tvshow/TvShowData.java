@@ -10,6 +10,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class TvShowData implements Parcelable {
 
+    @SerializedName("adult")
+    private boolean isAdult;
+
     @SerializedName("id")
     private long id;
 
@@ -50,6 +53,15 @@ public class TvShowData implements Parcelable {
         this.rating = rating;
         this.onAirDate = onAirDate;
         this.voteCount = voteCount;
+    }
+
+    /**
+     * Get IsAdult or not
+     *
+     * @return
+     */
+    public boolean getIsAdult() {
+        return isAdult;
     }
 
     /**

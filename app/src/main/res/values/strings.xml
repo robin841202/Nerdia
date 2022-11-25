@@ -60,4 +60,6 @@
     <string name="msg_saved_to_watchlist">已儲存至待觀看清單</string>
     <string name="msg_removed_from_watchlist">已從待觀看清單中移除</string>
     <string name="msg_operation_error">資料存取發生錯誤</string>
+    <string name="label_add_to_watchlist">加入至待看清單</string>
+    <string name="label_existed_in_watchlist">已存在待看清單</string>
 </resources>

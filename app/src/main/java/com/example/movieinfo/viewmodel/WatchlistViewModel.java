@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WatchlistViewModel extends AndroidViewModel {
-    private WatchlistRepository watchlistRepository;
+    private final WatchlistRepository watchlistRepository;
 
     public WatchlistViewModel(@NonNull Application application) {
         super(application);

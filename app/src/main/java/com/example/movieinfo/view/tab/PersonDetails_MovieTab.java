@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,7 +28,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class PersonDetails_MovieTab extends Fragment implements MoviesAdapter.IMovieListener {
+public class PersonDetails_MovieTab extends Fragment{
 
     private final String LOG_TAG = "PersonDetails_MovieTab";
 
@@ -78,7 +79,7 @@ public class PersonDetails_MovieTab extends Fragment implements MoviesAdapter.IM
         mShimmer.setVisibility(View.VISIBLE);
 
         // Initialize Recycler Adapter
-        moviesAdapter = new MoviesAdapter(this);
+        moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
 
         // Set adapter
         mRcView.setAdapter(moviesAdapter);
@@ -123,21 +124,6 @@ public class PersonDetails_MovieTab extends Fragment implements MoviesAdapter.IM
 
             Log.d(LOG_TAG, "PersonDetails: liveData changed");
         };
-    }
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }

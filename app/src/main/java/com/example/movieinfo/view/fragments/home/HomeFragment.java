@@ -1,10 +1,11 @@
 package com.example.movieinfo.view.fragments.home;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,25 +18,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
+import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
+public class HomeFragment extends Fragment{
 
     private final String LOG_TAG = "HomeFragment";
+
+    private Context context;
 
     private SwipeRefreshLayout pullToRefresh;
 
@@ -98,6 +101,8 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = getContext();
+
         // Initialize viewModel, data only survive this fragment lifecycle
         moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
         moviesViewModel.init();
@@ -143,20 +148,20 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         pullToRefresh = root.findViewById(R.id.swiperefresh);
 
         // Initialize Adapter
-        upcomingMoviesAdapter = new MoviesAdapter(this);
-        nowPlayingMoviesAdapter = new MoviesAdapter(this);
-        trendingMoviesAdapter = new MoviesAdapter(this);
-        popularMoviesAdapter = new MoviesAdapter(this);
-        popularTvShowsAdapter = new TvShowsAdapter(this);
-        trendingTvShowsAdapter = new TvShowsAdapter(this);
+        upcomingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        nowPlayingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        trendingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        popularMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        popularTvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
+        trendingTvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
 
         // Initialize linearLayoutManager
-        upcomingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        nowPlayingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        trendingMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        popularMoviesLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        popularTvShowsLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        trendingTvShowsLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        upcomingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        nowPlayingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        trendingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        popularMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        popularTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        trendingTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
         // Set adapter
         upcomingMovies_RcView.setAdapter(upcomingMoviesAdapter);
@@ -886,37 +891,6 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
 
     // endregion
 
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
     /**
      * Reset all results
      */
@@ -965,6 +939,5 @@ public class HomeFragment extends Fragment implements MoviesAdapter.IMovieListen
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_homeFragment_to_verticalBrowseFragment, arguments);
     }
-
 
 }

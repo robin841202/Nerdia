@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,7 +33,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShowListener {
+public class SearchTvShowsTab extends Fragment{
 
     private final String LOG_TAG = "SearchTvShowsTab";
 
@@ -87,7 +88,7 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
         mShimmer = view.findViewById(R.id.shimmer_search);
 
         // Initialize Adapter
-        tvShowsAdapter = new TvShowsAdapter(this);
+        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
 
         // Initialize gridLayoutManager
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
@@ -191,25 +192,11 @@ public class SearchTvShowsTab extends Fragment implements TvShowsAdapter.ITvShow
 
 
     /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
-    /**
      * Reset search results
      */
     private void clearResults() {
         currentPage = 1;
         tvShowsAdapter.removeAllTvShows();
     }
+
 }

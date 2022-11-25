@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -34,7 +35,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener, TvShowsAdapter.ITvShowListener {
+public class SimilarTab extends Fragment{
 
     private final String LOG_TAG = "SimilarTab";
 
@@ -117,12 +118,12 @@ public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener
         // Initialize Recycler Adapter
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
-                moviesAdapter = new MoviesAdapter(this);
+                moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
                 // Set adapter
                 similar_RcView.setAdapter(moviesAdapter);
                 break;
             case StaticParameter.MediaType.TV:
-                tvShowsAdapter = new TvShowsAdapter(this);
+                tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
                 // Set adapter
                 similar_RcView.setAdapter(tvShowsAdapter);
                 break;
@@ -293,36 +294,6 @@ public class SimilarTab extends Fragment implements MoviesAdapter.IMovieListener
                 break;
         }
 
-    }
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }

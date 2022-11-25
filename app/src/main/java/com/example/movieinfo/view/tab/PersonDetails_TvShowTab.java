@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,7 +30,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class PersonDetails_TvShowTab extends Fragment implements TvShowsAdapter.ITvShowListener {
+public class PersonDetails_TvShowTab extends Fragment{
 
     private final String LOG_TAG = "PersonDetails_TvShowTab";
 
@@ -80,7 +81,7 @@ public class PersonDetails_TvShowTab extends Fragment implements TvShowsAdapter.
         mShimmer.setVisibility(View.VISIBLE);
 
         // Initialize Recycler Adapter
-        tvShowsAdapter = new TvShowsAdapter(this);
+        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
 
         // Set adapter
         mRcView.setAdapter(tvShowsAdapter);
@@ -127,19 +128,5 @@ public class PersonDetails_TvShowTab extends Fragment implements TvShowsAdapter.
         };
     }
 
-    /**
-     * Callback when tvShow item get clicked
-     *
-     * @param tvShow tvShow data
-     */
-    @Override
-    public void onTvShowClick(TvShowData tvShow) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.TV);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, tvShow.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
 
 }

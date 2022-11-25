@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,6 +24,7 @@ import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.view.MediaDetailsActivity;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
+import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.example.movieinfo.viewmodel.WatchlistViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Watchlist_MovieTab extends Fragment implements MoviesAdapter.IMovieListener{
+public class Watchlist_MovieTab extends Fragment{
 
     private final String LOG_TAG = "Watchlist_MovieTab";
 
@@ -80,7 +82,7 @@ public class Watchlist_MovieTab extends Fragment implements MoviesAdapter.IMovie
         mShimmer.setVisibility(View.VISIBLE);
 
         // Initialize Recycler Adapter
-        moviesAdapter = new MoviesAdapter(this);
+        moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
 
         // Set adapter
         mRcView.setAdapter(moviesAdapter);
@@ -107,36 +109,18 @@ public class Watchlist_MovieTab extends Fragment implements MoviesAdapter.IMovie
             mShimmer.stopShimmer();
             mShimmer.setVisibility(View.GONE);
 
-            if (movieWatchlist.size() > 0) {
-                // Mapping "MovieWatchlistEntity" object to "MovieData" object
-                ArrayList<MovieData> movieData_list = movieWatchlist.stream().map(data -> new MovieData(
-                        data.getMovieId(),
-                        data.getTitle(),
-                        data.getPosterPath(),
-                        data.getRating())).collect(Collectors.toCollection(ArrayList::new));
+            // Mapping "MovieWatchlistEntity" object to "MovieData" object
+            ArrayList<MovieData> movieData_list = movieWatchlist.stream().map(data -> new MovieData(
+                    data.getMovieId(),
+                    data.getTitle(),
+                    data.getPosterPath(),
+                    data.getRating())).collect(Collectors.toCollection(ArrayList::new));
 
-                // append data to adapter
-                moviesAdapter.setMovies(movieData_list);
-            }
+            // append data to adapter
+            moviesAdapter.setMovies(movieData_list);
 
             Log.d(LOG_TAG, "watchlist movies: data loaded successfully");
         };
-    }
-
-
-    /**
-     * Callback when movie item get clicked
-     *
-     * @param movie movie data
-     */
-    @Override
-    public void onMovieClick(MovieData movie) {
-        Intent intent = new Intent(getContext(), MediaDetailsActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MEDIA_TYPE_KEY, StaticParameter.MediaType.MOVIE);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, movie.getId());
-        startActivity(intent);
-        // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
 }
