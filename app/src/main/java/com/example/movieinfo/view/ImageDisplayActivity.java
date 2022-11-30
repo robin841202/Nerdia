@@ -58,7 +58,7 @@ public class ImageDisplayActivity extends AppCompatActivity {
             // endregion
 
 
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.BackdropSize.ORIGINAL, imgFilePath);
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.BackdropSize.ORIGINAL, imgFilePath);
             Glide.with(this)
                     .load(imgUrl)
                     .placeholder(shimmerDrawable)

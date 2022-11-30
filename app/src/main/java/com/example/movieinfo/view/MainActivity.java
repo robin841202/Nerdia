@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.homeFragment:
                 case R.id.discoverFragment:
                 case R.id.watchlistFragment:
+                case R.id.profileFragment:
                     // Hide Toolbar
                     toolbar.setVisibility(View.GONE);
                     break;

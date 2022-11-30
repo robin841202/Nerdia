@@ -12,7 +12,7 @@ public class PersonDetailViewModel extends ViewModel {
     private LiveData<PersonDetailData> liveData;
 
     /**
-     * Initialize ViewModel, Only call this when you need a new ViewModel instead of getting shared ViewModel
+     * Initialize ViewModel liveData, Prevent from triggering observer twice
      */
     public void init() {
         repository = new PersonRepository();

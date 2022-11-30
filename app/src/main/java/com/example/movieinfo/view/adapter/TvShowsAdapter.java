@@ -106,7 +106,7 @@ public class TvShowsAdapter extends RecyclerView.Adapter<TvShowsAdapter.TvShowsV
         }
 
         public void bind(TvShowData tvShowData) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.PosterSize.W342, tvShowData.getPosterPath());
 
             // set image poster
             Glide.with(itemView)

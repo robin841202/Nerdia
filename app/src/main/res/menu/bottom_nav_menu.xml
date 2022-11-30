@@ -15,4 +15,8 @@
         android:id="@+id/watchlistFragment"
         android:icon="@drawable/ic_nav_watchlist"
         android:title="@string/title_watchlist" />
+    <item
+        android:id="@+id/profile_navigation"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/title_profile" />
 </menu>

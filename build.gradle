@@ -32,4 +32,8 @@ ext{
     shimmerVersion = '0.5.0'
 
     roomVersion = '2.4.3'
+
+    securityVersion = '1.0.0'
+
+    browserVersion = '1.4.0'
 }

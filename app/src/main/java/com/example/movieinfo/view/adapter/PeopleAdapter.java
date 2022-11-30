@@ -13,9 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
-import com.example.movieinfo.model.CreditsResponse.CastData;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.person.PersonData;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
@@ -113,7 +111,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
 
         public void bind(PersonData personData) {
             if (!Strings.isNullOrEmpty(personData.getProfilePath())) {
-                String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, personData.getProfilePath());
+                String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.ProfileSize.W185, personData.getProfilePath());
                 // set profile image
                 Glide.with(itemView)
                         .load(imgUrl)

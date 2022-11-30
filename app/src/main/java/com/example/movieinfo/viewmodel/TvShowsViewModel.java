@@ -18,7 +18,7 @@ public class TvShowsViewModel extends ViewModel {
     private LiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
 
     /**
-     * Initialize ViewModel, Only call this when you need a new ViewModel instead of getting shared ViewModel
+     * Initialize ViewModel liveData, Prevent from triggering observer twice
      */
     public void init() {
         repository = new TvShowRepository();

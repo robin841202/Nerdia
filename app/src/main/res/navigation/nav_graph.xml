@@ -91,5 +91,32 @@
         android:name="com.example.movieinfo.view.fragments.watchlist.WatchlistFragment"
         android:label="@string/title_watchlist"
         tools:layout="@layout/fragment_watch_list" />
+    <navigation
+        android:id="@+id/profile_navigation"
+        app:startDestination="@+id/profileFragment">
+        <fragment
+            android:id="@+id/profileFragment"
+            android:name="com.example.movieinfo.view.fragments.profile.ProfileFragment"
+            android:label="@string/title_profile"
+            tools:layout="@layout/fragment_profile">
+            <action
+                android:id="@+id/action_profileFragment_to_loginTmdbFragment"
+                app:destination="@id/loginTmdbFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
+        <fragment
+            android:id="@+id/loginTmdbFragment"
+            android:name="com.example.movieinfo.view.fragments.profile.LoginTmdbFragment"
+            android:label="@string/label_login"
+            tools:layout="@layout/fragment_login_tmdb">
+            <action
+                android:id="@+id/action_loginTmdbFragment_to_profileFragment"
+                app:destination="@id/profileFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
+    </navigation>
+
 
 </navigation>

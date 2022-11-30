@@ -1,7 +1,5 @@
 package com.example.movieinfo.model.service;
 
-import com.example.movieinfo.model.movie.MovieDetailData;
-import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 
@@ -158,5 +156,33 @@ public interface ITvShowService {
             @Query("with_genres")
                     String includeGenres
     );
+
+
+    /**
+     * Get TvShow Watchlist on TMDB
+     * @param id Account Id
+     * @param apiKey TMDB API Key
+     * @param session Valid session
+     * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
+     * @param page target page
+     * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @return
+     */
+    @GET("account/{account_id}/watchlist/tv")
+    Call<TvShowsResponse> getTMDBTvShowWatchlist(
+            @Path("account_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("session_id")
+                    String session,
+            @Query("sort_by")
+                    String sortMode,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language
+    );
+
 
 }

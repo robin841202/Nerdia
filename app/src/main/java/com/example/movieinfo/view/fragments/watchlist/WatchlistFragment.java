@@ -77,7 +77,7 @@ public class WatchlistFragment extends Fragment {
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new WatchlistTab(), getString(R.string.label_watchlist));
-        pagerAdapter.addFragment(new HistoryTab(), getString(R.string.label_history));
+        //pagerAdapter.addFragment(new HistoryTab(), getString(R.string.label_history));
         viewPager.setAdapter(pagerAdapter);
         // Disable swiping viewpager
         viewPager.setUserInputEnabled(false);

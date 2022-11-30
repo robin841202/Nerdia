@@ -62,4 +62,28 @@
     <string name="msg_operation_error">資料存取發生錯誤</string>
     <string name="label_add_to_watchlist">加入至待看清單</string>
     <string name="label_existed_in_watchlist">已存在待看清單</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="label_my_profile">我的檔案</string>
+    <string name="label_anonymous_description">登入同步電影及影集資料</string>
+    <string name="label_profile_description">檢視檔案</string>
+    <string name="label_login_to_tmdb">登入至TMDB</string>
+    <string name="title_profile">帳戶</string>
+    <string name="label_login">登入</string>
+    <string name="label_logout">登出</string>
+    <string name="label_ok">確認</string>
+    <string name="label_cancel">取消</string>
+    <string name="label_logout_alert_message">確認登出此帳號?</string>
+    <string name="label_authorization_denied">請求許可遭拒</string>
+    <string name="label_retry">重試</string>
+    <string name="msg_login_successful">登入成功</string>
+    <string name="msg_login_failed">登入失敗</string>
+    <string name="msg_logout_successful">成功登出</string>
 </resources>

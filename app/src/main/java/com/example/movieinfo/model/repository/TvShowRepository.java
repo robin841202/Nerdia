@@ -292,6 +292,19 @@ public class TvShowRepository {
     }
 
     /**
+     * Get TvShow Watchlist on TMDB (using LiveData)
+     * @param userId Account Id
+     * @param session Valid session
+     * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
+     * @param page target page
+     */
+    public void getTMDBTvShowWatchlist(long userId, String session, String sortMode, int page) {
+        Call<TvShowsResponse> call = service.getTMDBTvShowWatchlist(userId, apiKey, session, sortMode, page, language);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(tvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
      * Discover TvShows (using LiveData)
      *
      * @param page    target page

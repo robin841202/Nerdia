@@ -32,7 +32,7 @@ public class MediaDetailViewModel extends AndroidViewModel {
     }
 
     /**
-     * Initialize ViewModel, Only call this when you need a new ViewModel instead of getting shared ViewModel
+     * Initialize ViewModel liveData, Prevent from triggering observer twice
      */
     public void init() {
         movieRepository = new MovieRepository();

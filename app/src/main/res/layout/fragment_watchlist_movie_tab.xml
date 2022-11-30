@@ -1,106 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="16dp"
     android:paddingHorizontal="16dp"
+    android:paddingBottom="16dp"
     tools:context=".view.fragments.watchlist.tab.Watchlist_MovieTab">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_media"/>
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.gridlayout.widget.GridLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:columnCount="3"
-            app:orientation="horizontal"
-            app:rowCount="3"
-            app:useDefaultMargins="true">
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_media" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
+            <androidx.gridlayout.widget.GridLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
+                app:columnCount="3"
+                app:orientation="horizontal"
+                app:rowCount="3"
+                app:useDefaultMargins="true">
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="2"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    app:layout_row="0" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1"
+                    app:layout_row="0" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="2"
+                    app:layout_columnWeight="1"
+                    app:layout_row="0" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="2"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    app:layout_row="1" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="2" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1"
+                    app:layout_row="1" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="2" />
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="2"
+                    app:layout_columnWeight="1"
+                    app:layout_row="1" />
 
-            <include
-                layout="@layout/item_media_shimmer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_column="2"
-                app:layout_columnWeight="1"
-                app:layout_row="2" />
-        </androidx.gridlayout.widget.GridLayout>
-    </com.facebook.shimmer.ShimmerFrameLayout>
-</LinearLayout>
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="0"
+                    app:layout_columnWeight="1"
+                    app:layout_row="2" />
+
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="1"
+                    app:layout_columnWeight="1"
+                    app:layout_row="2" />
+
+                <include
+                    layout="@layout/item_media_shimmer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_column="2"
+                    app:layout_columnWeight="1"
+                    app:layout_row="2" />
+            </androidx.gridlayout.widget.GridLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

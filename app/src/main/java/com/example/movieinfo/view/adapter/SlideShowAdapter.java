@@ -259,7 +259,7 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         public void bind(SlideShowItemData itemData) {
-            String imgUrl = StaticParameter.getImageUrl(itemData.getImageSizeType(), itemData.getSource());
+            String imgUrl = StaticParameter.getTmdbImageUrl(itemData.getImageSizeType(), itemData.getSource());
 
             // set image poster
             Glide.with(itemView)

@@ -1,6 +1,7 @@
 package com.example.movieinfo.view.fragments.watchlist.tab;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,33 +16,42 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieData;
-import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.model.user.UserData;
+import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
+import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
-import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.example.movieinfo.viewmodel.WatchlistViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Watchlist_MovieTab extends Fragment{
+public class Watchlist_MovieTab extends Fragment {
 
     private final String LOG_TAG = "Watchlist_MovieTab";
 
     private WatchlistViewModel viewModel;
+    private Context context;
 
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
     private MoviesAdapter moviesAdapter;
     private GridLayoutManager mLayoutMgr;
+    private SwipeRefreshLayout pullToRefresh;
+
+    private String mSession;
+    private long mUserId;
+    private int mCurrentPage;
+    // Set sortMode Desc as default
+    private final String mSortMode = StaticParameter.SortMode.CREATED_DATE_DESC;
 
     public Watchlist_MovieTab() {
         // Required empty public constructor
@@ -58,9 +68,35 @@ public class Watchlist_MovieTab extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = getContext();
+
+        // set default page
+        mCurrentPage = 1;
+
         // Initialize viewModel, data only survive this fragment lifecycle
         viewModel = new ViewModelProvider(this).get(WatchlistViewModel.class);
-        viewModel.init();
+        // Initialize liveData in viewModel, prevent from triggering observer multiple times
+        viewModel.initLiveData();
+
+        // Get SharedPreference file
+        SharedPreferences sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
+
+        if (sp != null) {
+            // Get the session from sharedPreference
+            mSession = SharedPreferenceUtils.getSessionFromSharedPreference(sp);
+            // Get the userData from sharedPreference
+            UserData userData = SharedPreferenceUtils.getUserDataFromSharedPreference(sp);
+            mUserId = userData != null ? userData.getId() : 0;
+            if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+
+                // Set the observer
+                viewModel.getMovieWatchlistLiveData().observe(this, movieWatchlistTMDBObserver);
+            } else { // NOT LOGIN
+
+                // Load movie watchlist from local database and observe it
+                viewModel.loadAllMovieWatchlist().observe(this, loadMovieWatchlistObserver());
+            }
+        }
     }
 
     @Override
@@ -73,16 +109,14 @@ public class Watchlist_MovieTab extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         // Initialize Views
         mRcView = view.findViewById(R.id.recycler);
         mShimmer = view.findViewById(R.id.shimmer);
-
-        // show shimmer animation
-        mShimmer.startShimmer();
-        mShimmer.setVisibility(View.VISIBLE);
+        pullToRefresh = view.findViewById(R.id.swiperefresh);
 
         // Initialize Recycler Adapter
-        moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        moviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
 
         // Set adapter
         mRcView.setAdapter(moviesAdapter);
@@ -96,12 +130,35 @@ public class Watchlist_MovieTab extends Fragment{
         // Set layoutManager
         mRcView.setLayoutManager(mLayoutMgr);
 
-        // Load movie watchlist and observe it
-        viewModel.loadAllMovieWatchlist().observe(getViewLifecycleOwner(), loadMovieWatchlistObserver());
+
+        if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+            // Set SwipeRefreshListener
+            pullToRefresh.setOnRefreshListener(() -> {
+                // Refetching data
+                resetTMDBResult();
+                Log.d(LOG_TAG, "onRefresh");
+                pullToRefresh.setRefreshing(false);
+            });
+            fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+        } else { // NOT LOGIN
+            // show shimmer animation
+            mShimmer.startShimmer();
+            mShimmer.setVisibility(View.VISIBLE);
+
+            // Set SwipeRefreshListener
+            pullToRefresh.setOnRefreshListener(() -> {
+                // do nothing
+                pullToRefresh.setRefreshing(false);
+            });
+        }
+
     }
 
+
+    // region Local database
+
     /**
-     * Observe when Movie Watchlist LiveData changed
+     * Observe when Movie Watchlist LiveData changed (Local database)
      */
     public Observer<List<MovieWatchlistEntity>> loadMovieWatchlistObserver() {
         return movieWatchlist -> {
@@ -123,4 +180,85 @@ public class Watchlist_MovieTab extends Fragment{
         };
     }
 
+    // endregion
+
+
+
+    // region Remote Data Source (API)
+
+    /**
+     * Start fetching movie watchlist from TMDB
+     *
+     * @param userId   Account Id
+     * @param session  Valid session
+     * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
+     * @param page     target page
+     */
+    private void fetchMovieWatchlistFromTMDB(long userId, String session, String sortMode, int page) {
+        if (userId >= 0) {
+            // show shimmer animation
+            mShimmer.startShimmer();
+            mShimmer.setVisibility(View.VISIBLE);
+            viewModel.getTMDBMovieWatchlist(userId, session, sortMode, page);
+        }
+    }
+
+
+    /**
+     * Observe when movie watchlist from TMDB LiveData changed
+     */
+    private final Observer<ArrayList<MovieData>> movieWatchlistTMDBObserver = movies -> {
+        // hide shimmer animation
+        mShimmer.stopShimmer();
+        mShimmer.setVisibility(View.GONE);
+
+        if (movies.size() > 0) {
+            // append data to adapter
+            moviesAdapter.appendMovies(movies);
+
+            // attach onScrollListener to RecyclerView
+            mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    // when scrolling up
+                    if (dy > 0) {
+                        final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
+
+                        // get the number of all items in recyclerView
+                        int totalItemCount = mLayoutMgr.getItemCount();
+                        // get the last visible item's position
+                        int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
+
+                        if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                            // detach current OnScrollListener
+                            mRcView.removeOnScrollListener(this);
+
+                            // append nextPage data to recyclerView
+                            mCurrentPage++;
+                            fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+                        }
+                    }
+                }
+            });
+        }
+
+        Log.d(LOG_TAG, "movie watchlist: data fetched successfully");
+    };
+
+
+    /**
+     * Reset TMDB results
+     */
+    private void resetTMDBResult() {
+        // set default page
+        mCurrentPage = 1;
+
+        // remove data in adapter
+        moviesAdapter.removeAllMovies();
+
+        // Start fetching data
+        fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+    }
+
+    // endregion
 }

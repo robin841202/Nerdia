@@ -105,7 +105,7 @@ public class CastsAdapter extends RecyclerView.Adapter<CastsAdapter.CastsViewHol
 
         public void bind(CastData castData) {
             if (!Strings.isNullOrEmpty(castData.getProfile_path())) {
-                String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, castData.getProfile_path());
+                String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.ProfileSize.W185, castData.getProfile_path());
                 // set profile image
                 Glide.with(itemView)
                         .load(imgUrl)

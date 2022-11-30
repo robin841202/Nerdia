@@ -356,6 +356,19 @@ public class MovieRepository {
     }
 
     /**
+     * Get Movie Watchlist on TMDB (using LiveData)
+     * @param userId Account Id
+     * @param session Valid session
+     * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
+     * @param page target page
+     */
+    public void getTMDBMovieWatchlist(long userId, String session, String sortMode, int page) {
+        Call<MoviesResponse> call = service.getTMDBMovieWatchlist(userId, apiKey, session, sortMode, page, language);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /**
      * Discover Movies (using LiveData)
      *
      * @param page    target page

@@ -106,7 +106,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         }
 
         public void bind(MovieData movieData) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.PosterSize.W342, movieData.getPosterPath());
 
             // set image poster
             Glide.with(itemView)

@@ -22,7 +22,7 @@ public class DiscoverViewModel extends ViewModel {
     private LiveData<ArrayList<TvShowData>> tvShowsLiveData;
 
     /**
-     * Initialize ViewModel, Only call this when you need a new ViewModel instead of getting shared ViewModel
+     * Initialize ViewModel liveData, Prevent from triggering observer twice
      */
     public void init() {
         genreRepository = new GenreRepository();

@@ -21,14 +21,9 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.person.PersonDetailData;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
-import com.example.movieinfo.view.adapter.SlideShowAdapter;
-import com.example.movieinfo.view.tab.CastTab;
-import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.PersonDetails_AboutTab;
 import com.example.movieinfo.view.tab.PersonDetails_MovieTab;
 import com.example.movieinfo.view.tab.PersonDetails_TvShowTab;
-import com.example.movieinfo.view.tab.SimilarTab;
-import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.PersonDetailViewModel;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
@@ -165,7 +160,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
         // region Profile Image
         String profilePath = personDetail.getProfilePath();
         if (!Strings.isNullOrEmpty(profilePath)) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, profilePath);
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.ProfileSize.W185, profilePath);
 
             // set profile image and use circleCrop
             Glide.with(this)

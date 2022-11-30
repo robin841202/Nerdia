@@ -1,13 +1,21 @@
 package com.example.movieinfo.model;
 
+import java.util.Locale;
+
 public class StaticParameter {
 
     public static final String TmdbApiBaseUrl = "https://api.themoviedb.org/3/";
     public static final String OmdbApiBaseUrl = "https://www.omdbapi.com/";
-    private static final String ImageBaseUrl = "https://image.tmdb.org/t/p/";
+    public static final String AuthLocalValidUrlAuthority = "auth";
+    public static final String AuthLocalValidUrlPath = "allow";
+    public static final String AuthLocalValidUrl = "movieinfo://" + AuthLocalValidUrlAuthority + "/" + AuthLocalValidUrlPath;
+    public static final String TmdbAuthFormatUrl = "https://www.themoviedb.org/authenticate/%s?redirect_to=" + AuthLocalValidUrl;
+    private static final String TmdbImageBaseUrl = "https://image.tmdb.org/t/p/";
     private static final String YoutubeThumbnailBaseUrl = "https://img.youtube.com/vi/";
     private static final String TmdbWebBaseUrl = "https://www.themoviedb.org/";
     private static final String ImdbWebBaseUrl = "https://www.imdb.com/";
+    private static final String GravatarFormatUrl = "https://www.gravatar.com/avatar/%s?size=%d";
+
 
     /**
      * Define extra data key for passing data to other activities or fragments
@@ -22,6 +30,18 @@ public class StaticParameter {
         public static final String EXTRA_DATA_IMAGE_PATH_KEY = "EXTRA_DATA_IMAGE_PATH";
         public static final String EXTRA_DATA_INCLUDE_GENRES_KEY = "EXTRA_DATA_INCLUDE_GENRES";
         public static final String EXTRA_DATA_ACTIONBAR_TITLE_KEY = "EXTRA_DATA_ACTIONBAR_TITLE";
+        public static final String EXTRA_DATA_LOGIN_KEY = "EXTRA_DATA_LOGIN";
+        public static final String EXTRA_DATA_LOGIN_IS_SUCCESS_KEY = "EXTRA_DATA_LOGIN_IS_SUCCESS";
+    }
+
+    public static class SharedPreferenceFileKey {
+        public static final String SP_FILE_TMDB_KEY = "SP_TMDB";
+    }
+
+    public static class SharedPreferenceFieldKey {
+        public static final String SP_FIELD_TMDB_TOKEN_KEY = "SP_FIELD_TMDB_TOKEN";
+        public static final String SP_FIELD_TMDB_SESSION_KEY = "SP_FIELD_TMDB_SESSION";
+        public static final String SP_FIELD_TMDB_USERDATA_KEY = "SP_FIELD_TMDB_USERDATA";
     }
 
     public static class OmdbSourceName {
@@ -91,6 +111,11 @@ public class StaticParameter {
         public static final String ORIGINAL = "original";
     }
 
+    public static class SortMode {
+        public static final String CREATED_DATE_ASC = "created_at.asc";
+        public static final String CREATED_DATE_DESC = "created_at.desc";
+    }
+
     /**
      * Get TMDB Image Full Url
      *
@@ -98,8 +123,8 @@ public class StaticParameter {
      * @param filePath
      * @return TMDB Image Full Url
      */
-    public static String getImageUrl(String size, String filePath) {
-        return ImageBaseUrl + size + filePath;
+    public static String getTmdbImageUrl(String size, String filePath) {
+        return TmdbImageBaseUrl + size + filePath;
     }
 
     /**
@@ -116,10 +141,21 @@ public class StaticParameter {
     /**
      * Get IMDB Web Page Full Url
      *
-     * @param id        ID
+     * @param id ID
      * @return IMDB Web Page Full Url
      */
     public static String getImdbWebUrl(String id) {
         return ImdbWebBaseUrl + "title/" + id;
+    }
+
+    /**
+     * Get Gravatar Image Full Url
+     *
+     * @param hash hash
+     * @param size 1px to 2048px
+     * @return Gravatar Image Full Url
+     */
+    public static String getGravatarImageUrl(String hash, int size) {
+        return String.format(Locale.TAIWAN, GravatarFormatUrl, hash, size);
     }
 }

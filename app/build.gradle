@@ -34,6 +34,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 
 }
 
@@ -71,6 +74,9 @@ dependencies {
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
 
     // ExpandableTextView - In order to expand or collapse textView
@@ -97,6 +103,12 @@ dependencies {
 
     // Enable to use Java 8 while minSDK < 24 - https://developer.android.com/studio/write/java8-support#groovy
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
+    // Security crypto - Encrypt the SharedPreference
+    implementation "androidx.security:security-crypto:$rootProject.securityVersion"
+
+    // Browser - In order to use Chrome Custom Tabs
+    implementation "androidx.browser:browser:$rootProject.browserVersion"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

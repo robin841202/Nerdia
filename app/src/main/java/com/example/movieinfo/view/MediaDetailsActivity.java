@@ -285,7 +285,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // region Poster Image
         String posterPath = movieDetail.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
                     .load(imgUrl)
@@ -467,7 +467,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // region Poster Image
         String posterPath = tvShowDetail.getPosterPath();
         if (posterPath != null && !posterPath.isEmpty()) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.PosterSize.W342, posterPath);
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.PosterSize.W342, posterPath);
             // set image poster
             Glide.with(this)
                     .load(imgUrl)

@@ -99,7 +99,7 @@ public class ProfileImageAdapter extends RecyclerView.Adapter<ProfileImageAdapte
         }
 
         public void bind(ImageData imageData) {
-            String imgUrl = StaticParameter.getImageUrl(StaticParameter.ProfileSize.W185, imageData.getFilePath());
+            String imgUrl = StaticParameter.getTmdbImageUrl(StaticParameter.ProfileSize.W185, imageData.getFilePath());
 
             // set image
             Glide.with(itemView)

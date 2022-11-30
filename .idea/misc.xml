@@ -35,10 +35,12 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_genres_list.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_history_tab.xml" value="0.353125" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_home.xml" value="0.31756440281030446" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_login_tmdb.xml" value="0.25" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_movie_details_about_tab.xml" value="0.31756440281030446" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_about_tab.xml" value="0.29671772428884025" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_movie_tab.xml" value="0.353125" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_person_details_tv_tab.xml" value="0.29739583333333336" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_search.xml" value="0.3006774361646691" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_search_movies_tab.xml" value="0.1" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_search_people_tab.xml" value="0.33" />
@@ -47,7 +49,7 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_tv_show_details_about_tab.xml" value="0.33" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_vertical_browse.xml" value="0.18" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watch_list.xml" value="0.16" />
-        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_movie_tab.xml" value="0.1710393541876892" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_movie_tab.xml" value="0.1" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tab.xml" value="0.1710393541876892" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tvShow_tab.xml" value="0.5057291666666667" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/fragment_watchlist_tv_show_tab.xml" value="0.24495459132189706" />
