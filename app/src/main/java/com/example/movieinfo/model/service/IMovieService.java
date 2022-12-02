@@ -4,6 +4,7 @@ import com.example.movieinfo.model.GenresResponse;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -129,6 +130,36 @@ public interface IMovieService {
                     String imageLanguages
     );
 
+    /**
+     * Get Movie Detail By Movie Id
+     *
+     * @param id             Movie Id
+     * @param apiKey         TMDB API Key
+     * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param session        Valid session
+     * @return
+     */
+    @GET("movie/{movie_id}")
+    Call<MovieDetailData> getMovieDetail(
+            @Path("movie_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("language")
+                    String language,
+            @Query("append_to_response")
+                    String subRequestType,
+            @Query("include_video_language")
+                    String videoLanguages,
+            @Query("include_image_language")
+                    String imageLanguages,
+            @Query("session_id")
+                    String session
+    );
+
 
     /**
      * Search Movies By Keyword
@@ -203,11 +234,12 @@ public interface IMovieService {
 
     /**
      * Get Movie Watchlist on TMDB
-     * @param id Account Id
-     * @param apiKey TMDB API Key
-     * @param session Valid session
+     *
+     * @param id       Account Id
+     * @param apiKey   TMDB API Key
+     * @param session  Valid session
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
-     * @param page target page
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
      * @return
      */
@@ -226,6 +258,5 @@ public interface IMovieService {
             @Query("language")
                     String language
     );
-
 
 }

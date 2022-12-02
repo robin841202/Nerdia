@@ -1,30 +1,75 @@
 package com.example.movieinfo.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.movieinfo.model.OmdbData;
+import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.TmdbStatusResponse;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.repository.MovieRepository;
 import com.example.movieinfo.model.repository.OmdbRepository;
 import com.example.movieinfo.model.repository.TvShowRepository;
+import com.example.movieinfo.model.repository.UserRepository;
 import com.example.movieinfo.model.repository.WatchlistRepository;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.example.movieinfo.model.user.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.Locale;
+
 public class MediaDetailViewModel extends AndroidViewModel {
+
+    // region Define static variables
+
+    // Define default subRequest type
+    private static final String SUB_REQUEST_TYPE = TextUtils.join(",", new String[]{
+            StaticParameter.SubRequestType.VIDEOS,
+            StaticParameter.SubRequestType.IMAGES,
+            StaticParameter.SubRequestType.CREDITS,
+            StaticParameter.SubRequestType.EXTERNAL_IDS
+    });
+
+    // Define subRequest type with login status
+    private static final String SUB_REQUEST_TYPE_LOGIN = TextUtils.join(",", new String[]{
+            StaticParameter.SubRequestType.VIDEOS,
+            StaticParameter.SubRequestType.IMAGES,
+            StaticParameter.SubRequestType.CREDITS,
+            StaticParameter.SubRequestType.EXTERNAL_IDS,
+            StaticParameter.SubRequestType.ACCOUNT_STATES
+    });
+
+    // Define video languages
+    private static final String VIDEO_LANGUAGES = TextUtils.join(",", new String[]{
+            Locale.TRADITIONAL_CHINESE.toLanguageTag(),
+            Locale.ENGLISH.getLanguage()
+    });
+
+    // Define image languages
+    private static final String IMAGE_LANGUAGES = TextUtils.join(",", new String[]{
+            Locale.TRADITIONAL_CHINESE.toLanguageTag(),
+            Locale.ENGLISH.getLanguage(),
+            "null"
+    });
+
+    // endregion
+
     private MovieRepository movieRepository;
     private TvShowRepository tvShowRepository;
     private OmdbRepository omdbRepository;
+    private UserRepository userRepository;
     private final WatchlistRepository watchlistRepository;
     private LiveData<MovieDetailData> movieDetailLiveData;
     private LiveData<TvShowDetailData> tvShowDetailLiveData;
     private LiveData<OmdbData> omdbLiveData;
+    private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
 
     public MediaDetailViewModel(@NonNull Application application) {
         super(application);
@@ -38,9 +83,11 @@ public class MediaDetailViewModel extends AndroidViewModel {
         movieRepository = new MovieRepository();
         tvShowRepository = new TvShowRepository();
         omdbRepository = new OmdbRepository();
+        userRepository = new UserRepository();
         movieDetailLiveData = movieRepository.getMovieDetailLiveData();
         tvShowDetailLiveData = tvShowRepository.getTvShowDetailLiveData();
         omdbLiveData = omdbRepository.getOmdbLiveData();
+        watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
     }
 
     // region Remote Data Source (API)
@@ -50,13 +97,20 @@ public class MediaDetailViewModel extends AndroidViewModel {
     /**
      * Call repository to get movie detail and update to liveData
      *
-     * @param movieId        Movie Id
-     * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
-     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param movieId Movie Id
      */
-    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
-        movieRepository.getMovieDetail(movieId, subRequestType, videoLanguages, imageLanguages);
+    public void getMovieDetail(long movieId) {
+        movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+    }
+
+    /**
+     * Call repository to get movie detail and update to liveData (Login)
+     *
+     * @param movieId Movie Id
+     * @param session Valid session
+     */
+    public void getMovieDetailWithLogin(long movieId, String session) {
+        movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
     }
 
     /**
@@ -66,6 +120,38 @@ public class MediaDetailViewModel extends AndroidViewModel {
      */
     public LiveData<MovieDetailData> getMovieDetailLiveData() {
         return movieDetailLiveData;
+    }
+
+    // endregion
+
+    // region TvShow Details
+
+    /**
+     * Call repository to get tvShow detail and update to liveData
+     *
+     * @param tvShowId TvShow Id
+     */
+    public void getTvShowDetail(long tvShowId) {
+        tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+    }
+
+    /**
+     * Call repository to get tvShow detail and update to liveData (Login)
+     *
+     * @param tvShowId TvShow Id
+     * @param session  Valid session
+     */
+    public void getTvShowDetailWithLogin(long tvShowId, String session) {
+        tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<TvShowDetailData> getTvShowDetailLiveData() {
+        return tvShowDetailLiveData;
     }
 
     // endregion
@@ -92,18 +178,17 @@ public class MediaDetailViewModel extends AndroidViewModel {
 
     // endregion
 
-    // region TvShow Details
+    // region Update Watchlist
 
     /**
-     * Call repository to get tvShow detail and update to liveData
+     * Call repository to add or delete media in TMDB watchlist and update status to liveData
      *
-     * @param tvShowId       TvShow Id
-     * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
-     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param userId        User Id
+     * @param session       Valid session
+     * @param bodyWatchlist Post body
      */
-    public void getTvShowDetail(long tvShowId, String subRequestType, String videoLanguages, String imageLanguages) {
-        tvShowRepository.getTvShowDetail(tvShowId, subRequestType, videoLanguages, imageLanguages);
+    public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
+        userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
     }
 
     /**
@@ -111,8 +196,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
      *
      * @return
      */
-    public LiveData<TvShowDetailData> getTvShowDetailLiveData() {
-        return tvShowDetailLiveData;
+    public LiveData<TmdbStatusResponse> getWatchlistUpdateResponseLiveData() {
+        return watchlistUpdateResponseLiveData;
     }
 
     // endregion
@@ -129,7 +214,7 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param id movie Id
      * @return
      */
-    public LiveData<Boolean> checkMovieExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkMovieExistInRoomWatchlist(long id) {
         return watchlistRepository.checkMovieExistInWatchlist(id);
     }
 
@@ -164,7 +249,7 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param id tvShow Id
      * @return
      */
-    public LiveData<Boolean> checkTvShowExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkTvShowExistInWatchlist(long id) {
         return watchlistRepository.checkTvShowExistInWatchlist(id);
     }
 

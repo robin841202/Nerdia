@@ -6,15 +6,20 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.movieinfo.model.TmdbStatusResponse;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
+import com.example.movieinfo.model.repository.UserRepository;
 import com.example.movieinfo.model.repository.WatchlistRepository;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.example.movieinfo.model.user.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import java.util.List;
 
 public class OperateMediaViewModel extends AndroidViewModel {
     private final WatchlistRepository watchlistRepository;
+    private UserRepository userRepository;
+    private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
+    private LiveData<AccountStatesOnMedia> accountStatesLiveData;
 
     public OperateMediaViewModel(@NonNull Application application) {
         super(application);
@@ -25,8 +30,12 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * Initialize ViewModel liveData, Prevent from triggering observer twice
      */
     public void init() {
-
+        userRepository = new UserRepository();
+        watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
+        accountStatesLiveData = userRepository.getAccountStatesLiveData();
     }
+
+    // region Room Database
 
     // region Movie Watchlist
 
@@ -36,7 +45,7 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * @param id movie Id
      * @return
      */
-    public LiveData<Boolean> checkMovieExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkMovieExistInWatchlist(long id) {
         return watchlistRepository.checkMovieExistInWatchlist(id);
     }
 
@@ -71,7 +80,7 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * @param id tvShow Id
      * @return
      */
-    public LiveData<Boolean> checkTvShowExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkTvShowExistInWatchlist(long id) {
         return watchlistRepository.checkTvShowExistInWatchlist(id);
     }
 
@@ -97,4 +106,67 @@ public class OperateMediaViewModel extends AndroidViewModel {
 
     // endregion
 
+    // endregion
+
+
+    // region Remote Data Source (API)
+
+    // region Get Account States on Media
+
+    /**
+     * Call repository to get account states on TMDB movie and update status to liveData
+     *
+     * @param movieId Movie Id
+     * @param session Valid session
+     */
+    public void getTMDBAccountStatesOnMovie(long movieId, String session) {
+        userRepository.getTMDBAccountStatesOnMovie(movieId, session);
+    }
+
+    /**
+     * Call repository to get account states on TMDB tvShow and update status to liveData
+     *
+     * @param tvShowId TvShow Id
+     * @param session Valid session
+     */
+    public void getTMDBAccountStatesOnTvShow(long tvShowId, String session) {
+        userRepository.getTMDBAccountStatesOnTvShow(tvShowId, session);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<AccountStatesOnMedia> getAccountStatesLiveData() {
+        return accountStatesLiveData;
+    }
+
+    // endregion
+
+    // region Update Watchlist
+
+    /**
+     * Call repository to add or delete media in TMDB watchlist and update status to liveData
+     *
+     * @param userId        User Id
+     * @param session       Valid session
+     * @param bodyWatchlist Post body
+     */
+    public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
+        userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<TmdbStatusResponse> getWatchlistUpdateResponseLiveData() {
+        return watchlistUpdateResponseLiveData;
+    }
+
+    // endregion
+
+    // endregion
 }

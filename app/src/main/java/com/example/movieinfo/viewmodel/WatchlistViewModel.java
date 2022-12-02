@@ -40,7 +40,7 @@ public class WatchlistViewModel extends AndroidViewModel {
         tvShowWatchlistLiveData = tvShowRepository.getTvShowsLiveData();
     }
 
-    // region Local Database
+    // region Room Database
 
     /**
      * Load All Movie Watchlist from room database (using LiveData)

@@ -12,6 +12,7 @@ import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.IMovieService;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -286,6 +287,77 @@ public class MovieRepository {
     // region MVVM architecture using LiveData
 
 
+    // region MOVIE DETAILS
+
+    /**
+     * Get Movie Detail By Movie Id (using LiveData)
+     *
+     * @param movieId        Movie Id
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     */
+    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
+        call.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
+    }
+
+    /**
+     * Get Movie Detail By Movie Id (using LiveData)
+     *
+     * @param movieId        Movie Id
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param session        Valid session
+     */
+    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages, String session) {
+        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages, session);
+        call.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
+    }
+
+    /**
+     * (private) Get MovieDetail Request Handler (using LiveData)
+     *
+     * @param movieDetailLiveData live data
+     * @return Request Handler
+     */
+    private Callback<MovieDetailData> getMovieDetailRequestHandler(MutableLiveData<MovieDetailData> movieDetailLiveData) {
+        return new Callback<MovieDetailData>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    MovieDetailData responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        movieDetailLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieDetailData> call, @NonNull Throwable t) {
+                // post null to liveData
+                movieDetailLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getMovieDetail,\n %s ", t.getMessage()));
+            }
+        };
+    }
+
+    /***
+     * Get Movie Detail Live Data
+     * @return
+     */
+    public MutableLiveData<MovieDetailData> getMovieDetailLiveData() {
+        return movieDetailLiveData;
+    }
+
+    // endregion
+
+    // region MOVIES RESPONSE
+
+    // region UPCOMING MOVIES
+
     /**
      * Get Upcoming Movies (using LiveData)
      *
@@ -297,6 +369,18 @@ public class MovieRepository {
         call.enqueue(requestHandler);
     }
 
+    /***
+     * Get Movies Response Live Data (For Upcoming Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getUpcomingMoviesLiveData() {
+        return upcomingMoviesLiveData;
+    }
+
+    // endregion
+
+    // region NOW-PLAYING MOVIES
+
     /**
      * Get Now-Playing Movies (using LiveData)
      *
@@ -307,6 +391,18 @@ public class MovieRepository {
         Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(nowPlayingMoviesLiveData);
         call.enqueue(requestHandler);
     }
+
+    /***
+     * Get Movies Response Live Data (For Now-Playing Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getNowPlayingMoviesLiveData() {
+        return nowPlayingMoviesLiveData;
+    }
+
+    // endregion
+
+    // region TRENDING MOVIES
 
     /**
      * Get Trending Movies (using LiveData)
@@ -320,6 +416,18 @@ public class MovieRepository {
         call.enqueue(requestHandler);
     }
 
+    /***
+     * Get Movies Response Live Data (For Trending Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getTrendingMoviesLiveData() {
+        return trendingMoviesLiveData;
+    }
+
+    // endregion
+
+    // region POPULAR MOVIES
+
     /**
      * Get Popular Movies (using LiveData)
      *
@@ -330,6 +438,16 @@ public class MovieRepository {
         Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(popularMoviesLiveData);
         call.enqueue(requestHandler);
     }
+
+    /***
+     * Get Movies Response Live Data (For Popular Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getPopularMoviesLiveData() {
+        return popularMoviesLiveData;
+    }
+
+    // endregion
 
     /**
      * Search Movies By Keyword (using LiveData)
@@ -357,10 +475,11 @@ public class MovieRepository {
 
     /**
      * Get Movie Watchlist on TMDB (using LiveData)
-     * @param userId Account Id
-     * @param session Valid session
+     *
+     * @param userId   Account Id
+     * @param session  Valid session
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
-     * @param page target page
+     * @param page     target page
      */
     public void getTMDBMovieWatchlist(long userId, String session, String sortMode, int page) {
         Call<MoviesResponse> call = service.getTMDBMovieWatchlist(userId, apiKey, session, sortMode, page, language);
@@ -371,7 +490,7 @@ public class MovieRepository {
     /**
      * Discover Movies (using LiveData)
      *
-     * @param page    target page
+     * @param page          target page
      * @param includeGenres Comma separated value of genre ids that you want to include in the results.
      */
     public void discoverMovies(int page, String includeGenres) {
@@ -409,38 +528,6 @@ public class MovieRepository {
         };
     }
 
-
-    /**
-     * Get Movie Detail By Movie Id (using LiveData)
-     *
-     * @param movieId        Movie Id
-     * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
-     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
-     */
-    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
-        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
-        call.enqueue(new Callback<MovieDetailData>() {
-            @Override
-            public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    MovieDetailData responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        movieDetailLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MovieDetailData> call, @NonNull Throwable t) {
-                // post null to liveData
-                movieDetailLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: getMovieDetail,\n %s ", t.getMessage()));
-            }
-        });
-    }
-
     /***
      * Get Movies Response Live Data
      * @return
@@ -449,45 +536,8 @@ public class MovieRepository {
         return moviesLiveData;
     }
 
-    /***
-     * Get Movies Response Live Data (For Upcoming Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getUpcomingMoviesLiveData() {
-        return upcomingMoviesLiveData;
-    }
-
-    /***
-     * Get Movies Response Live Data (For Now-Playing Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getNowPlayingMoviesLiveData() {
-        return nowPlayingMoviesLiveData;
-    }
-
-    /***
-     * Get Movies Response Live Data (For Trending Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getTrendingMoviesLiveData() {
-        return trendingMoviesLiveData;
-    }
-
-    /***
-     * Get Movies Response Live Data (For Popular Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getPopularMoviesLiveData() {
-        return popularMoviesLiveData;
-    }
+    // endregion
 
 
-    /***
-     * Get Movie Detail Live Data
-     * @return
-     */
-    public MutableLiveData<MovieDetailData> getMovieDetailLiveData() {
-        return movieDetailLiveData;
-    }
     // endregion
 }

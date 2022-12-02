@@ -31,7 +31,7 @@ public interface IMovieWatchlistDao {
     LiveData<List<MovieWatchlistEntity>> getAll();
 
     @Query("SELECT EXISTS(SELECT * FROM MovieWatchlistTable WHERE movieId = :id)")
-    LiveData<Boolean> checkExistById(long id);
+    ListenableFuture<Boolean> checkExistById(long id);
 
     @Query("DELETE FROM MovieWatchlistTable")
     void deleteAll();

@@ -8,6 +8,7 @@ import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.model.user.UserData;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
@@ -65,8 +66,21 @@ public class SharedPreferenceUtils {
      * @param sp SharedPreference object
      * @return Session or empty string
      */
-    @Nullable
     public static String getSessionFromSharedPreference(SharedPreferences sp) {
         return sp.getString(StaticParameter.SharedPreferenceFieldKey.SP_FIELD_TMDB_SESSION_KEY, "");
+    }
+
+    /**
+     * Get all useful login info from sharedPreference
+     *
+     * @param sp SharedPreference object
+     * @return LoginInfo object
+     */
+    public static LoginInfo getLoginInfoFromSharedPreference(SharedPreferences sp) {
+        if(sp == null) return new LoginInfo();
+        String session = getSessionFromSharedPreference(sp);
+        UserData userData = getUserDataFromSharedPreference(sp);
+        long userId = userData != null ? userData.getId() : 0;
+        return new LoginInfo(userId, session, !Strings.isNullOrEmpty(session));
     }
 }

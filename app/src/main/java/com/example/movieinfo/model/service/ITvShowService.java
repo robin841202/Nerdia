@@ -2,6 +2,7 @@ package com.example.movieinfo.model.service;
 
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -86,6 +87,36 @@ public interface ITvShowService {
                     String imageLanguages
     );
 
+    /**
+     * Get TvShow Detail By TvShow Id
+     *
+     * @param id             TvShow Id
+     * @param apiKey         TMDB API Key
+     * @param language       ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param session        Valid session
+     * @return
+     */
+    @GET("tv/{tv_id}")
+    Call<TvShowDetailData> getTvShowDetail(
+            @Path("tv_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("language")
+                    String language,
+            @Query("append_to_response")
+                    String subRequestType,
+            @Query("include_video_language")
+                    String videoLanguages,
+            @Query("include_image_language")
+                    String imageLanguages,
+            @Query("session_id")
+                    String session
+    );
+
 
     /**
      * Search TvShows By Keyword
@@ -160,11 +191,12 @@ public interface ITvShowService {
 
     /**
      * Get TvShow Watchlist on TMDB
-     * @param id Account Id
-     * @param apiKey TMDB API Key
-     * @param session Valid session
+     *
+     * @param id       Account Id
+     * @param apiKey   TMDB API Key
+     * @param session  Valid session
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
-     * @param page target page
+     * @param page     target page
      * @param language ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
      * @return
      */
@@ -183,6 +215,5 @@ public interface ITvShowService {
             @Query("language")
                     String language
     );
-
 
 }

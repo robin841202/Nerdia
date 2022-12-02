@@ -7,7 +7,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.BuildConfig;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.TmdbStatusResponse;
+import com.example.movieinfo.model.auth.SessionResponse;
 import com.example.movieinfo.model.service.IUserService;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.example.movieinfo.model.user.BodyWatchlist;
 import com.example.movieinfo.model.user.UserData;
 
 import retrofit2.Call;
@@ -22,12 +26,15 @@ public class UserRepository {
     private final String apiKey = BuildConfig.TMDB_API_KEY;
 
     // UserData LiveData
-    private MutableLiveData<UserData> userLiveData;
+    private final MutableLiveData<UserData> userLiveData = new MutableLiveData<>();
+
+    // TmdbStatusResponse LiveData
+    private final MutableLiveData<TmdbStatusResponse> statusResponseLiveData = new MutableLiveData<>();
+
+    // AccountStatesOnMedia LiveData
+    private final MutableLiveData<AccountStatesOnMedia> accountStatesLiveData = new MutableLiveData<>();
 
     public UserRepository() {
-
-        // Initialize LiveData
-        initLiveData();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(StaticParameter.TmdbApiBaseUrl)
@@ -36,14 +43,9 @@ public class UserRepository {
         service = retrofit.create(IUserService.class);
     }
 
-    /**
-     * Initialize every LiveData
-     */
-    private void initLiveData() {
-        userLiveData = new MutableLiveData<>();
-    }
-
     // region MVVM architecture using LiveData
+
+    // region USER DATA
 
     /**
      * Get account details (using LiveData)
@@ -80,6 +82,120 @@ public class UserRepository {
     public MutableLiveData<UserData> getUserLiveData() {
         return userLiveData;
     }
+
+    // endregion
+
+    // region TMDB STATUS RESPONSE
+
+    /**
+     * Add or delete movie or tvShow in TMDB watchlist (using LiveData)
+     *
+     * @param userId    User Id
+     * @param session   Valid session
+     * @param bodyWatchlist Post body
+     */
+    public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
+        Call<TmdbStatusResponse> call = service.updateMediaToWatchlistTMDB(userId, apiKey, session, bodyWatchlist);
+        call.enqueue(new Callback<TmdbStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TmdbStatusResponse> call, @NonNull Response<TmdbStatusResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    TmdbStatusResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        statusResponseLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TmdbStatusResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                statusResponseLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: updateMediaToWatchlistTMDB,\n %s ", t.getMessage()));
+            }
+        });
+    }
+
+    /***
+     * Get TmdbStatusResponse Live Data
+     * @return
+     */
+    public MutableLiveData<TmdbStatusResponse> getStatusResponseLiveData() {
+        return statusResponseLiveData;
+    }
+
+    // endregion
+
+    // region ACCOUNT STATES ON MEDIA
+
+    /**
+     * Get Account states on TMDB movie (using LiveData)
+     *
+     * @param movieId Movie Id
+     * @param session User session
+     */
+    public void getTMDBAccountStatesOnMovie(long movieId, String session) {
+        Call<AccountStatesOnMedia> call = service.getTMDBAccountStatesOnMovie(movieId, apiKey, session);
+        call.enqueue(new Callback<AccountStatesOnMedia>() {
+            @Override
+            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    AccountStatesOnMedia responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        accountStatesLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
+                // post null to liveData
+                accountStatesLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnMovie,\n %s ", t.getMessage()));
+            }
+        });
+    }
+
+    /**
+     * Get Account states on TMDB tvShow (using LiveData)
+     *
+     * @param tvShowId TvShow Id
+     * @param session User session
+     */
+    public void getTMDBAccountStatesOnTvShow(long tvShowId, String session) {
+        Call<AccountStatesOnMedia> call = service.getTMDBAccountStatesOnTvShow(tvShowId, apiKey, session);
+        call.enqueue(new Callback<AccountStatesOnMedia>() {
+            @Override
+            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    AccountStatesOnMedia responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        accountStatesLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
+                // post null to liveData
+                accountStatesLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnTvShow,\n %s ", t.getMessage()));
+            }
+        });
+    }
+
+    /***
+     * Get AccountStatesOnMedia Live Data
+     * @return
+     */
+    public MutableLiveData<AccountStatesOnMedia> getAccountStatesLiveData() {
+        return accountStatesLiveData;
+    }
+
+    // endregion
 
     // endregion
 }

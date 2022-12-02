@@ -167,9 +167,10 @@
                     android:layout_width="@dimen/toggleBtn_size"
                     android:layout_height="@dimen/toggleBtn_size"
                     android:layout_margin="8dp"
+                    android:background="@drawable/watchlist_toggle_btn"
                     android:textOff="@null"
                     android:textOn="@null"
-                    android:background="@drawable/watchlist_toggle_btn"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 

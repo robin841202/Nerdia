@@ -9,9 +9,10 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -25,11 +26,16 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.TmdbStatusResponse;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.LoginInfo;
+import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
 import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
@@ -46,7 +52,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 
@@ -56,17 +61,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private Context context;
 
     private String mediaType;
-
-    // Define subRequest type
-    private final String SUB_REQUEST_TYPE = "videos,images,credits,external_ids";
-
-    // Define video languages
-    private final String[] videoLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage()};
-    private final String VIDEO_LANGUAGES = TextUtils.join(",", videoLanguagesCodeArray);
-
-    // Define image languages
-    private final String[] imageLanguagesCodeArray = {Locale.TRADITIONAL_CHINESE.toLanguageTag(), Locale.ENGLISH.getLanguage(), "null"};
-    private final String IMAGE_LANGUAGES = TextUtils.join(",", imageLanguagesCodeArray);
 
     private SlideShowAdapter slideshowAdapter;
 
@@ -81,12 +75,20 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
     private MediaDetailViewModel mediaDetailViewModel;
 
+    private LoginInfo mLoginInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_details);
 
         context = this;
+
+        // Get SharedPreference file
+        SharedPreferences sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
+
+        // Initialize loginInfo
+        mLoginInfo = SharedPreferenceUtils.getLoginInfoFromSharedPreference(sp);
 
         // Initialize Views
         poster = findViewById(R.id.img_movie_poster);
@@ -135,14 +137,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                     // Set movieDetail observer
                     mediaDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
-                    // Check and observe whether movie is already in local database watchlist or not
-                    mediaDetailViewModel.checkMovieExistInWatchlist(movieId).observe(this, aBoolean -> {
-                        // Set toggle button default status
-                        watchlistToggleBtn.setChecked(aBoolean);
-                    });
-
                     // Start fetch data from api
-                    getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+                    getMovieDetail(movieId);
 
                 }
 
@@ -161,19 +157,31 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                     // Set tvShowDetail observer
                     mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
-                    // Check and observe whether movie is already in local database watchlist or not
-                    mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowId).observe(this, aBoolean -> {
-                        // Set toggle button default status
-                        watchlistToggleBtn.setChecked(aBoolean);
-                    });
-
                     // Start fetch data from api
-                    getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+                    getTvShowDetail(tvShowId);
                 }
                 break;
             default:
                 // do nothing
                 break;
+        }
+
+        // Set watchlist update observer if isLogin
+        if (mLoginInfo.isLogin()) {
+            mediaDetailViewModel.getWatchlistUpdateResponseLiveData().observe(this, tmdbStatusResponse -> {
+                switch (tmdbStatusResponse.getStatusCode()) {
+                    case 1: // Success
+                    case 12: // The item/record was updated successfully.
+                        showWatchlistAddMsg(true);
+                        break;
+                    case 13: // The item/record was deleted successfully.
+                        showWatchlistDeleteMsg(true);
+                        break;
+                    default:
+                        showWatchlistAddMsg(false);
+                        break;
+                }
+            });
         }
 
     }
@@ -197,13 +205,14 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Get Movie Detail By Movie Id
      *
-     * @param id             movie id
-     * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
-     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param id movie id
      */
-    public void getMovieDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
-        mediaDetailViewModel.getMovieDetail(id, subRequestType, videoLanguages, imageLanguages);
+    public void getMovieDetail(long id) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.getMovieDetailWithLogin(id, mLoginInfo.getSession());
+        } else { // NOT LOGIN
+            mediaDetailViewModel.getMovieDetail(id);
+        }
     }
 
     /**
@@ -214,15 +223,41 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             // populate data to UI
             populateDetails(movieDetailData);
 
+            // region Set watchlist toggle button initial status
+            if (mLoginInfo.isLogin()) { // LOGIN TMDB
+                AccountStatesOnMedia accountStates = movieDetailData.getAccountStatesOnMedia();
+                if (accountStates != null) {
+                    // show watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.VISIBLE);
+                    // Set watchlist toggle button default status
+                    watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                } else {
+                    // hide watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.GONE);
+                }
+            } else { // NOT LOGIN
+                // region Check and observe whether movie is already in local database watchlist or not
+                try {
+                    boolean isExisted = mediaDetailViewModel.checkMovieExistInRoomWatchlist(movieDetailData.getId()).get();
+                    // show watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.VISIBLE);
+                    // Set watchlist toggle button default status
+                    watchlistToggleBtn.setChecked(isExisted);
+                } catch (ExecutionException | InterruptedException e) {
+                    // hide watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+                // endregion
+            }
+            // endregion
+
             // region Set toggle button onChange listener
-            watchlistToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) { // INSERT
-                        insertMovieToWatchlist(movieDetailData);
-                    } else { // DELETE
-                        deleteMovieFromWatchlist(movieDetailData);
-                    }
+            watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) { // INSERT
+                    insertMovieToWatchlist(movieDetailData);
+                } else { // DELETE
+                    deleteMovieFromWatchlist(movieDetailData);
                 }
             });
             // endregion
@@ -331,40 +366,52 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     // endregion
 
     // region Movie Watchlist
+
     /**
      * Insert movie to watchlist
+     *
      * @param movieDetailData
      */
-    private void insertMovieToWatchlist(MovieDetailData movieDetailData){
-        MovieWatchlistEntity newEntity = new MovieWatchlistEntity(
-                movieDetailData.getId(),
-                movieDetailData.getTitle(),
-                movieDetailData.getPosterPath(),
-                movieDetailData.getRating(),
-                movieDetailData.getIsAdult(),
-                Calendar.getInstance().getTime());
-        try {
-            String msg = mediaDetailViewModel.insertMovieWatchlist(newEntity).get() != null ? getString(R.string.msg_saved_to_watchlist) : getString(R.string.msg_operation_error);
-            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getColor(R.color.teal_200))
-                    .show();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+    private void insertMovieToWatchlist(MovieDetailData movieDetailData) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.updateMediaToWatchlistTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), new BodyWatchlist(StaticParameter.MediaType.MOVIE, movieDetailData.getId(), true));
+        } else { // NOT LOGIN
+            // region Room database
+            MovieWatchlistEntity newEntity = new MovieWatchlistEntity(
+                    movieDetailData.getId(),
+                    movieDetailData.getTitle(),
+                    movieDetailData.getPosterPath(),
+                    movieDetailData.getRating(),
+                    movieDetailData.getIsAdult(),
+                    Calendar.getInstance().getTime());
+            try {
+                boolean isSuccess = mediaDetailViewModel.insertMovieWatchlist(newEntity).get() != null;
+                showWatchlistAddMsg(isSuccess);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            // endregion
         }
     }
 
+
     /**
      * Delete movie from watchlist
+     *
      * @param movieDetailData
      */
-    private void deleteMovieFromWatchlist(MovieDetailData movieDetailData){
-        try {
-            String msg = mediaDetailViewModel.deleteMovieWatchlistById(movieDetailData.getId()).get() != null ? getString(R.string.msg_removed_from_watchlist) : getString(R.string.msg_operation_error);
-            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getColor(R.color.teal_200))
-                    .show();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+    private void deleteMovieFromWatchlist(MovieDetailData movieDetailData) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.updateMediaToWatchlistTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), new BodyWatchlist(StaticParameter.MediaType.MOVIE, movieDetailData.getId(), false));
+        } else { // NOT LOGIN
+            // region Room Database
+            try {
+                boolean isSuccess = mediaDetailViewModel.deleteMovieWatchlistById(movieDetailData.getId()).get() != null;
+                showWatchlistDeleteMsg(isSuccess);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            // endregion
         }
     }
 
@@ -380,13 +427,15 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     /**
      * Get TvShow Detail By TvShow Id
      *
-     * @param id             tvShow id
-     * @param subRequestType Can do subRequest in the same time  ex: videos
-     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
-     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param id tvShow id
      */
-    public void getTvShowDetail(long id, String subRequestType, String videoLanguages, String imageLanguages) {
-        mediaDetailViewModel.getTvShowDetail(id, subRequestType, videoLanguages, imageLanguages);
+    public void getTvShowDetail(long id) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.getTvShowDetailWithLogin(id, mLoginInfo.getSession());
+        } else { // NOT LOGIN
+            mediaDetailViewModel.getTvShowDetail(id);
+        }
+
     }
 
     /**
@@ -397,15 +446,43 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             // populate data to UI
             populateDetails(tvShowDetailData);
 
+            // region Set watchlist toggle button initial status
+            if (mLoginInfo.isLogin()) { // LOGIN TMDB
+                AccountStatesOnMedia accountStates = tvShowDetailData.getAccountStatesOnMedia();
+                if (accountStates != null) {
+                    // show watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.VISIBLE);
+                    // Set watchlist toggle button default status
+                    watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                } else {
+                    // hide watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.GONE);
+                }
+            } else { // NOT LOGIN
+
+                // region Check and observe whether movie is already in local database watchlist or not
+                try {
+                    boolean isExisted = mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowDetailData.getId()).get();
+                    // show watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.VISIBLE);
+                    // Set toggle button default status
+                    watchlistToggleBtn.setChecked(isExisted);
+                } catch (ExecutionException | InterruptedException e) {
+                    // hide watchlist toggle button
+                    watchlistToggleBtn.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+                // endregion
+
+            }
+            // endregion
+
             // region Set toggle button onChange listener
-            watchlistToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) { // INSERT
-                        insertTvShowToWatchlist(tvShowDetailData);
-                    } else { // DELETE
-                        deleteTvShowFromWatchlist(tvShowDetailData);
-                    }
+            watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) { // INSERT
+                    insertTvShowToWatchlist(tvShowDetailData);
+                } else { // DELETE
+                    deleteTvShowFromWatchlist(tvShowDetailData);
                 }
             });
             // endregion
@@ -511,47 +588,57 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     // endregion
 
     // region TvShow Watchlist
+
     /**
      * Insert tvShow to watchlist
+     *
      * @param tvShowDetailData
      */
-    private void insertTvShowToWatchlist(TvShowDetailData tvShowDetailData){
-        TvShowWatchlistEntity newEntity = new TvShowWatchlistEntity(
-                tvShowDetailData.getId(),
-                tvShowDetailData.getTitle(),
-                tvShowDetailData.getPosterPath(),
-                tvShowDetailData.getRating(),
-                tvShowDetailData.getIsAdult(),
-                Calendar.getInstance().getTime());
-        try {
-            String msg = mediaDetailViewModel.insertTvShowWatchlist(newEntity).get() != null ? getString(R.string.msg_saved_to_watchlist) : getString(R.string.msg_operation_error);
-            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getColor(R.color.teal_200))
-                    .show();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+    private void insertTvShowToWatchlist(TvShowDetailData tvShowDetailData) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.updateMediaToWatchlistTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), new BodyWatchlist(StaticParameter.MediaType.TV, tvShowDetailData.getId(), true));
+        } else { // NOT LOGIN
+            // region Room Database
+            TvShowWatchlistEntity newEntity = new TvShowWatchlistEntity(
+                    tvShowDetailData.getId(),
+                    tvShowDetailData.getTitle(),
+                    tvShowDetailData.getPosterPath(),
+                    tvShowDetailData.getRating(),
+                    tvShowDetailData.getIsAdult(),
+                    Calendar.getInstance().getTime());
+            try {
+                boolean isSuccess = mediaDetailViewModel.insertTvShowWatchlist(newEntity).get() != null;
+                showWatchlistAddMsg(isSuccess);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            // endregion
         }
     }
 
     /**
      * Delete tvShow from watchlist
+     *
      * @param tvShowDetailData
      */
-    private void deleteTvShowFromWatchlist(TvShowDetailData tvShowDetailData){
-        try {
-            String msg = mediaDetailViewModel.deleteTvShowWatchlistById(tvShowDetailData.getId()).get() != null ? getString(R.string.msg_removed_from_watchlist) : getString(R.string.msg_operation_error);
-            Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getColor(R.color.teal_200))
-                    .show();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+    private void deleteTvShowFromWatchlist(TvShowDetailData tvShowDetailData) {
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            mediaDetailViewModel.updateMediaToWatchlistTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), new BodyWatchlist(StaticParameter.MediaType.TV, tvShowDetailData.getId(), false));
+        } else { // NOT LOGIN
+            // region Room Database
+            try {
+                boolean isSuccess = mediaDetailViewModel.deleteTvShowWatchlistById(tvShowDetailData.getId()).get() != null;
+                showWatchlistDeleteMsg(isSuccess);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            // endregion
         }
     }
 
     // endregion
 
     // endregion
-
 
 
     // region Create Tabs & Contents
@@ -678,5 +765,29 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private void showRatingBottomSheet() {
         RatingBottomSheet blankFragment = new RatingBottomSheet(mediaType);
         blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
+    }
+
+    /**
+     * Show watchlist message after adding
+     *
+     * @param isSuccess
+     */
+    private void showWatchlistAddMsg(boolean isSuccess) {
+        String msg = isSuccess ? getString(R.string.msg_saved_to_watchlist) : getString(R.string.msg_operation_error);
+        Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(getColor(R.color.teal_200))
+                .show();
+    }
+
+    /**
+     * Show watchlist message after deleting
+     *
+     * @param isSuccess
+     */
+    private void showWatchlistDeleteMsg(boolean isSuccess) {
+        String msg = isSuccess ? getString(R.string.msg_removed_from_watchlist) : getString(R.string.msg_operation_error);
+        Snackbar.make(watchlistToggleBtn, msg, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(getColor(R.color.teal_200))
+                .show();
     }
 }

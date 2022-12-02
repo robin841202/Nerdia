@@ -51,7 +51,7 @@ public class WatchlistRepository {
      *
      * @return exist or not (live data)
      */
-    public LiveData<Boolean> checkMovieExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkMovieExistInWatchlist(long id) {
         return movieWatchlistDao.checkExistById(id);
     }
 
@@ -99,7 +99,7 @@ public class WatchlistRepository {
      *
      * @return exist or not (live data)
      */
-    public LiveData<Boolean> checkTvShowExistInWatchlist(long id) {
+    public ListenableFuture<Boolean> checkTvShowExistInWatchlist(long id) {
         return tvShowWatchlistDao.checkExistById(id);
     }
 

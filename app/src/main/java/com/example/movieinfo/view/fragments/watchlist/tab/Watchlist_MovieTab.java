@@ -22,6 +22,7 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieData;
+import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.model.user.UserData;
 import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
@@ -47,8 +48,7 @@ public class Watchlist_MovieTab extends Fragment {
     private GridLayoutManager mLayoutMgr;
     private SwipeRefreshLayout pullToRefresh;
 
-    private String mSession;
-    private long mUserId;
+    private LoginInfo mLoginInfo;
     private int mCurrentPage;
     // Set sortMode Desc as default
     private final String mSortMode = StaticParameter.SortMode.CREATED_DATE_DESC;
@@ -81,22 +81,17 @@ public class Watchlist_MovieTab extends Fragment {
         // Get SharedPreference file
         SharedPreferences sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
 
-        if (sp != null) {
-            // Get the session from sharedPreference
-            mSession = SharedPreferenceUtils.getSessionFromSharedPreference(sp);
-            // Get the userData from sharedPreference
-            UserData userData = SharedPreferenceUtils.getUserDataFromSharedPreference(sp);
-            mUserId = userData != null ? userData.getId() : 0;
-            if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+        // Initialize loginInfo
+        mLoginInfo = SharedPreferenceUtils.getLoginInfoFromSharedPreference(sp);
 
-                // Set the observer
-                viewModel.getMovieWatchlistLiveData().observe(this, movieWatchlistTMDBObserver);
-            } else { // NOT LOGIN
-
-                // Load movie watchlist from local database and observe it
-                viewModel.loadAllMovieWatchlist().observe(this, loadMovieWatchlistObserver());
-            }
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            // Set the observer
+            viewModel.getMovieWatchlistLiveData().observe(this, movieWatchlistTMDBObserver);
+        } else { // NOT LOGIN
+            // Load movie watchlist from local database and observe it
+            viewModel.loadAllMovieWatchlist().observe(this, loadMovieWatchlistObserver());
         }
+
     }
 
     @Override
@@ -131,7 +126,7 @@ public class Watchlist_MovieTab extends Fragment {
         mRcView.setLayoutManager(mLayoutMgr);
 
 
-        if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
             // Set SwipeRefreshListener
             pullToRefresh.setOnRefreshListener(() -> {
                 // Refetching data
@@ -139,7 +134,7 @@ public class Watchlist_MovieTab extends Fragment {
                 Log.d(LOG_TAG, "onRefresh");
                 pullToRefresh.setRefreshing(false);
             });
-            fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+            fetchMovieWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
         } else { // NOT LOGIN
             // show shimmer animation
             mShimmer.startShimmer();
@@ -155,10 +150,10 @@ public class Watchlist_MovieTab extends Fragment {
     }
 
 
-    // region Local database
+    // region Room database
 
     /**
-     * Observe when Movie Watchlist LiveData changed (Local database)
+     * Observe when Movie Watchlist LiveData changed (Room Database)
      */
     public Observer<List<MovieWatchlistEntity>> loadMovieWatchlistObserver() {
         return movieWatchlist -> {
@@ -235,7 +230,7 @@ public class Watchlist_MovieTab extends Fragment {
 
                             // append nextPage data to recyclerView
                             mCurrentPage++;
-                            fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+                            fetchMovieWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
                         }
                     }
                 }
@@ -257,7 +252,7 @@ public class Watchlist_MovieTab extends Fragment {
         moviesAdapter.removeAllMovies();
 
         // Start fetching data
-        fetchMovieWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+        fetchMovieWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
     }
 
     // endregion

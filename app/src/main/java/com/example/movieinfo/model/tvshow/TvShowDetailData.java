@@ -6,6 +6,7 @@ import com.example.movieinfo.model.GenreData;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.ProductionCompany;
 import com.example.movieinfo.model.VideosResponse;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -69,6 +70,9 @@ public class TvShowDetailData {
 
     @SerializedName("external_ids")
     private ExternalIdResponse externalIdResponse;
+
+    @SerializedName("account_states")
+    private AccountStatesOnMedia accountStatesOnMedia;
 
 
 
@@ -243,5 +247,14 @@ public class TvShowDetailData {
      */
     public ExternalIdResponse getExternalIdResponse() {
         return externalIdResponse;
+    }
+
+    /**
+     * Get Account States on Media
+     *
+     * @return
+     */
+    public AccountStatesOnMedia getAccountStatesOnMedia() {
+        return accountStatesOnMedia;
     }
 }

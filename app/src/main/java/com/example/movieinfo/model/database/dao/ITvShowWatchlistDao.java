@@ -31,7 +31,7 @@ public interface ITvShowWatchlistDao {
     LiveData<List<TvShowWatchlistEntity>> getAll();
 
     @Query("SELECT EXISTS(SELECT * FROM TvShowWatchlistTable WHERE tvShowId = :id)")
-    LiveData<Boolean> checkExistById(long id);
+    ListenableFuture<Boolean> checkExistById(long id);
 
     @Query("DELETE FROM TvShowWatchlistTable")
     void deleteAll();

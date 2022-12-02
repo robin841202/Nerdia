@@ -243,6 +243,9 @@ public class TvShowRepository {
 
     // region MVVM architecture using LiveData
 
+    // region TVSHOWS RESPONSE
+
+    // region POPULAR TVSHOWS
 
     /**
      * Get Popular TvShows (using LiveData)
@@ -255,6 +258,18 @@ public class TvShowRepository {
         call.enqueue(requestHandler);
     }
 
+    /***
+     * Get TvShows Response Live Data (For Popular TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getPopularTvShowsLiveData() {
+        return popularTvShowsLiveData;
+    }
+
+    // endregion
+
+    // region TRENDING TVSHOWS
+
     /**
      * Get Trending TvShows (using LiveData)
      *
@@ -266,6 +281,16 @@ public class TvShowRepository {
         Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(trendingTvShowsLiveData);
         call.enqueue(requestHandler);
     }
+
+    /***
+     * Get TvShows Response Live Data (For Trending TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getTrendingTvShowsLiveData() {
+        return trendingTvShowsLiveData;
+    }
+
+    // endregion
 
     /**
      * Search TvShows By Keyword (using LiveData)
@@ -293,10 +318,11 @@ public class TvShowRepository {
 
     /**
      * Get TvShow Watchlist on TMDB (using LiveData)
-     * @param userId Account Id
-     * @param session Valid session
+     *
+     * @param userId   Account Id
+     * @param session  Valid session
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
-     * @param page target page
+     * @param page     target page
      */
     public void getTMDBTvShowWatchlist(long userId, String session, String sortMode, int page) {
         Call<TvShowsResponse> call = service.getTMDBTvShowWatchlist(userId, apiKey, session, sortMode, page, language);
@@ -307,7 +333,7 @@ public class TvShowRepository {
     /**
      * Discover TvShows (using LiveData)
      *
-     * @param page    target page
+     * @param page          target page
      * @param includeGenres Comma separated value of genre ids that you want to include in the results.
      */
     public void discoverTvShows(int page, String includeGenres) {
@@ -344,6 +370,18 @@ public class TvShowRepository {
         };
     }
 
+    /***
+     * Get TvShows Response Live Data (For Trending TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getTvShowsLiveData() {
+        return tvShowsLiveData;
+    }
+
+    // endregion
+
+
+    // region TVSHOW DETAILS
 
     /**
      * Get TvShow Detail By TvShow Id (using LiveData)
@@ -356,7 +394,32 @@ public class TvShowRepository {
     public void getTvShowDetail(long tvShowId,
                                 String subRequestType, String videoLanguages, String imageLanguages) {
         Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
-        call.enqueue(new Callback<TvShowDetailData>() {
+        call.enqueue(getTvShowDetailRequestHandler(tvShowDetailLiveData));
+    }
+
+    /**
+     * Get TvShow Detail By TvShow Id (using LiveData)
+     *
+     * @param tvShowId       TvShow Id
+     * @param subRequestType Can do subRequest in the same time  ex: videos
+     * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
+     * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
+     * @param session        Valid session
+     */
+    public void getTvShowDetail(long tvShowId,
+                                String subRequestType, String videoLanguages, String imageLanguages, String session) {
+        Call<TvShowDetailData> call = service.getTvShowDetail(tvShowId, apiKey, language, subRequestType, videoLanguages, imageLanguages, session);
+        call.enqueue(getTvShowDetailRequestHandler(tvShowDetailLiveData));
+    }
+
+    /**
+     * (private) Get TvShowDetail Request Handler (using LiveData)
+     *
+     * @param tvShowDetailLiveData live data
+     * @return Request Handler
+     */
+    private Callback<TvShowDetailData> getTvShowDetailRequestHandler(MutableLiveData<TvShowDetailData> tvShowDetailLiveData) {
+        return new Callback<TvShowDetailData>() {
             @Override
             public void onResponse(Call<TvShowDetailData> call, Response<TvShowDetailData> response) {
                 if (response.isSuccessful()) { // Request successfully
@@ -374,34 +437,9 @@ public class TvShowRepository {
                 tvShowDetailLiveData.postValue(null);
                 Log.d(LOG_TAG, String.format("data fetch failed: getTvShowDetail,\n %s ", t.getMessage()));
             }
-        });
+        };
     }
 
-
-    /***
-     * Get TvShows Response Live Data (For Popular TvShows)
-     * @return
-     */
-    public MutableLiveData<ArrayList<TvShowData>> getPopularTvShowsLiveData() {
-        return popularTvShowsLiveData;
-    }
-
-    /***
-     * Get TvShows Response Live Data (For Trending TvShows)
-     * @return
-     */
-    public MutableLiveData<ArrayList<TvShowData>> getTrendingTvShowsLiveData() {
-        return trendingTvShowsLiveData;
-    }
-
-
-    /***
-     * Get TvShows Response Live Data (For Trending TvShows)
-     * @return
-     */
-    public MutableLiveData<ArrayList<TvShowData>> getTvShowsLiveData() {
-        return tvShowsLiveData;
-    }
 
     /***
      * Get TvShow Detail Live Data
@@ -411,6 +449,7 @@ public class TvShowRepository {
         return tvShowDetailLiveData;
     }
 
+    // endregion
 
     // endregion
 }

@@ -25,6 +25,7 @@ import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.model.user.UserData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.view.MediaDetailsActivity;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Watchlist_TvShowTab extends Fragment{
+public class Watchlist_TvShowTab extends Fragment {
 
     private final String LOG_TAG = "Watchlist_TvShowTab";
 
@@ -52,8 +53,7 @@ public class Watchlist_TvShowTab extends Fragment{
     private GridLayoutManager mLayoutMgr;
     private SwipeRefreshLayout pullToRefresh;
 
-    private String mSession;
-    private long mUserId;
+    private LoginInfo mLoginInfo;
     private int mCurrentPage;
     // Set sortMode Desc as default
     private final String mSortMode = StaticParameter.SortMode.CREATED_DATE_DESC;
@@ -86,20 +86,15 @@ public class Watchlist_TvShowTab extends Fragment{
         // Get SharedPreference file
         SharedPreferences sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
 
-        if (sp != null) {
-            // Get the session from sharedPreference
-            mSession = SharedPreferenceUtils.getSessionFromSharedPreference(sp);
-            // Get the userData from sharedPreference
-            UserData userData = SharedPreferenceUtils.getUserDataFromSharedPreference(sp);
-            mUserId = userData != null ? userData.getId() : 0;
-            if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+        // Initialize loginInfo
+        mLoginInfo = SharedPreferenceUtils.getLoginInfoFromSharedPreference(sp);
 
-                // Set the observer
-                viewModel.getTvShowWatchlistLiveData().observe(this, tvShowWatchlistTMDBObserver);
-            } else { // NOT LOGIN
-                // Load tvShow watchlist from local database and observe it
-                viewModel.loadAllTvShowWatchlist().observe(this, loadTvShowWatchlistObserver());
-            }
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            // Set the observer
+            viewModel.getTvShowWatchlistLiveData().observe(this, tvShowWatchlistTMDBObserver);
+        } else { // NOT LOGIN
+            // Load tvShow watchlist from local database and observe it
+            viewModel.loadAllTvShowWatchlist().observe(this, loadTvShowWatchlistObserver());
         }
     }
 
@@ -119,7 +114,7 @@ public class Watchlist_TvShowTab extends Fragment{
         pullToRefresh = view.findViewById(R.id.swiperefresh);
 
         // Initialize Recycler Adapter
-        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
+        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
 
         // Set adapter
         mRcView.setAdapter(tvShowsAdapter);
@@ -134,7 +129,7 @@ public class Watchlist_TvShowTab extends Fragment{
         mRcView.setLayoutManager(mLayoutMgr);
 
 
-        if (!Strings.isNullOrEmpty(mSession)) { // LOGIN TMDB
+        if (mLoginInfo.isLogin()) { // LOGIN TMDB
             // Set SwipeRefreshListener
             pullToRefresh.setOnRefreshListener(() -> {
                 // Refetching data
@@ -142,7 +137,7 @@ public class Watchlist_TvShowTab extends Fragment{
                 Log.d(LOG_TAG, "onRefresh");
                 pullToRefresh.setRefreshing(false);
             });
-            fetchTvShowWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+            fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
         } else { // NOT LOGIN
             // show shimmer animation
             mShimmer.startShimmer();
@@ -157,7 +152,7 @@ public class Watchlist_TvShowTab extends Fragment{
 
     }
 
-    // region Local database
+    // region Room Database
 
     /**
      * Observe when TvShow Watchlist LiveData changed
@@ -183,7 +178,6 @@ public class Watchlist_TvShowTab extends Fragment{
     }
 
     // endregion
-
 
 
     // region Remote Data Source (API)
@@ -237,7 +231,7 @@ public class Watchlist_TvShowTab extends Fragment{
 
                             // append nextPage data to recyclerView
                             mCurrentPage++;
-                            fetchTvShowWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+                            fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
                         }
                     }
                 }
@@ -259,7 +253,7 @@ public class Watchlist_TvShowTab extends Fragment{
         tvShowsAdapter.removeAllTvShows();
 
         // Start fetching data
-        fetchTvShowWatchlistFromTMDB(mUserId, mSession, mSortMode, mCurrentPage);
+        fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
     }
 
     // endregion

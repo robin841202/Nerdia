@@ -2,10 +2,6 @@ package com.example.movieinfo.model.auth;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Response Data Model, using @SerializedName to map to json key
  */

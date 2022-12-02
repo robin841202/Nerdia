@@ -57,6 +57,14 @@ public class StaticParameter {
         public static final String PERSON = "person";
     }
 
+    public static class SubRequestType{
+        public static final String VIDEOS = "videos";
+        public static final String IMAGES = "images";
+        public static final String CREDITS = "credits";
+        public static final String EXTERNAL_IDS = "external_ids";
+        public static final String ACCOUNT_STATES = "account_states";
+    }
+
     public static class TimeWindow {
         public static final String DAILY = "day";
         public static final String WEEKLY = "week";
