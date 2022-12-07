@@ -36,6 +36,8 @@ android {
     }
     buildFeatures {
         viewBinding true
+        // Enable dataBinding feature
+        dataBinding true
     }
 
 }
@@ -68,6 +70,8 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     // Retrofit Gson Converter - In order to convert dataModel object into Json representation or in another way
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    // Retrofit Guava Adapter - In order to let retrofit support ListenableFuture
+    implementation "com.squareup.retrofit2:adapter-guava:$rootProject.retrofitVersion"
 
     // Gson - In order to convert dataModel object into Json representation or in another way
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"

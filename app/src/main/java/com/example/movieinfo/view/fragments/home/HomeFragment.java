@@ -25,12 +25,9 @@ import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
-import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 

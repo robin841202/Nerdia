@@ -1,15 +1,16 @@
 package com.example.movieinfo.model.service;
 
 import com.example.movieinfo.model.TmdbStatusResponse;
-import com.example.movieinfo.model.auth.SessionResponse;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.RequestBody.BodyRate;
+import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.example.movieinfo.model.user.UserData;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -53,6 +54,89 @@ public interface IUserService {
             @Body
                     BodyWatchlist bodyWatchlist
     );
+
+
+    // region Rating
+
+    /**
+     * Rate movie in TMDB
+     *
+     * @param movieId  Movie Id
+     * @param apiKey   TMDB API Key
+     * @param session  Valid session
+     * @param bodyRate Post body
+     * @return Status Response Model
+     */
+    @POST("movie/{movie_id}/rating")
+    ListenableFuture<TmdbStatusResponse> rateMovieTMDB(
+            @Path("movie_id")
+                    long movieId,
+            @Query("api_key")
+                    String apiKey,
+            @Query("session_id")
+                    String session,
+            @Body
+                    BodyRate bodyRate
+    );
+
+    /**
+     * Remove rate on movie in TMDB
+     *
+     * @param movieId Movie Id
+     * @param apiKey  TMDB API Key
+     * @param session Valid session
+     * @return Status Response Model
+     */
+    @DELETE("movie/{movie_id}/rating")
+    ListenableFuture<TmdbStatusResponse> removeRateMovieTMDB(
+            @Path("movie_id")
+                    long movieId,
+            @Query("api_key")
+                    String apiKey,
+            @Query("session_id")
+                    String session
+    );
+
+    /**
+     * Rate tvShow in TMDB
+     *
+     * @param tvShowId TvShow Id
+     * @param apiKey   TMDB API Key
+     * @param session  Valid session
+     * @param bodyRate Post body
+     * @return Status Response Model
+     */
+    @POST("tv/{tv_id}/rating")
+    ListenableFuture<TmdbStatusResponse> rateTvShowTMDB(
+            @Path("tv_id")
+                    long tvShowId,
+            @Query("api_key")
+                    String apiKey,
+            @Query("session_id")
+                    String session,
+            @Body
+                    BodyRate bodyRate
+    );
+
+    /**
+     * Remove rate on tvShow in TMDB
+     *
+     * @param tvShowId TvShow Id
+     * @param apiKey   TMDB API Key
+     * @param session  Valid session
+     * @return Status Response Model
+     */
+    @DELETE("tv/{tv_id}/rating")
+    ListenableFuture<TmdbStatusResponse> removeRateTvShowTMDB(
+            @Path("tv_id")
+                    long tvShowId,
+            @Query("api_key")
+                    String apiKey,
+            @Query("session_id")
+                    String session
+    );
+
+    // endregion
 
     // region Account States on Media
 

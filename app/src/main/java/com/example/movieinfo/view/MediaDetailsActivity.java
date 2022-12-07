@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -26,18 +25,19 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.ImagesResponse;
 import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.TmdbStatusResponse;
 import com.example.movieinfo.model.VideosResponse;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.RequestBody;
+import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.example.movieinfo.view.adapter.SlideShowAdapter;
+import com.example.movieinfo.view.bottomsheet.RateDetailsBottomSheet;
 import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
@@ -46,16 +46,22 @@ import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 
-public class MediaDetailsActivity extends AppCompatActivity implements SlideShowAdapter.ISlideShowListener {
+public class MediaDetailsActivity extends AppCompatActivity implements SlideShowAdapter.ISlideShowListener, RatingBottomSheet.IRatingListener {
 
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
@@ -72,10 +78,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
     private TextView voteCount;
     private ViewGroup ratingGroup;
     private ToggleButton watchlistToggleBtn;
+    private MaterialButton ratingBtn;
 
     private MediaDetailViewModel mediaDetailViewModel;
 
     private LoginInfo mLoginInfo;
+    private long mMediaId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +111,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         ViewPager2 slideshowViewPager2 = findViewById(R.id.viewpager_slideshow);
         TabLayout tabLayoutSlideshow = findViewById(R.id.tabLayout_slideshow);
         watchlistToggleBtn = findViewById(R.id.toggleBtn_watchlist);
+        ratingBtn = findViewById(R.id.btn_rating);
 
         // Initialize RecyclerView Adapter
         slideshowAdapter = new SlideShowAdapter(this, getLifecycle());
@@ -126,19 +135,19 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             case StaticParameter.MediaType.MOVIE:
 
                 // get movie id from intent
-                long movieId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, 0);
+                mMediaId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_MOVIE_ID_KEY, 0);
 
                 // Create and bind tabs and viewpager together (movie)
-                createMovieTabContents(customPagerAdapter, viewPager, tabLayoutDetails, movieId);
+                createMovieTabContents(customPagerAdapter, viewPager, tabLayoutDetails, mMediaId);
 
                 //  if data exists, get detail and populate in Views
-                if (movieId > 0) {
+                if (mMediaId > 0) {
 
                     // Set movieDetail observer
                     mediaDetailViewModel.getMovieDetailLiveData().observe(this, getMovieDetailObserver());
 
                     // Start fetch data from api
-                    getMovieDetail(movieId);
+                    getMovieDetail(mMediaId);
 
                 }
 
@@ -146,19 +155,19 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             case StaticParameter.MediaType.TV:
 
                 // get tvShow id from intent
-                long tvShowId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, 0);
+                mMediaId = intent.getLongExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_TVSHOW_ID_KEY, 0);
 
                 // Create and bind tabs and viewpager together (tvShow)
-                createTvShowTabContents(customPagerAdapter, viewPager, tabLayoutDetails, tvShowId);
+                createTvShowTabContents(customPagerAdapter, viewPager, tabLayoutDetails, mMediaId);
 
                 //  if data exists, get detail and populate in Views
-                if (tvShowId > 0) {
+                if (mMediaId > 0) {
 
                     // Set tvShowDetail observer
                     mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getTvShowDetailObserver());
 
                     // Start fetch data from api
-                    getTvShowDetail(tvShowId);
+                    getTvShowDetail(mMediaId);
                 }
                 break;
             default:
@@ -166,8 +175,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                 break;
         }
 
-        // Set watchlist update observer if isLogin
+
         if (mLoginInfo.isLogin()) {
+            // Set watchlist update observer if isLogin
             mediaDetailViewModel.getWatchlistUpdateResponseLiveData().observe(this, tmdbStatusResponse -> {
                 switch (tmdbStatusResponse.getStatusCode()) {
                     case 1: // Success
@@ -182,6 +192,23 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                         break;
                 }
             });
+
+            // Set ratedScore UI observer if isLogin
+            mediaDetailViewModel.getRatedScore().observe(this, score -> {
+                // show rating button
+                ratingBtn.setVisibility(View.VISIBLE);
+                // Set the existed score into rating button UI
+                if (score > 0) {
+                    ratingBtn.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_check));
+                    ratingBtn.setText(String.format(Locale.TAIWAN, "%.1f", score));
+                } else {
+                    ratingBtn.setIcon(ContextCompat.getDrawable(context, R.drawable.ic_add));
+                    ratingBtn.setText(context.getString(R.string.label_rating));
+                }
+            });
+        } else {
+            // Hide rating button
+            ratingBtn.setVisibility(View.GONE);
         }
 
     }
@@ -227,10 +254,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             if (mLoginInfo.isLogin()) { // LOGIN TMDB
                 AccountStatesOnMedia accountStates = movieDetailData.getAccountStatesOnMedia();
                 if (accountStates != null) {
+                    // region watchlist toggle button
                     // show watchlist toggle button
                     watchlistToggleBtn.setVisibility(View.VISIBLE);
                     // Set watchlist toggle button default status
                     watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                    // endregion
                 } else {
                     // hide watchlist toggle button
                     watchlistToggleBtn.setVisibility(View.GONE);
@@ -259,6 +288,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                 } else { // DELETE
                     deleteMovieFromWatchlist(movieDetailData);
                 }
+            });
+            // endregion
+
+            // region Set rating Button click event
+            ratingBtn.setOnClickListener(v -> {
+                showRatingBottomSheet();
             });
             // endregion
 
@@ -355,9 +390,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set vote count
         voteCount.setText(String.valueOf(movieDetail.getVoteCount()));
 
-        // set rating click event
+        // set rateDetails click event
         ratingGroup.setOnClickListener(v -> {
-            showRatingBottomSheet();
+            showRateDetailsBottomSheet();
         });
 
         Log.d(LOG_TAG, "movie detail: data populate to UI successfully");
@@ -450,16 +485,19 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
             if (mLoginInfo.isLogin()) { // LOGIN TMDB
                 AccountStatesOnMedia accountStates = tvShowDetailData.getAccountStatesOnMedia();
                 if (accountStates != null) {
+
+                    // region watchlist toggle button
                     // show watchlist toggle button
                     watchlistToggleBtn.setVisibility(View.VISIBLE);
                     // Set watchlist toggle button default status
                     watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                    // endregion
+
                 } else {
                     // hide watchlist toggle button
                     watchlistToggleBtn.setVisibility(View.GONE);
                 }
             } else { // NOT LOGIN
-
                 // region Check and observe whether movie is already in local database watchlist or not
                 try {
                     boolean isExisted = mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowDetailData.getId()).get();
@@ -473,7 +511,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                     e.printStackTrace();
                 }
                 // endregion
-
             }
             // endregion
 
@@ -484,6 +521,12 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                 } else { // DELETE
                     deleteTvShowFromWatchlist(tvShowDetailData);
                 }
+            });
+            // endregion
+
+            // region Set rating Button click event
+            ratingBtn.setOnClickListener(v -> {
+                showRatingBottomSheet();
             });
             // endregion
         };
@@ -579,9 +622,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set vote count
         voteCount.setText(String.valueOf(tvShowDetail.getVoteCount()));
 
-        // set rating click event
+        // set rateDetails click event
         ratingGroup.setOnClickListener(v -> {
-            showRatingBottomSheet();
+            showRateDetailsBottomSheet();
         });
     }
 
@@ -760,10 +803,18 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
 
 
     /**
+     * Show Rate Details Bottom Sheet Modal
+     */
+    private void showRateDetailsBottomSheet() {
+        RateDetailsBottomSheet blankFragment = new RateDetailsBottomSheet(mediaType);
+        blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
+    }
+
+    /**
      * Show Rating Bottom Sheet Modal
      */
     private void showRatingBottomSheet() {
-        RatingBottomSheet blankFragment = new RatingBottomSheet(mediaType);
+        RatingBottomSheet blankFragment = new RatingBottomSheet(this);
         blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
     }
 
@@ -790,4 +841,71 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
                 .setBackgroundTint(getColor(R.color.teal_200))
                 .show();
     }
+
+    /**
+     * Trigger when rating submit from RatingBottomSheet
+     *
+     * @param isSubmit submit or not(remove)
+     * @param score    submit score
+     */
+    @Override
+    public void onRatingSubmit(boolean isSubmit, double score) {
+        if (isSubmit) { // Submit Mode
+            if (score <= 0.0) {
+                // score can't be <= 0.0
+                Snackbar.make(ratingBtn, context.getString(R.string.label_rating_cant_be_zero), Snackbar.LENGTH_LONG)
+                        .setTextColor(context.getColor(R.color.white))
+                        .setBackgroundTint(context.getColor(R.color.red))
+                        .show();
+                return;
+            }
+            boolean isSuccess = false;
+            switch (mediaType) {
+                case StaticParameter.MediaType.MOVIE:
+                    isSuccess = mediaDetailViewModel.rateMovieTMDB(mMediaId, mLoginInfo.getSession(), new RequestBody.BodyRate(score));
+                    break;
+                case StaticParameter.MediaType.TV:
+                    isSuccess = mediaDetailViewModel.rateTvShowTMDB(mMediaId, mLoginInfo.getSession(), new RequestBody.BodyRate(score));
+                    break;
+            }
+            if (isSuccess) { // Success
+                // Set score into viewModel
+                mediaDetailViewModel.setRatedScore(score);
+
+                Snackbar.make(ratingBtn, String.format(Locale.TAIWAN, context.getString(R.string.format_rated_with_score), score), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(getColor(R.color.teal_200))
+                        .show();
+            } else { // Failed
+                Snackbar.make(ratingBtn, context.getString(R.string.msg_operation_error), Snackbar.LENGTH_LONG)
+                        .setTextColor(context.getColor(R.color.white))
+                        .setBackgroundTint(context.getColor(R.color.red))
+                        .show();
+            }
+
+        } else { // Remove Mode
+            boolean isSuccess = false;
+            switch (mediaType) {
+                case StaticParameter.MediaType.MOVIE:
+                    isSuccess = mediaDetailViewModel.removeRateMovieTMDB(mMediaId, mLoginInfo.getSession());
+                    break;
+                case StaticParameter.MediaType.TV:
+                    isSuccess = mediaDetailViewModel.removeRateTvShowTMDB(mMediaId, mLoginInfo.getSession());
+                    break;
+            }
+            if (isSuccess) { // Success
+                // Set score into viewModel
+                mediaDetailViewModel.setRatedScore(-1);
+
+                Snackbar.make(ratingBtn, context.getString(R.string.label_remove_rating), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(getColor(R.color.teal_200))
+                        .show();
+            } else { // Failed
+                Snackbar.make(ratingBtn, context.getString(R.string.msg_operation_error), Snackbar.LENGTH_LONG)
+                        .setTextColor(context.getColor(R.color.white))
+                        .setBackgroundTint(context.getColor(R.color.red))
+                        .show();
+            }
+        }
+    }
+
 }

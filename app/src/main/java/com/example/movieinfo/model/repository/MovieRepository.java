@@ -3,19 +3,27 @@ package com.example.movieinfo.model.repository;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.BuildConfig;
+import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.IMovieService;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.google.common.base.Strings;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -327,10 +335,28 @@ public class MovieRepository {
             @Override
             public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
                 if (response.isSuccessful()) { // Request successfully
-                    MovieDetailData responseBody = response.body();
-                    if (responseBody != null) { // Data exists
+                    MovieDetailData movieDetailData = response.body();
+                    if (movieDetailData != null) { // Data exists
+
+                        // region Handle rated score in accountStates
+                        if (movieDetailData.getAccountStatesOnMedia() != null) {
+                            if (movieDetailData.getAccountStatesOnMedia().getRated() instanceof LinkedTreeMap<?, ?>) { // rate score existed
+                                Type type = new TypeToken<AccountStatesOnMedia.Rated>() {
+                                }.getType();
+                                Gson gson = new Gson();
+                                AccountStatesOnMedia.Rated ratedObj = gson.fromJson(gson.toJson(movieDetailData.getAccountStatesOnMedia().getRated()), type);
+                                double score = ratedObj.score;
+                                // Set the score
+                                movieDetailData.getAccountStatesOnMedia().setScore(score);
+                            } else { // rate score not existed, type will be Boolean
+                                // Set the score to negative
+                                movieDetailData.getAccountStatesOnMedia().setScore(-1);
+                            }
+                        }
+                        // endregion
+
                         // post result data to liveData
-                        movieDetailLiveData.postValue(responseBody);
+                        movieDetailLiveData.postValue(movieDetailData);
                     }
                 }
             }

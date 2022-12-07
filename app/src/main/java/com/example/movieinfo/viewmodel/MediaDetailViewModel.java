@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.movieinfo.model.OmdbData;
 import com.example.movieinfo.model.StaticParameter;
@@ -19,8 +21,8 @@ import com.example.movieinfo.model.repository.TvShowRepository;
 import com.example.movieinfo.model.repository.UserRepository;
 import com.example.movieinfo.model.repository.WatchlistRepository;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
-import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.RequestBody.BodyRate;
+import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Locale;
@@ -71,6 +73,9 @@ public class MediaDetailViewModel extends AndroidViewModel {
     private LiveData<OmdbData> omdbLiveData;
     private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
 
+    // Used to observe MovieDetailData.accountStatesOnMedia.score
+    private final MediatorLiveData<Double> ratedScore = new MediatorLiveData<>();
+
     public MediaDetailViewModel(@NonNull Application application) {
         super(application);
         watchlistRepository = new WatchlistRepository(application);
@@ -88,6 +93,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
         tvShowDetailLiveData = tvShowRepository.getTvShowDetailLiveData();
         omdbLiveData = omdbRepository.getOmdbLiveData();
         watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
+        ratedScore.addSource(Transformations.map(movieDetailLiveData, input -> input.getAccountStatesOnMedia().getScore()), score -> ratedScore.postValue(score));
+        ratedScore.addSource(Transformations.map(tvShowDetailLiveData, input -> input.getAccountStatesOnMedia().getScore()), score -> ratedScore.postValue(score));
     }
 
     // region Remote Data Source (API)
@@ -202,6 +209,52 @@ public class MediaDetailViewModel extends AndroidViewModel {
 
     // endregion
 
+    // region Rate Media
+
+    /**
+     * Call repository to rate movie in TMDB
+     *
+     * @param movieId  Movie Id
+     * @param session  Valid session
+     * @param bodyRate Post body
+     */
+    public boolean rateMovieTMDB(long movieId, String session, BodyRate bodyRate) {
+        return userRepository.rateMovieTMDB(movieId, session, bodyRate);
+    }
+
+    /**
+     * Call repository to remove rate on movie in TMDB
+     *
+     * @param movieId Movie Id
+     * @param session Valid session
+     */
+    public boolean removeRateMovieTMDB(long movieId, String session) {
+        return userRepository.removeRateMovieTMDB(movieId, session);
+    }
+
+    /**
+     * Call repository to rate tvShow in TMDB
+     *
+     * @param tvShowId TvShow Id
+     * @param session  Valid session
+     * @param bodyRate Post body
+     */
+    public boolean rateTvShowTMDB(long tvShowId, String session, BodyRate bodyRate) {
+        return userRepository.rateTvShowTMDB(tvShowId, session, bodyRate);
+    }
+
+    /**
+     * Call repository to remove rate on tvShow in TMDB
+     *
+     * @param tvShowId TvShow Id
+     * @param session  Valid session
+     */
+    public boolean removeRateTvShowTMDB(long tvShowId, String session) {
+        return userRepository.removeRateTvShowTMDB(tvShowId, session);
+    }
+
+    // endregion
+
     // endregion
 
     // region Room Database
@@ -277,4 +330,25 @@ public class MediaDetailViewModel extends AndroidViewModel {
 
     // endregion
 
+    // region Separated observe field
+
+    /**
+     * Get the liveData to observe it, Used to observe (MovieDetailData/TvShowDetailData).accountStatesOnMedia.score
+     *
+     * @return
+     */
+    public LiveData<Double> getRatedScore() {
+        return ratedScore;
+    }
+
+    /**
+     * Set the ratedScore
+     *
+     * @param score
+     */
+    public void setRatedScore(double score) {
+        ratedScore.postValue(score);
+    }
+
+    // endregion
 }

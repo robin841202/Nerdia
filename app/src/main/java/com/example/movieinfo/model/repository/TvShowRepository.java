@@ -12,9 +12,14 @@ import com.example.movieinfo.model.service.ITvShowService;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
+import com.example.movieinfo.model.user.AccountStatesOnMedia;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -421,12 +426,29 @@ public class TvShowRepository {
     private Callback<TvShowDetailData> getTvShowDetailRequestHandler(MutableLiveData<TvShowDetailData> tvShowDetailLiveData) {
         return new Callback<TvShowDetailData>() {
             @Override
-            public void onResponse(Call<TvShowDetailData> call, Response<TvShowDetailData> response) {
+            public void onResponse(@NonNull Call<TvShowDetailData> call, @NonNull Response<TvShowDetailData> response) {
                 if (response.isSuccessful()) { // Request successfully
-                    TvShowDetailData responseBody = response.body();
-                    if (responseBody != null) { // Data exists
+                    TvShowDetailData tvShowDetailData = response.body();
+                    if (tvShowDetailData != null) { // Data exists
+                        // region Handle rated score in accountStates
+                        if (tvShowDetailData.getAccountStatesOnMedia() != null) {
+                            if (tvShowDetailData.getAccountStatesOnMedia().getRated() instanceof LinkedTreeMap<?, ?>) { // rate score existed
+                                Type type = new TypeToken<AccountStatesOnMedia.Rated>() {
+                                }.getType();
+                                Gson gson = new Gson();
+                                AccountStatesOnMedia.Rated ratedObj = gson.fromJson(gson.toJson(tvShowDetailData.getAccountStatesOnMedia().getRated()), type);
+                                double score = ratedObj.score;
+                                // Set the score
+                                tvShowDetailData.getAccountStatesOnMedia().setScore(score);
+                            } else { // rate score not existed, type will be Boolean
+                                // Set the score to negative
+                                tvShowDetailData.getAccountStatesOnMedia().setScore(-1);
+                            }
+                        }
+                        // endregion
+
                         // post result data to liveData
-                        tvShowDetailLiveData.postValue(responseBody);
+                        tvShowDetailLiveData.postValue(tvShowDetailData);
                     }
                 }
             }

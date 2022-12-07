@@ -1,5 +1,7 @@
 package com.example.movieinfo.model.user;
 
+import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -13,11 +15,7 @@ public class AccountStatesOnMedia {
     @SerializedName("watchlist")
     private boolean isInWatchlist;
 
-    /**
-     * Boolean false or Rated object
-     */
-    @SerializedName("rated")
-    private Object rated;
+    private double score;
 
     public boolean isFavourite() {
         return isFavourite;
@@ -27,14 +25,28 @@ public class AccountStatesOnMedia {
         return isInWatchlist;
     }
 
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    /**
+     * Boolean false or Rated object
+     */
+    @SerializedName("rated")
+    private Object rated;
+
     public Object getRated() {
         return rated;
     }
 
     /**
-     * Avatar object
+     * Rated object
      */
-    private static class Rated {
+    public static class Rated {
         @SerializedName("value")
         public double score;
     }

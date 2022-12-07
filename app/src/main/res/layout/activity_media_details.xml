@@ -82,7 +82,8 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/card_movie_poster"
-                    app:layout_constraintTop_toBottomOf="@+id/guideline_backdrop" />
+                    app:layout_constraintTop_toBottomOf="@+id/guideline_backdrop"
+                    tools:text="電影標題" />
 
                 <TextView
                     android:id="@+id/text_movie_release_date"
@@ -91,7 +92,8 @@
                     android:textColor="#757575"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="@+id/text_movie_title"
-                    app:layout_constraintTop_toBottomOf="@+id/text_movie_title" />
+                    app:layout_constraintTop_toBottomOf="@+id/text_movie_title"
+                    tools:text="上映日期" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/group_vote"
@@ -133,7 +135,8 @@
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/ratingBar_movie_rating"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="100%" />
 
                     <TextView
                         android:id="@+id/text_vote_count"
@@ -147,7 +150,8 @@
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/img_icon_people"
-                        app:layout_constraintTop_toBottomOf="@+id/text_score" />
+                        app:layout_constraintTop_toBottomOf="@+id/text_score"
+                        tools:text="987" />
 
                     <ImageView
                         android:id="@+id/img_icon_people"
@@ -162,6 +166,26 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:gravity="center"
+                    android:text="@string/label_rating"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    android:visibility="gone"
+                    app:backgroundTint="@drawable/watchlist_material_btn"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_add"
+                    app:iconSize="36dp"
+                    app:iconTint="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/toggleBtn_watchlist"
+                    app:layout_constraintStart_toEndOf="@+id/group_vote"
+                    tools:visibility="visible" />
+
                 <ToggleButton
                     android:id="@+id/toggleBtn_watchlist"
                     android:layout_width="@dimen/toggleBtn_size"
@@ -172,7 +196,8 @@
                     android:textOn="@null"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier_movie_poster"
@@ -205,17 +230,6 @@
             android:id="@+id/viewpager_details"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <!--<androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewpager_details"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </androidx.core.widget.NestedScrollView>-->
     </LinearLayout>
 
 

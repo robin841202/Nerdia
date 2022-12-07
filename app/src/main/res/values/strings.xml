@@ -86,4 +86,10 @@
     <string name="msg_login_successful">登入成功</string>
     <string name="msg_login_failed">登入失敗</string>
     <string name="msg_logout_successful">成功登出</string>
+    <string name="label_apply">送出</string>
+    <string name="label_remove">移除</string>
+    <string name="label_rating">進行評分</string>
+    <string name="format_rated_with_score">已送出評分: %.1f</string>
+    <string name="label_remove_rating">成功移除評分</string>
+    <string name="label_rating_cant_be_zero">分數無法為0</string>
 </resources>

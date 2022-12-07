@@ -28,7 +28,7 @@ import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.viewmodel.OperateMediaViewModel;

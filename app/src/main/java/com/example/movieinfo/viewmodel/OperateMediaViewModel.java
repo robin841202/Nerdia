@@ -12,7 +12,7 @@ import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
 import com.example.movieinfo.model.repository.UserRepository;
 import com.example.movieinfo.model.repository.WatchlistRepository;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.example.movieinfo.model.user.BodyWatchlist;
+import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public class OperateMediaViewModel extends AndroidViewModel {

@@ -1,109 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rating_bottom_sheet"
+    xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginVertical="16dp"
+        android:indeterminateOnly="false"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/circle_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_progress"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_gravity="center_vertical"
-        >
+        android:text="0.0"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="@+id/progressBar"
+        tool:text="0.0" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_tmdb"
-            android:layout_width="@dimen/logo"
-            android:layout_height="@dimen/logo"
-            android:layout_gravity="center"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:cardCornerRadius="4dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_tmdb_logo" />
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/text_rating_tmdb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="4dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Indicator"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:padding="16dp">
+        android:layout_marginVertical="16dp"
+        android:isIndicator="false"
+        android:numStars="10"
+        android:stepSize="0.5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_imdb"
-            android:layout_width="@dimen/logo"
-            android:layout_height="@dimen/logo"
-            android:layout_gravity="center"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:cardCornerRadius="4dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                android:src="@drawable/imdb_logo" />
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/text_rating_imdb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="4dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_remove"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="32dp"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:gravity="center"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="10dp"
+        android:text="@string/label_remove"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="?attr/colorPrimaryVariant"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_apply"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_rotten_tomatoes"
-            android:layout_width="@dimen/logo"
-            android:layout_height="@dimen/logo"
-            android:layout_gravity="center"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            app:cardCornerRadius="4dp">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_apply"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="32dp"
+        android:backgroundTint="?attr/colorPrimaryVariant"
+        android:gravity="center"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="10dp"
+        android:text="@string/label_apply"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/lightGray"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        app:rippleColor="@color/lightGray" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="2dp"
-                android:src="@drawable/rotten_tomatoes_logo" />
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/text_rating_tomato"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="4dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
