@@ -1,7 +1,6 @@
-package com.example.movieinfo.view.fragments.watchlist.tab;
+package com.example.movieinfo.view.fragments.profile.ratedlist;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,30 +20,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
-import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
-import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.user.LoginInfo;
-import com.example.movieinfo.model.user.UserData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
-import com.example.movieinfo.view.MediaDetailsActivity;
-import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.viewmodel.SimilarTabViewModel;
-import com.example.movieinfo.viewmodel.WatchlistViewModel;
+import com.example.movieinfo.viewmodel.RatedListViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class Watchlist_TvShowTab extends Fragment {
+public class RatedList_TvShowTab extends Fragment {
 
     private final String LOG_TAG = "RatedList_TvShowTab";
 
-    private WatchlistViewModel viewModel;
+    private RatedListViewModel viewModel;
     private Context context;
 
     private ShimmerFrameLayout mShimmer;
@@ -58,13 +47,13 @@ public class Watchlist_TvShowTab extends Fragment {
     // Set sortMode Desc as default
     private final String mSortMode = StaticParameter.SortMode.CREATED_DATE_DESC;
 
-    public Watchlist_TvShowTab() {
+    public RatedList_TvShowTab() {
         // Required empty public constructor
     }
 
-    public static Watchlist_TvShowTab newInstance() {
+    public static RatedList_TvShowTab newInstance() {
         Bundle args = new Bundle();
-        Watchlist_TvShowTab fragment = new Watchlist_TvShowTab();
+        RatedList_TvShowTab fragment = new RatedList_TvShowTab();
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,7 +68,7 @@ public class Watchlist_TvShowTab extends Fragment {
         mCurrentPage = 1;
 
         // Initialize viewModel, data only survive this fragment lifecycle
-        viewModel = new ViewModelProvider(this).get(WatchlistViewModel.class);
+        viewModel = new ViewModelProvider(this).get(RatedListViewModel.class);
         // Initialize liveData in viewModel, prevent from triggering observer multiple times
         viewModel.initLiveData();
 
@@ -88,14 +77,6 @@ public class Watchlist_TvShowTab extends Fragment {
 
         // Initialize loginInfo
         mLoginInfo = SharedPreferenceUtils.getLoginInfoFromSharedPreference(sp);
-
-        if (mLoginInfo.isLogin()) { // LOGIN TMDB
-            // Set the observer
-            viewModel.getTvShowWatchlistLiveData().observe(this, tvShowWatchlistTMDBObserver);
-        } else { // NOT LOGIN
-            // Load tvShow watchlist from local database and observe it
-            viewModel.loadAllTvShowWatchlist().observe(this, loadTvShowWatchlistObserver());
-        }
     }
 
     @Override
@@ -130,6 +111,9 @@ public class Watchlist_TvShowTab extends Fragment {
 
 
         if (mLoginInfo.isLogin()) { // LOGIN TMDB
+            // Set the observer
+            viewModel.getRatedTvShowsLiveData().observe(getViewLifecycleOwner(), ratedTvShowsTMDBObserver);
+
             // Set SwipeRefreshListener
             pullToRefresh.setOnRefreshListener(() -> {
                 // Refetching data
@@ -137,73 +121,35 @@ public class Watchlist_TvShowTab extends Fragment {
                 Log.d(LOG_TAG, "onRefresh");
                 pullToRefresh.setRefreshing(false);
             });
-            fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
-        } else { // NOT LOGIN
-            // show shimmer animation
-            mShimmer.startShimmer();
-            mShimmer.setVisibility(View.VISIBLE);
-
-            // Set SwipeRefreshListener
-            pullToRefresh.setOnRefreshListener(() -> {
-                // do nothing
-                pullToRefresh.setRefreshing(false);
-            });
+            fetchRatedTvShowsFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
         }
 
     }
 
-    // region Room Database
-
-    /**
-     * Observe when TvShow Watchlist LiveData changed
-     */
-    public Observer<List<TvShowWatchlistEntity>> loadTvShowWatchlistObserver() {
-        return tvShowWatchlist -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
-
-            // Mapping "TvShowWatchlistEntity" object to "TvShowData" object
-            ArrayList<TvShowData> tvShowData_list = tvShowWatchlist.stream().map(data -> new TvShowData(
-                    data.getTvShowId(),
-                    data.getTitle(),
-                    data.getPosterPath(),
-                    data.getRating())).collect(Collectors.toCollection(ArrayList::new));
-
-            // append data to adapter
-            tvShowsAdapter.setTvShows(tvShowData_list);
-
-            Log.d(LOG_TAG, "watchlist tvShows: data loaded successfully");
-        };
-    }
-
-    // endregion
-
-
     // region Remote Data Source (API)
 
     /**
-     * Start fetching tvShow watchlist from TMDB
+     * Start fetching rated tvShows from TMDB
      *
      * @param userId   Account Id
      * @param session  Valid session
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
      * @param page     target page
      */
-    private void fetchTvShowWatchlistFromTMDB(long userId, String session, String sortMode, int page) {
+    private void fetchRatedTvShowsFromTMDB(long userId, String session, String sortMode, int page) {
         if (userId >= 0) {
             // show shimmer animation
             mShimmer.startShimmer();
             mShimmer.setVisibility(View.VISIBLE);
-            viewModel.getTMDBTvShowWatchlist(userId, session, sortMode, page);
+            viewModel.getTMDBRatedTvShows(userId, session, sortMode, page);
         }
     }
 
 
     /**
-     * Observe when tvShow watchlist from TMDB LiveData changed
+     * Observe when rated tvShows from TMDB LiveData changed
      */
-    private final Observer<ArrayList<TvShowData>> tvShowWatchlistTMDBObserver = tvShows -> {
+    private final Observer<ArrayList<TvShowData>> ratedTvShowsTMDBObserver = tvShows -> {
         // hide shimmer animation
         mShimmer.stopShimmer();
         mShimmer.setVisibility(View.GONE);
@@ -231,14 +177,14 @@ public class Watchlist_TvShowTab extends Fragment {
 
                             // append nextPage data to recyclerView
                             mCurrentPage++;
-                            fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
+                            fetchRatedTvShowsFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
                         }
                     }
                 }
             });
         }
 
-        Log.d(LOG_TAG, "tvShow watchlist: data fetched successfully");
+        Log.d(LOG_TAG, "rated tvShows: data fetched successfully");
     };
 
 
@@ -253,7 +199,7 @@ public class Watchlist_TvShowTab extends Fragment {
         tvShowsAdapter.removeAllTvShows();
 
         // Start fetching data
-        fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
+        fetchRatedTvShowsFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
     }
 
     // endregion

@@ -23,13 +23,10 @@ import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.user.LoginInfo;
-import com.example.movieinfo.model.user.UserData;
-import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.viewmodel.WatchlistViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class Watchlist_MovieTab extends Fragment {
 
-    private final String LOG_TAG = "Watchlist_MovieTab";
+    private final String LOG_TAG = "RatedList_MovieTab";
 
     private WatchlistViewModel viewModel;
     private Context context;
@@ -98,7 +95,7 @@ public class Watchlist_MovieTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_watchlist_movie_tab, container, false);
+        return inflater.inflate(R.layout.fragment_general_grid_list, container, false);
     }
 
     @Override

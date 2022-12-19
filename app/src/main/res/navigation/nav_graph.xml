@@ -104,6 +104,12 @@
                 app:destination="@id/loginTmdbFragment"
                 app:enterAnim="@anim/fade_in"
                 app:exitAnim="@anim/fade_out" />
+            <action
+                android:id="@+id/action_profileFragment_to_watchlistTab"
+                app:destination="@id/watchlistTab" />
+            <action
+                android:id="@+id/action_profileFragment_to_ratedListFragment"
+                app:destination="@id/ratedListFragment" />
         </fragment>
         <fragment
             android:id="@+id/loginTmdbFragment"
@@ -112,6 +118,28 @@
             tools:layout="@layout/fragment_login_tmdb">
             <action
                 android:id="@+id/action_loginTmdbFragment_to_profileFragment"
+                app:destination="@id/profileFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
+        <fragment
+            android:id="@+id/watchlistTab"
+            android:name="com.example.movieinfo.view.fragments.watchlist.tab.WatchlistTab"
+            android:label="@string/label_unwatched_list"
+            tools:layout="@layout/fragment_general_layout_with_tab">
+            <action
+                android:id="@+id/action_watchlistTab_to_profileFragment"
+                app:destination="@id/profileFragment"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out" />
+        </fragment>
+        <fragment
+            android:id="@+id/ratedListFragment"
+            android:name="com.example.movieinfo.view.fragments.profile.ratedlist.RatedListFragment"
+            android:label="@string/label_rated_list"
+            tools:layout="@layout/fragment_general_layout_with_tab">
+            <action
+                android:id="@+id/action_ratedListFragment_to_profileFragment"
                 app:destination="@id/profileFragment"
                 app:enterAnim="@anim/fade_in"
                 app:exitAnim="@anim/fade_out" />

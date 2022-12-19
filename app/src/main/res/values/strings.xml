@@ -92,4 +92,7 @@
     <string name="format_rated_with_score">已送出評分: %.1f</string>
     <string name="label_remove_rating">成功移除評分</string>
     <string name="label_rating_cant_be_zero">分數無法為0</string>
+    <string name="label_unwatched_list">待觀看清單</string>
+    <string name="label_rated_list">已評清單</string>
+    <string name="label_rated_list_not_login">已評清單\n請登入以使用此功能</string>
 </resources>

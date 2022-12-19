@@ -2,7 +2,6 @@ package com.example.movieinfo.view.fragments.profile;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -19,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.URLUtil;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -28,17 +25,13 @@ import android.widget.ProgressBar;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.auth.RequestTokenResponse;
-import com.example.movieinfo.model.auth.SessionResponse;
 import com.example.movieinfo.model.user.UserData;
-import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.viewmodel.LoginTmdbViewModel;
-import com.example.movieinfo.viewmodel.ProfileViewModel;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
 import java.util.Date;
-import java.util.Map;
 
 public class LoginTmdbFragment extends Fragment {
     private final String LOG_TAG = "LoginTmdbFragment";

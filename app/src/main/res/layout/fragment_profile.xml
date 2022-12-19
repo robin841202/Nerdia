@@ -120,6 +120,50 @@
             app:rippleColor="@color/red_transparent"
             app:strokeColor="@color/red"
             app:strokeWidth="2dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_border"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_watchlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_list_style"
+            android:gravity="start"
+            android:paddingVertical="12dp"
+            android:text="@string/label_unwatched_list"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@drawable/btn_list_text_color"
+            app:backgroundTint="@null"
+            app:icon="@drawable/ic_watchlist_toggle_btn_off"
+            app:iconGravity="start"
+            app:iconSize="28dp"
+            app:iconTint="@color/white"
+            app:rippleColor="@color/gray_transparent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_rated_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_list_style"
+            android:gravity="start"
+            android:paddingVertical="12dp"
+            android:text="@string/label_rated_list"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@drawable/btn_list_text_color"
+            app:backgroundTint="@null"
+            app:icon="@drawable/ic_rated"
+            app:iconGravity="start"
+            app:iconSize="28dp"
+            app:iconTint="@color/white"
+            app:rippleColor="@color/gray_transparent" />
+    </LinearLayout>
+
 
 </LinearLayout>

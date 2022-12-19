@@ -2,19 +2,15 @@ package com.example.movieinfo.view.fragments.profile;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +21,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.model.user.UserData;
 import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
-import com.example.movieinfo.viewmodel.LoginTmdbViewModel;
-import com.example.movieinfo.viewmodel.ProfileViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
@@ -40,16 +35,15 @@ public class ProfileFragment extends Fragment {
     private final String LOG_TAG = "ProfileFragment";
     private Context context;
 
-    private MaterialButton loginBtn;
-    private MaterialButton logoutBtn;
     private SharedPreferences sp;
 
     private ViewGroup anonymousGroup;
     private ViewGroup profileGroup;
     private TextView profileNameTextView;
     private ImageView profileImage;
+    private MaterialButton ratedListBtn;
 
-    private ProfileViewModel viewModel;
+    private LoginInfo mLoginInfo;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -72,6 +66,8 @@ public class ProfileFragment extends Fragment {
         // Get SharedPreference file
         sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
 
+        // Initialize loginInfo
+        mLoginInfo = SharedPreferenceUtils.getLoginInfoFromSharedPreference(sp);
 
         // Observe userData SharedPreference livedata
         SharedPreferenceStringLiveData spUserLiveData = new SharedPreferenceStringLiveData(sp, StaticParameter.SharedPreferenceFieldKey.SP_FIELD_TMDB_USERDATA_KEY, "");
@@ -88,10 +84,6 @@ public class ProfileFragment extends Fragment {
             // show not login UI
             showAnonymousUI();
         });
-
-        // Initialize viewModel, data only survive this fragment lifecycle
-        viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-
     }
 
     @Override
@@ -106,18 +98,18 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Views
-        loginBtn = view.findViewById(R.id.btn_login);
-        logoutBtn = view.findViewById(R.id.btn_logout);
         anonymousGroup = view.findViewById(R.id.group_anonymous);
         profileGroup = view.findViewById(R.id.group_profile);
         profileNameTextView = view.findViewById(R.id.text_profile_name);
         profileImage = view.findViewById(R.id.img_profile);
+        MaterialButton loginBtn = view.findViewById(R.id.btn_login);
+        MaterialButton logoutBtn = view.findViewById(R.id.btn_logout);
+        MaterialButton watchlistBtn = view.findViewById(R.id.btn_watchlist);
+        ratedListBtn = view.findViewById(R.id.btn_rated_list);
 
         // Set login btn onClick listener
         loginBtn.setOnClickListener(v -> {
-            // navigate to loginTmdbFragment
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_profileFragment_to_loginTmdbFragment);
+            navigateTo(R.id.action_profileFragment_to_loginTmdbFragment);
         });
 
         // Set logout btn onClick listener
@@ -159,6 +151,17 @@ public class ProfileFragment extends Fragment {
                     .setAnchorView(R.id.bottomNavView) // set snackbar above bottomNav
                     .show();
         });
+
+        // Set watchlist btn onClick listener
+        watchlistBtn.setOnClickListener(v -> {
+            navigateTo(R.id.action_profileFragment_to_watchlistTab);
+        });
+
+        // Set ratedList btn onClick listener
+        ratedListBtn.setOnClickListener(v -> {
+            navigateTo(R.id.action_profileFragment_to_ratedListFragment);
+        });
+
     }
 
     /**
@@ -185,6 +188,10 @@ public class ProfileFragment extends Fragment {
 
         // show the profile viewgroup
         profileGroup.setVisibility(View.VISIBLE);
+
+        // enable ratedListBtn
+        ratedListBtn.setEnabled(true);
+        ratedListBtn.setText(R.string.label_rated_list);
     }
 
     /**
@@ -195,6 +202,9 @@ public class ProfileFragment extends Fragment {
         profileGroup.setVisibility(View.GONE);
         // show the anonymous viewgroup
         anonymousGroup.setVisibility(View.VISIBLE);
+        // disable ratedListBtn
+        ratedListBtn.setEnabled(false);
+        ratedListBtn.setText(R.string.label_rated_list_not_login);
     }
 
     /**
@@ -205,5 +215,15 @@ public class ProfileFragment extends Fragment {
         spEditor.putString(StaticParameter.SharedPreferenceFieldKey.SP_FIELD_TMDB_SESSION_KEY, "");
         spEditor.putString(StaticParameter.SharedPreferenceFieldKey.SP_FIELD_TMDB_USERDATA_KEY, "");
         spEditor.apply();
+    }
+
+    /**
+     * Navigate to specific fragment
+     *
+     * @param actionId action resource id
+     */
+    private void navigateTo(int actionId) {
+        NavHostFragment.findNavController(this)
+                .navigate(actionId);
     }
 }

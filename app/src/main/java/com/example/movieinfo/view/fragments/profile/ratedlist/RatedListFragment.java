@@ -1,4 +1,4 @@
-package com.example.movieinfo.view.fragments.watchlist.tab;
+package com.example.movieinfo.view.fragments.profile.ratedlist;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -18,13 +17,13 @@ import com.example.movieinfo.view.adapter.CustomPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class WatchlistTab extends Fragment{
+public class RatedListFragment extends Fragment{
 
     private final String LOG_TAG = "RatedListFragment";
 
     private Context context;
 
-    public WatchlistTab() {
+    public RatedListFragment() {
         // Required empty public constructor
     }
 
@@ -68,21 +67,18 @@ public class WatchlistTab extends Fragment{
         Use custom CustomPagerAdapter class to manage page views in fragments.
         Each page is represented by its own fragment.
         */
-        pagerAdapter.addFragment(new Watchlist_MovieTab(), getString(R.string.label_movies));
-        pagerAdapter.addFragment(new Watchlist_TvShowTab(), getString(R.string.label_tvshows));
+        pagerAdapter.addFragment(new RatedList_MovieTab(), getString(R.string.label_movies));
+        pagerAdapter.addFragment(new RatedList_TvShowTab(), getString(R.string.label_tvshows));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
-        new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                // Get page title from viewpager2
-                String title = pagerAdapter.getPageTitle(position);
-                // Set tab title
-                tab.setText(title);
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            // Get page title from viewpager2
+            String title = pagerAdapter.getPageTitle(position);
+            // Set tab title
+            tab.setText(title);
 
-                Log.d(LOG_TAG, String.valueOf(position));
-            }
+            Log.d(LOG_TAG, String.valueOf(position));
         }).attach();
     }
 
