@@ -10,6 +10,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.movieinfo.model.OmdbData;
+import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.TmdbStatusResponse;
 import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
@@ -25,6 +26,7 @@ import com.example.movieinfo.model.user.RequestBody.BodyRate;
 import com.example.movieinfo.model.user.RequestBody.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MediaDetailViewModel extends AndroidViewModel {
@@ -72,6 +74,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
     private LiveData<TvShowDetailData> tvShowDetailLiveData;
     private LiveData<OmdbData> omdbLiveData;
     private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
+    private LiveData<ArrayList<ReviewsResponse.ReviewData>> movieReviewsLiveData;
+    private LiveData<ArrayList<ReviewsResponse.ReviewData>> tvShowReviewsLiveData;
 
     // Used to observe MovieDetailData.accountStatesOnMedia.score
     private final MediatorLiveData<Double> ratedScore = new MediatorLiveData<>();
@@ -91,6 +95,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
         userRepository = new UserRepository();
         movieDetailLiveData = movieRepository.getMovieDetailLiveData();
         tvShowDetailLiveData = tvShowRepository.getTvShowDetailLiveData();
+        movieReviewsLiveData = movieRepository.getReviewsLiveData();
+        tvShowReviewsLiveData = tvShowRepository.getReviewsLiveData();
         omdbLiveData = omdbRepository.getOmdbLiveData();
         watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
         ratedScore.addSource(Transformations.map(movieDetailLiveData, input -> input.getAccountStatesOnMedia().getScore()), score -> ratedScore.postValue(score));
@@ -159,6 +165,52 @@ public class MediaDetailViewModel extends AndroidViewModel {
      */
     public LiveData<TvShowDetailData> getTvShowDetailLiveData() {
         return tvShowDetailLiveData;
+    }
+
+    // endregion
+
+    // region Movie Reviews
+
+    /**
+     * Call repository to get movie reviews and update to liveData
+     *
+     * @param movieId Movie Id
+     * @param page    target page
+     */
+    public void getTMDBMovieReviews(long movieId, int page) {
+        movieRepository.getTMDBMovieReviews(movieId, page);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<ArrayList<ReviewsResponse.ReviewData>> getMovieReviewsLiveData() {
+        return movieReviewsLiveData;
+    }
+
+    // endregion
+
+    // region TvShow Reviews
+
+    /**
+     * Call repository to get tvShow reviews and update to liveData
+     *
+     * @param tvShowId TvShow Id
+     * @param page    target page
+     */
+    public void getTMDBTvShowReviews(long tvShowId, int page) {
+        tvShowRepository.getTMDBTvShowReviews(tvShowId, page);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<ArrayList<ReviewsResponse.ReviewData>> getTvShowReviewsLiveData() {
+        return tvShowReviewsLiveData;
     }
 
     // endregion

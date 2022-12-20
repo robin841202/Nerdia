@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="?attr/colorOnPrimary"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/label_profile_img"
+                    app:srcCompat="@drawable/ic_profile" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text_author_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintStart_toEndOf="@+id/card_avatar"
+                app:layout_constraintTop_toTopOf="@+id/card_avatar"
+                tool:text="garethmb" />
+
+            <TextView
+                android:id="@+id/text_review_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:layout_constraintStart_toEndOf="@+id/card_avatar"
+                app:layout_constraintTop_toBottomOf="@+id/text_author_name"
+                tool:text="2022-07-05 13:08" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/lightGray"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="?attr/colorPrimaryVariant"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/ic_rated_fill"
+                app:iconTint="?attr/colorPrimaryVariant"
+                app:layout_constraintBottom_toBottomOf="@+id/card_avatar"
+                app:layout_constraintEnd_toStartOf="@+id/btn_external_source"
+                tool:text="8.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_external_source"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/ic_output"
+                app:iconSize="30dp"
+                app:iconTint="?attr/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <io.github.giangpham96.expandabletextview.ExpandableTextView
+                android:id="@+id/expandText_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:lineSpacingMultiplier="1.2"
+                android:padding="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                app:expandAction="@string/label_read_more"
+                app:expandActionColor="?attr/colorPrimary"
+                app:layout_constraintTop_toBottomOf="@+id/card_avatar"
+                app:limitedMaxLines="12"
+                tool:originalText="The God of Thunder returns in Marvel Studios’ “Thor: Love and Thunder” and audiences find that Thor (Chris Hemsworth), has been doing missions with the Guardians of the Galaxy while he works himself back into shape and looks to find a new purpose in life.\n\nThor has been taking the spotlight in many of the missions and when multiple calls for help arise, Thor opts to go off on his own to address a particular call for help while the Guardians head on their way to help others.\n\nIt is learned that a being named Gorr (Christian Bale) has been killing Gods and Thor is eager to put a stop to him before he can do more damage. His mission soon puts him on a collision course with Gorr and The Mighty Thor (Natalie Portman) who being his ex and wielding his former weapon causes more than a few funny and awkward moments.\n\nIn a race to save captured children, rally the gods, and defeat Gorr, Thor, and Jane along with Korr (Taika Waititi) and Valkyrie (Tessa Thompson), embark on an epic adventure in a race against time.\n\nWhile audiences have come to expect Marvel films to be epic cinematic events, this film is less on the over-the-top action sequences in favor of establishing new circumstances and challenges for the characters going forward.\n\nWhile there are indeed action sequences and plenty of VFX, it does not have the action or intensity of several of the past films. What it does offer is a good mix of action and humor with enjoyable characters old and new and establishes scenarios for the MCU going forward.\n\nBale is very good as Gorr and you understand his motivations clearly as while evil, he has a degree of sympathy towards his character which makes his creepy performance all the more compelling.\n\nThe cast works very well with one another and there are two scenes in the credits which open up all kinds of possibilities for the future as we are told Thor will return before the credits even begin to roll.\n\nThe film also has considerable music and I joked to myself that Guns and Roses are going to be getting a big check due to their music being used frequently during the film as well as that of other artists which helps make the film an enjoyable outing from start to finish which should delight fans as we wait to see for the next cinematic offering from Marvel.\n\n4 stars out of 5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

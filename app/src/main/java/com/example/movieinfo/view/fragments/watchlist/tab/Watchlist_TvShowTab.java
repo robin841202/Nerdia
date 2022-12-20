@@ -1,7 +1,6 @@
 package com.example.movieinfo.view.fragments.watchlist.tab;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,20 +20,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
-import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.database.entity.TvShowWatchlistEntity;
-import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.user.LoginInfo;
-import com.example.movieinfo.model.user.UserData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
-import com.example.movieinfo.view.MediaDetailsActivity;
-import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.viewmodel.SimilarTabViewModel;
 import com.example.movieinfo.viewmodel.WatchlistViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +94,7 @@ public class Watchlist_TvShowTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_general_grid_list, container, false);
+        return inflater.inflate(R.layout.fragment_general_gridshimmer_list, container, false);
     }
 
     @Override

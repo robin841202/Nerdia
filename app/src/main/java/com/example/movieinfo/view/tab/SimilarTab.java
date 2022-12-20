@@ -1,7 +1,6 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -19,17 +17,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.view.MediaDetailsActivity;
-import com.example.movieinfo.view.adapter.CastsAdapter;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SimilarTabViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -50,7 +44,7 @@ public class SimilarTab extends Fragment{
     private ShimmerFrameLayout mShimmer;
 
     private SwipeRefreshLayout pullToRefresh;
-    private RecyclerView similar_RcView;
+    private RecyclerView mRcView;
     private MoviesAdapter moviesAdapter;
     private TvShowsAdapter tvShowsAdapter;
     private GridLayoutManager mLayoutMgr;
@@ -103,7 +97,7 @@ public class SimilarTab extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_similar_tab, container, false);
+        return inflater.inflate(R.layout.fragment_general_gridshimmer_list, container, false);
     }
 
     @Override
@@ -111,32 +105,32 @@ public class SimilarTab extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 
         // Initialize Views
-        similar_RcView = view.findViewById(R.id.recycler_similar);
+        mRcView = view.findViewById(R.id.recycler);
         pullToRefresh = view.findViewById(R.id.swiperefresh);
-        mShimmer = view.findViewById(R.id.shimmer_similar);
+        mShimmer = view.findViewById(R.id.shimmer);
 
         // Initialize Recycler Adapter
         switch (mediaType) {
             case StaticParameter.MediaType.MOVIE:
                 moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
                 // Set adapter
-                similar_RcView.setAdapter(moviesAdapter);
+                mRcView.setAdapter(moviesAdapter);
                 break;
             case StaticParameter.MediaType.TV:
                 tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
                 // Set adapter
-                similar_RcView.setAdapter(tvShowsAdapter);
+                mRcView.setAdapter(tvShowsAdapter);
                 break;
         }
 
         // Set NestedScrollingEnable
-        similar_RcView.setNestedScrollingEnabled(true);
+        mRcView.setNestedScrollingEnabled(true);
 
         // Initialize gridLayoutManager
         mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
 
         // Set layoutManager
-        similar_RcView.setLayoutManager(mLayoutMgr);
+        mRcView.setLayoutManager(mLayoutMgr);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -181,7 +175,7 @@ public class SimilarTab extends Fragment{
                 moviesAdapter.appendMovies(movies);
 
                 // attach onScrollListener to RecyclerView
-                similar_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         // when scrolling up
@@ -195,7 +189,7 @@ public class SimilarTab extends Fragment{
 
                             if (totalItemCount <= lastVisibleItem + visibleThreshold) {
                                 // detach current OnScrollListener
-                                similar_RcView.removeOnScrollListener(this);
+                                mRcView.removeOnScrollListener(this);
 
                                 // append nextPage data to recyclerView
                                 currentPage++;
@@ -244,7 +238,7 @@ public class SimilarTab extends Fragment{
                 tvShowsAdapter.appendTvShows(tvShows);
 
                 // attach onScrollListener to RecyclerView
-                similar_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         // when scrolling up
@@ -258,7 +252,7 @@ public class SimilarTab extends Fragment{
 
                             if (totalItemCount <= lastVisibleItem + visibleThreshold) {
                                 // detach current OnScrollListener
-                                similar_RcView.removeOnScrollListener(this);
+                                mRcView.removeOnScrollListener(this);
 
                                 // append nextPage data to recyclerView
                                 currentPage++;

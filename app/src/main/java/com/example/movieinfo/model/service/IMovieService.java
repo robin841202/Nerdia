@@ -1,6 +1,7 @@
 package com.example.movieinfo.model.service;
 
 import com.example.movieinfo.model.GenresResponse;
+import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
@@ -285,6 +286,25 @@ public interface IMovieService {
                     int page,
             @Query("language")
                     String language
+    );
+
+
+    /**
+     * Get Movie reviews on TMDB
+     *
+     * @param id     Movie Id
+     * @param apiKey TMDB API Key
+     * @param page   target page
+     * @return
+     */
+    @GET("movie/{movie_id}/reviews")
+    Call<ReviewsResponse> getTMDBMovieReviews(
+            @Path("movie_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page
     );
 
 }

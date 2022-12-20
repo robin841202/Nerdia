@@ -6,8 +6,7 @@
     android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="16dp"
-    android:paddingBottom="16dp"
+    android:padding="16dp"
     tools:context=".view.fragments.watchlist.tab.Watchlist_MovieTab">
 
     <LinearLayout

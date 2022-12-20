@@ -41,6 +41,7 @@ import com.example.movieinfo.view.bottomsheet.RateDetailsBottomSheet;
 import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
+import com.example.movieinfo.view.tab.ReviewsTab;
 import com.example.movieinfo.view.tab.SimilarTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MediaDetailViewModel;
@@ -697,6 +698,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         pagerAdapter.addFragment(new MovieDetails_AboutTab(), getString(R.string.label_about));
         pagerAdapter.addFragment(CastTab.newInstance(StaticParameter.MediaType.MOVIE), getString(R.string.label_cast));
         pagerAdapter.addFragment(SimilarTab.newInstance(StaticParameter.MediaType.MOVIE, movieId), getString(R.string.label_similar));
+        pagerAdapter.addFragment(ReviewsTab.newInstance(StaticParameter.MediaType.MOVIE, movieId), getString(R.string.label_review));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together
@@ -725,6 +727,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         pagerAdapter.addFragment(new TvShowDetails_AboutTab(), getString(R.string.label_about));
         pagerAdapter.addFragment(CastTab.newInstance(StaticParameter.MediaType.TV), getString(R.string.label_cast));
         pagerAdapter.addFragment(SimilarTab.newInstance(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_similar));
+        pagerAdapter.addFragment(ReviewsTab.newInstance(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_review));
         viewPager.setAdapter(pagerAdapter);
 
         // Generate tabItem by viewpager2 and attach viewpager2 & tabLayout together

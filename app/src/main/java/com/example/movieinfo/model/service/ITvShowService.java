@@ -1,5 +1,6 @@
 package com.example.movieinfo.model.service;
 
+import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.tvshow.TvShowDetailData;
 import com.example.movieinfo.model.tvshow.TvShowsResponse;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
@@ -242,6 +243,25 @@ public interface ITvShowService {
                     int page,
             @Query("language")
                     String language
+    );
+
+
+    /**
+     * Get TvShow reviews on TMDB
+     *
+     * @param id     TvShow Id
+     * @param apiKey TMDB API Key
+     * @param page   target page
+     * @return
+     */
+    @GET("tv/{tv_id}/reviews")
+    Call<ReviewsResponse> getTMDBTvShowReviews(
+            @Path("tv_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page
     );
 
 }

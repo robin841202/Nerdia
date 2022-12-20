@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.BuildConfig;
+import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.ITvShowService;
@@ -39,40 +40,31 @@ public class TvShowRepository {
     private final String mediaType = StaticParameter.MediaType.TV;
 
     // region TvShowData List LiveData
-    private MutableLiveData<ArrayList<TvShowData>> tvShowsLiveData;
+    private final MutableLiveData<ArrayList<TvShowData>> tvShowsLiveData = new MutableLiveData<>();
 
     // used when multiple liveData needs to observe different data in same activity or fragment
-    private MutableLiveData<ArrayList<TvShowData>> popularTvShowsLiveData;
-    private MutableLiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
+    private final MutableLiveData<ArrayList<TvShowData>> popularTvShowsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<TvShowData>> trendingTvShowsLiveData = new MutableLiveData<>();
 
     // endregion
 
     // region TvShowDetail LiveData
-    private MutableLiveData<TvShowDetailData> tvShowDetailLiveData;
+    private final MutableLiveData<TvShowDetailData> tvShowDetailLiveData = new MutableLiveData<>();
+    // endregion
+
+    // region ReviewData List LiveData
+    private final MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> reviewsLiveData = new MutableLiveData<>();
     // endregion
 
     public TvShowRepository() {
         this.language = Locale.TRADITIONAL_CHINESE.toLanguageTag();
         this.region = Locale.TAIWAN.getCountry();
 
-        // Initialize LiveData
-        initLiveData();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(StaticParameter.TmdbApiBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(ITvShowService.class);
-    }
-
-    /**
-     * Initialize every LiveData
-     */
-    private void initLiveData() {
-        tvShowsLiveData = new MutableLiveData<>();
-        popularTvShowsLiveData = new MutableLiveData<>();
-        trendingTvShowsLiveData = new MutableLiveData<>();
-        tvShowDetailLiveData = new MutableLiveData<>();
     }
 
     public void setLanguage(String language) {
@@ -399,7 +391,6 @@ public class TvShowRepository {
 
     // endregion
 
-
     // region TVSHOW DETAILS
 
     /**
@@ -483,6 +474,48 @@ public class TvShowRepository {
      */
     public MutableLiveData<TvShowDetailData> getTvShowDetailLiveData() {
         return tvShowDetailLiveData;
+    }
+
+    // endregion
+
+    // region REVIEWS RESPONSE
+
+    /**
+     * Get TvShow reviews on TMDB (using LiveData)
+     *
+     * @param tvShowId TvShow Id
+     * @param page    target page
+     */
+    public void getTMDBTvShowReviews(long tvShowId, int page) {
+        Call<ReviewsResponse> call = service.getTMDBTvShowReviews(tvShowId, apiKey, page);
+        Callback<ReviewsResponse> requestHandler = new Callback<ReviewsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewsResponse> call, @NonNull Response<ReviewsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    ReviewsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        reviewsLiveData.postValue(responseBody.review_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                reviewsLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        };
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Reviews Response Live Data
+     * @return
+     */
+    public MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> getReviewsLiveData() {
+        return reviewsLiveData;
     }
 
     // endregion

@@ -83,7 +83,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
 
-    // ExpandableTextView - In order to expand or collapse textView
+    // Giangpham96/ExpandableTextView - In order to expand or collapse textView - https://github.com/giangpham96/ExpandableTextView
     implementation "com.github.giangpham96:ExpandableTextView:$rootProject.expandableTextViewVersion"
 
     // Guava - In order to check string isNullOrEmpty easily

@@ -3,26 +3,20 @@ package com.example.movieinfo.model.repository;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieinfo.BuildConfig;
-import com.example.movieinfo.R;
+import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.movie.MovieDetailData;
 import com.example.movieinfo.model.movie.MoviesResponse;
 import com.example.movieinfo.model.service.IMovieService;
 import com.example.movieinfo.model.user.AccountStatesOnMedia;
-import com.google.common.base.Strings;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -44,26 +38,27 @@ public class MovieRepository {
 
     // region MovieData List LiveData
 
-    private MutableLiveData<ArrayList<MovieData>> moviesLiveData;
+    private final MutableLiveData<ArrayList<MovieData>> moviesLiveData = new MutableLiveData<>();
 
     // used when multiple liveData needs to observe different data in same activity or fragment
-    private MutableLiveData<ArrayList<MovieData>> upcomingMoviesLiveData;
-    private MutableLiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData;
-    private MutableLiveData<ArrayList<MovieData>> trendingMoviesLiveData;
-    private MutableLiveData<ArrayList<MovieData>> popularMoviesLiveData;
+    private final MutableLiveData<ArrayList<MovieData>> upcomingMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> trendingMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> popularMoviesLiveData = new MutableLiveData<>();
 
     // endregion
 
     // region MovieDetail LiveData
-    private MutableLiveData<MovieDetailData> movieDetailLiveData;
+    private final MutableLiveData<MovieDetailData> movieDetailLiveData = new MutableLiveData<>();
+    // endregion
+
+    // region ReviewData List LiveData
+    private final MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> reviewsLiveData = new MutableLiveData<>();
     // endregion
 
     public MovieRepository() {
         this.language = Locale.TRADITIONAL_CHINESE.toLanguageTag();
         this.region = Locale.TAIWAN.getCountry();
-
-        // Initialize LiveData
-        initLiveData();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(StaticParameter.TmdbApiBaseUrl)
@@ -71,19 +66,6 @@ public class MovieRepository {
                 .build();
         service = retrofit.create(IMovieService.class);
     }
-
-    /**
-     * Initialize every LiveData
-     */
-    private void initLiveData() {
-        moviesLiveData = new MutableLiveData<>();
-        upcomingMoviesLiveData = new MutableLiveData<>();
-        nowPlayingMoviesLiveData = new MutableLiveData<>();
-        trendingMoviesLiveData = new MutableLiveData<>();
-        popularMoviesLiveData = new MutableLiveData<>();
-        movieDetailLiveData = new MutableLiveData<>();
-    }
-
 
     public void setLanguage(String language) {
         this.language = language;
@@ -574,6 +556,48 @@ public class MovieRepository {
      */
     public MutableLiveData<ArrayList<MovieData>> getMoviesLiveData() {
         return moviesLiveData;
+    }
+
+    // endregion
+
+    // region REVIEWS RESPONSE
+
+    /**
+     * Get Movie reviews on TMDB (using LiveData)
+     *
+     * @param movieId Movie Id
+     * @param page    target page
+     */
+    public void getTMDBMovieReviews(long movieId, int page) {
+        Call<ReviewsResponse> call = service.getTMDBMovieReviews(movieId, apiKey, page);
+        Callback<ReviewsResponse> requestHandler = new Callback<ReviewsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewsResponse> call, @NonNull Response<ReviewsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    ReviewsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        reviewsLiveData.postValue(responseBody.review_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                reviewsLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        };
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Reviews Response Live Data
+     * @return
+     */
+    public MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> getReviewsLiveData() {
+        return reviewsLiveData;
     }
 
     // endregion
