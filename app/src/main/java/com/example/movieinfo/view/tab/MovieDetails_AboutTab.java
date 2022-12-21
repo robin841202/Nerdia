@@ -125,8 +125,8 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         ArrayList<GenreData> genre_List = movieDetail.getGenres();
         String status = Strings.isNullOrEmpty(movieDetail.getStatus()) ? getString(R.string.label_empty) : movieDetail.getStatus();
         int runtimeInMinutes = movieDetail.getRuntime();
-        int budgetNum = movieDetail.getBudget();
-        int revenueNum = movieDetail.getRevenue();
+        long budgetNum = movieDetail.getBudget();
+        long revenueNum = movieDetail.getRevenue();
 
         // set overview - using ExpandableTextView library setOriginalText function to show contents, do not use setText
         overViewTextView.setOriginalText(overView);

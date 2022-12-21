@@ -21,7 +21,7 @@ public class MovieDetailData {
     private boolean isAdult;
 
     @SerializedName("budget")
-    private int budget;
+    private long budget;
 
     @SerializedName("genres")
     private ArrayList<GenreData> genres;
@@ -33,7 +33,7 @@ public class MovieDetailData {
     private String status;
 
     @SerializedName("revenue")
-    private int revenue;
+    private long revenue;
 
     @SerializedName("runtime")
     private int runtime;
@@ -101,7 +101,7 @@ public class MovieDetailData {
      *
      * @return
      */
-    public int getBudget() {
+    public long getBudget() {
         return budget;
     }
 
@@ -129,7 +129,7 @@ public class MovieDetailData {
      *
      * @return
      */
-    public int getRevenue() {
+    public long getRevenue() {
         return revenue;
     }
 
