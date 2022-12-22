@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,6 +23,8 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.ReviewsResponse;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
+import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.ReviewAdapter;
 import com.example.movieinfo.viewmodel.MediaDetailViewModel;
 
@@ -104,21 +107,9 @@ public class ReviewsTab extends Fragment {
         mRcView = view.findViewById(R.id.recycler);
         pullToRefresh = view.findViewById(R.id.swiperefresh);
         progressBar = view.findViewById(R.id.progressBar);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Recycler Adapter
-        mAdapter = new ReviewAdapter((AppCompatActivity) context);
-
-        // Set adapter
-        mRcView.setAdapter(mAdapter);
-
-        // Set NestedScrollingEnable
-        mRcView.setNestedScrollingEnabled(true);
-
-        // Initialize gridLayoutManager
-        mLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-
-        // Set layoutManager
-        mRcView.setLayoutManager(mLayoutMgr);
+        initRecyclerView(emptyDataView);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -130,6 +121,30 @@ public class ReviewsTab extends Fragment {
 
         // Start getting data
         updateData(mediaType);
+    }
+
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView){
+        // Initialize Recycler Adapter
+        mAdapter = new ReviewAdapter((AppCompatActivity) context);
+
+        // Set adapter
+        mRcView.setAdapter(mAdapter);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
+
+        // Set NestedScrollingEnable
+        mRcView.setNestedScrollingEnabled(true);
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+
+        // Set layoutManager
+        mRcView.setLayoutManager(mLayoutMgr);
     }
 
     /**

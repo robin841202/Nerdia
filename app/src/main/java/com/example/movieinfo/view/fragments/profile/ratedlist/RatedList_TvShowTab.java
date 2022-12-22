@@ -23,6 +23,7 @@ import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.tvshow.TvShowData;
 import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.RatedListViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -38,7 +39,7 @@ public class RatedList_TvShowTab extends Fragment {
 
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
-    private TvShowsAdapter tvShowsAdapter;
+    private TvShowsAdapter mAdapter;
     private GridLayoutManager mLayoutMgr;
     private SwipeRefreshLayout pullToRefresh;
 
@@ -93,22 +94,9 @@ public class RatedList_TvShowTab extends Fragment {
         mRcView = view.findViewById(R.id.recycler);
         mShimmer = view.findViewById(R.id.shimmer);
         pullToRefresh = view.findViewById(R.id.swiperefresh);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Recycler Adapter
-        tvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
-
-        // Set adapter
-        mRcView.setAdapter(tvShowsAdapter);
-
-        // Set NestedScrollingEnable
-        mRcView.setNestedScrollingEnabled(true);
-
-        // Initialize gridLayoutManager
-        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-
-        // Set layoutManager
-        mRcView.setLayoutManager(mLayoutMgr);
-
+        initRecyclerView(emptyDataView);
 
         if (mLoginInfo.isLogin()) { // LOGIN TMDB
             // Set the observer
@@ -124,6 +112,30 @@ public class RatedList_TvShowTab extends Fragment {
             fetchRatedTvShowsFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
         }
 
+    }
+
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
+        // Initialize Recycler Adapter
+        mAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
+
+        // Set adapter
+        mRcView.setAdapter(mAdapter);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
+
+        // Set NestedScrollingEnable
+        mRcView.setNestedScrollingEnabled(true);
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+        // Set layoutManager
+        mRcView.setLayoutManager(mLayoutMgr);
     }
 
     // region Remote Data Source (API)
@@ -156,7 +168,7 @@ public class RatedList_TvShowTab extends Fragment {
 
         if (tvShows.size() > 0) {
             // append data to adapter
-            tvShowsAdapter.appendTvShows(tvShows);
+            mAdapter.appendTvShows(tvShows);
 
             // attach onScrollListener to RecyclerView
             mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -196,7 +208,7 @@ public class RatedList_TvShowTab extends Fragment {
         mCurrentPage = 1;
 
         // remove data in adapter
-        tvShowsAdapter.removeAllTvShows();
+        mAdapter.removeAllTvShows();
 
         // Start fetching data
         fetchRatedTvShowsFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);

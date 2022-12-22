@@ -22,6 +22,7 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
 import com.example.movieinfo.viewmodel.SimilarTabViewModel;
@@ -29,7 +30,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SimilarTab extends Fragment{
+public class SimilarTab extends Fragment {
 
     private final String LOG_TAG = "SimilarTab";
 
@@ -108,29 +109,9 @@ public class SimilarTab extends Fragment{
         mRcView = view.findViewById(R.id.recycler);
         pullToRefresh = view.findViewById(R.id.swiperefresh);
         mShimmer = view.findViewById(R.id.shimmer);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Recycler Adapter
-        switch (mediaType) {
-            case StaticParameter.MediaType.MOVIE:
-                moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-                // Set adapter
-                mRcView.setAdapter(moviesAdapter);
-                break;
-            case StaticParameter.MediaType.TV:
-                tvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
-                // Set adapter
-                mRcView.setAdapter(tvShowsAdapter);
-                break;
-        }
-
-        // Set NestedScrollingEnable
-        mRcView.setNestedScrollingEnabled(true);
-
-        // Initialize gridLayoutManager
-        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-
-        // Set layoutManager
-        mRcView.setLayoutManager(mLayoutMgr);
+        initRecyclerView(emptyDataView);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -143,6 +124,44 @@ public class SimilarTab extends Fragment{
         // Start getting data
         updateData(mediaType);
     }
+
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
+        // Initialize EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+
+        // Initialize Recycler Adapter
+        switch (mediaType) {
+            case StaticParameter.MediaType.MOVIE:
+                moviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+                // Set adapter
+                mRcView.setAdapter(moviesAdapter);
+
+                // Register EmptyStateObserver
+                moviesAdapter.registerAdapterDataObserver(emptyDataObserver);
+                break;
+            case StaticParameter.MediaType.TV:
+                tvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
+                // Set adapter
+                mRcView.setAdapter(tvShowsAdapter);
+
+                // Register EmptyStateObserver
+                tvShowsAdapter.registerAdapterDataObserver(emptyDataObserver);
+                break;
+        }
+
+        // Set NestedScrollingEnable
+        mRcView.setNestedScrollingEnabled(true);
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+        // Set layoutManager
+        mRcView.setLayoutManager(mLayoutMgr);
+    }
+
 
     // region Similar Movies
 

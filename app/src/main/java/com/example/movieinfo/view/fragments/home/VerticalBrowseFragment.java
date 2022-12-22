@@ -1,9 +1,9 @@
 package com.example.movieinfo.view.fragments.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -22,17 +22,16 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.tvshow.TvShowData;
-import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.view.adapter.TvShowsAdapter;
-import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
 import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.TvShowsViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class VerticalBrowseFragment extends Fragment{
+public class VerticalBrowseFragment extends Fragment {
 
     private final String LOG_TAG = "VerticalBrowseFragment";
 
@@ -41,13 +40,13 @@ public class VerticalBrowseFragment extends Fragment{
     private SwipeRefreshLayout pullToRefresh;
     private ActionBar toolBar;
 
-    private ShimmerFrameLayout verticalBrowse_Shimmer;
+    private ShimmerFrameLayout mShimmer;
 
-    private MoviesAdapter verticalBrowseAdapter_movie;
-    private TvShowsAdapter verticalBrowseAdapter_tv;
-    private RecyclerView verticalBrowse_RcView;
-    private GridLayoutManager verticalBrowseLayoutMgr;
-    private int verticalBrowsePage;
+    private MoviesAdapter movieAdapter;
+    private TvShowsAdapter tvShowAdapter;
+    private RecyclerView mRcView;
+    private GridLayoutManager mLayoutMgr;
+    private int currentPage;
 
     private MoviesViewModel moviesViewModel;
     private TvShowsViewModel tvShowsViewModel;
@@ -64,7 +63,7 @@ public class VerticalBrowseFragment extends Fragment{
         homeCategory = getArguments().getInt(StaticParameter.ExtraDataKey.EXTRA_DATA_VERTICAL_BROWSE_KEY, 0);
 
         // set default page
-        verticalBrowsePage = 1;
+        currentPage = 1;
 
         // Initialize viewModel, data only survive this fragment lifecycle
         moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
@@ -79,29 +78,32 @@ public class VerticalBrowseFragment extends Fragment{
             @Override
             public void onChanged(ArrayList<MovieData> movies) {
                 // hide shimmer animation
-                verticalBrowse_Shimmer.stopShimmer();
-                verticalBrowse_Shimmer.setVisibility(View.GONE);
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
                 // append data to adapter
-                verticalBrowseAdapter_movie.appendMovies(movies);
+                movieAdapter.appendMovies(movies);
                 // attach onScrollListener to RecyclerView
-                verticalBrowse_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = verticalBrowseLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = verticalBrowseLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = verticalBrowseLayoutMgr.findFirstVisibleItemPosition();
+                        // when scrolling up
+                        if (dy > 0) {
+                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            verticalBrowse_RcView.removeOnScrollListener(this);
+                            // get the number of all items in recyclerView
+                            int totalItemCount = mLayoutMgr.getItemCount();
+                            // get the last visible item's position
+                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
 
-                            // append nextPage data to recyclerView
-                            verticalBrowsePage++;
-                            fetchData(homeCategory);
+                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                // detach current OnScrollListener
+                                mRcView.removeOnScrollListener(this);
+
+                                // append nextPage data to recyclerView
+                                currentPage++;
+                                fetchData(homeCategory);
+                            }
                         }
                     }
                 });
@@ -117,30 +119,32 @@ public class VerticalBrowseFragment extends Fragment{
             @Override
             public void onChanged(ArrayList<TvShowData> tvShows) {
                 // hide shimmer animation
-                verticalBrowse_Shimmer.stopShimmer();
-                verticalBrowse_Shimmer.setVisibility(View.GONE);
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
                 // append data to adapter
-                verticalBrowseAdapter_tv.appendTvShows(tvShows);
+                tvShowAdapter.appendTvShows(tvShows);
                 // attach onScrollListener to RecyclerView
-                verticalBrowse_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // when scrolling up
+                        if (dy > 0) {
+                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                        // get the number of all items in recyclerView
-                        int totalItemCount = verticalBrowseLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = verticalBrowseLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = verticalBrowseLayoutMgr.findFirstVisibleItemPosition();
+                            // get the number of all items in recyclerView
+                            int totalItemCount = mLayoutMgr.getItemCount();
+                            // get the last visible item's position
+                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
 
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            verticalBrowse_RcView.removeOnScrollListener(this);
+                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                // detach current OnScrollListener
+                                mRcView.removeOnScrollListener(this);
 
-                            // append nextPage data to recyclerView
-                            verticalBrowsePage++;
-                            fetchData(homeCategory);
+                                // append nextPage data to recyclerView
+                                currentPage++;
+                                fetchData(homeCategory);
+                            }
                         }
                     }
                 });
@@ -180,41 +184,21 @@ public class VerticalBrowseFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_vertical_browse, container, false);
+        return inflater.inflate(R.layout.fragment_general_gridshimmer_list, container, false);
+    }
 
-        // Get Views
-        verticalBrowse_Shimmer = root.findViewById(R.id.shimmer_vertical_browse);
-        verticalBrowse_RcView = root.findViewById(R.id.recycler_vertical_browse);
-        pullToRefresh = root.findViewById(R.id.swiperefresh_vertical_browse);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Initialize Views
+        mShimmer = view.findViewById(R.id.shimmer);
+        mRcView = view.findViewById(R.id.recycler);
+        pullToRefresh = view.findViewById(R.id.swiperefresh);
         toolBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Adapter
-        verticalBrowseAdapter_movie = new MoviesAdapter((AppCompatActivity)getActivity());
-        verticalBrowseAdapter_tv = new TvShowsAdapter((AppCompatActivity)getActivity());
-
-        // Initialize gridLayoutManager
-        verticalBrowseLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-
-        // Set Adapter
-        switch (homeCategory) {
-            case StaticParameter.HomeCategory.UPCOMING_MOVIES:
-            case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
-            case StaticParameter.HomeCategory.TRENDING_MOVIES:
-            case StaticParameter.HomeCategory.POPULAR_MOVIES:
-                verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_movie);
-                break;
-            case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
-            case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
-                verticalBrowse_RcView.setAdapter(verticalBrowseAdapter_tv);
-                break;
-            default:
-                // do nothing
-                break;
-        }
-
-
-        // Set layoutManager
-        verticalBrowse_RcView.setLayoutManager(verticalBrowseLayoutMgr);
+        initRecyclerView(emptyDataView);
 
         // Start getting data
         fetchData(homeCategory);
@@ -225,9 +209,46 @@ public class VerticalBrowseFragment extends Fragment{
             Log.d(LOG_TAG, "onRefresh");
             pullToRefresh.setRefreshing(false);
         });
-        return root;
     }
 
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
+        // Initialize Adapter
+        movieAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        tvShowAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+        // Initialize EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+
+        // Set Adapter
+        switch (homeCategory) {
+            case StaticParameter.HomeCategory.UPCOMING_MOVIES:
+            case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
+            case StaticParameter.HomeCategory.TRENDING_MOVIES:
+            case StaticParameter.HomeCategory.POPULAR_MOVIES:
+                mRcView.setAdapter(movieAdapter);
+                // Set EmptyStateObserver
+                movieAdapter.registerAdapterDataObserver(emptyDataObserver);
+                break;
+            case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
+            case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
+                mRcView.setAdapter(tvShowAdapter);
+                // Set EmptyStateObserver
+                tvShowAdapter.registerAdapterDataObserver(emptyDataObserver);
+                break;
+            default:
+                // do nothing
+                break;
+        }
+
+        // Set layoutManager
+        mRcView.setLayoutManager(mLayoutMgr);
+    }
 
     /**
      * (Private) Fetch data depends on what kinds of homeCategory
@@ -236,39 +257,39 @@ public class VerticalBrowseFragment extends Fragment{
      */
     private void fetchData(int homeCategory) {
         // show shimmer animation
-        verticalBrowse_Shimmer.startShimmer();
-        verticalBrowse_Shimmer.setVisibility(View.VISIBLE);
+        mShimmer.startShimmer();
+        mShimmer.setVisibility(View.VISIBLE);
 
         switch (homeCategory) {
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_upcoming_movies));
-                moviesViewModel.getUpcomingMovies(verticalBrowsePage);
+                moviesViewModel.getUpcomingMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_now_playing_movies));
-                moviesViewModel.getNowPlayingMovies(verticalBrowsePage);
+                moviesViewModel.getNowPlayingMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_trending_movies));
-                moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage);
+                moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, currentPage);
                 break;
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_popular_movies));
-                moviesViewModel.getPopularMovies(verticalBrowsePage);
+                moviesViewModel.getPopularMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_popular_tvShows));
-                tvShowsViewModel.getPopularTvShows(verticalBrowsePage);
+                tvShowsViewModel.getPopularTvShows(currentPage);
                 break;
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_trending_tvShows));
-                tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, verticalBrowsePage);
+                tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, currentPage);
                 break;
             default:
                 // do nothing
@@ -283,7 +304,7 @@ public class VerticalBrowseFragment extends Fragment{
      */
     private void resetResults(int homeCategory) {
         // set default page
-        verticalBrowsePage = 1;
+        currentPage = 1;
 
         // remove data in adapter
         switch (homeCategory) {
@@ -291,11 +312,11 @@ public class VerticalBrowseFragment extends Fragment{
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
-                verticalBrowseAdapter_movie.removeAllMovies();
+                movieAdapter.removeAllMovies();
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
-                verticalBrowseAdapter_tv.removeAllTvShows();
+                tvShowAdapter.removeAllTvShows();
                 break;
             default:
                 // do nothing

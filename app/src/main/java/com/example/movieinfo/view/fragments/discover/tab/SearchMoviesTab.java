@@ -1,6 +1,5 @@
 package com.example.movieinfo.view.fragments.discover.tab;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,19 +21,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.movieinfo.R;
-import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
-import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
-import com.example.movieinfo.view.bottomsheet.OperateMediaBottomSheet;
-import com.example.movieinfo.viewmodel.MoviesViewModel;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.example.movieinfo.viewmodel.SearchViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class SearchMoviesTab extends Fragment{
+public class SearchMoviesTab extends Fragment {
 
 
     private final String LOG_TAG = "SearchMoviesTab";
@@ -44,7 +40,7 @@ public class SearchMoviesTab extends Fragment{
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
-    private MoviesAdapter movieAdapter;
+    private MoviesAdapter mAdapter;
     private GridLayoutManager mLayoutMgr;
     private int currentPage;
 
@@ -76,27 +72,20 @@ public class SearchMoviesTab extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_movies_tab, container, false);
+        return inflater.inflate(R.layout.fragment_general_gridshimmer_list, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Get Views
-        mRcView = view.findViewById(R.id.recycler_search);
-        pullToRefresh = view.findViewById(R.id.swiperefresh_search);
-        mShimmer = view.findViewById(R.id.shimmer_search);
+        // Initialize Views
+        mRcView = view.findViewById(R.id.recycler);
+        pullToRefresh = view.findViewById(R.id.swiperefresh);
+        mShimmer = view.findViewById(R.id.shimmer);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Adapter
-        movieAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-
-        // Initialize gridLayoutManager
-        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-
-        // Set Adapter & LayoutManager to RecyclerView
-        mRcView.setAdapter(movieAdapter);
-        mRcView.setLayoutManager(mLayoutMgr);
+        initRecyclerView(emptyDataView);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -115,19 +104,35 @@ public class SearchMoviesTab extends Fragment{
             searchKeywordViewModel = new ViewModelProvider(backStackEntry).get(SearchKeywordViewModel.class);
 
             // Keep monitoring search keyword changes
-            searchKeywordViewModel.getKeyWord().observe(backStackEntry, new Observer<String>() {
-                @Override
-                public void onChanged(String keyword) {
-                    // reset searched results
-                    clearResults();
+            searchKeywordViewModel.getKeyWord().observe(backStackEntry, keyword -> {
+                // reset searched results
+                clearResults();
 
-                    currentKeyword = keyword;
+                currentKeyword = keyword;
 
-                    // begin searching
-                    searchMovies(currentKeyword, currentPage);
-                }
+                // begin searching
+                searchMovies(currentKeyword, currentPage);
             });
         }
+    }
+
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
+        // Initialize Adapter
+        mAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+        // Set Adapter & LayoutManager to RecyclerView
+        mRcView.setAdapter(mAdapter);
+        mRcView.setLayoutManager(mLayoutMgr);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
     }
 
     /**
@@ -154,16 +159,16 @@ public class SearchMoviesTab extends Fragment{
             mShimmer.stopShimmer();
             mShimmer.setVisibility(View.GONE);
 
-            if (movies.size() > 0){
+            if (movies.size() > 0) {
                 // append data to adapter
-                movieAdapter.appendMovies(movies);
+                mAdapter.appendMovies(movies);
 
                 // attach onScrollListener to RecyclerView
                 mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         // when scrolling up
-                        if(dy > 0){
+                        if (dy > 0) {
                             final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
                             // get the number of all items in recyclerView
@@ -193,7 +198,7 @@ public class SearchMoviesTab extends Fragment{
      */
     private void clearResults() {
         currentPage = 1;
-        movieAdapter.removeAllMovies();
+        mAdapter.removeAllMovies();
     }
 
 }

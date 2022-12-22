@@ -24,6 +24,7 @@ import com.example.movieinfo.model.database.entity.MovieWatchlistEntity;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.viewmodel.WatchlistViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -41,7 +42,7 @@ public class Watchlist_MovieTab extends Fragment {
 
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
-    private MoviesAdapter moviesAdapter;
+    private MoviesAdapter mAdapter;
     private GridLayoutManager mLayoutMgr;
     private SwipeRefreshLayout pullToRefresh;
 
@@ -106,22 +107,9 @@ public class Watchlist_MovieTab extends Fragment {
         mRcView = view.findViewById(R.id.recycler);
         mShimmer = view.findViewById(R.id.shimmer);
         pullToRefresh = view.findViewById(R.id.swiperefresh);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Recycler Adapter
-        moviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-
-        // Set adapter
-        mRcView.setAdapter(moviesAdapter);
-
-        // Set NestedScrollingEnable
-        mRcView.setNestedScrollingEnabled(true);
-
-        // Initialize gridLayoutManager
-        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
-
-        // Set layoutManager
-        mRcView.setLayoutManager(mLayoutMgr);
-
+        initRecyclerView(emptyDataView);
 
         if (mLoginInfo.isLogin()) { // LOGIN TMDB
             // Set SwipeRefreshListener
@@ -146,6 +134,30 @@ public class Watchlist_MovieTab extends Fragment {
 
     }
 
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView){
+        // Initialize Recycler Adapter
+        mAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+
+        // Set adapter
+        mRcView.setAdapter(mAdapter);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
+
+        // Set NestedScrollingEnable
+        mRcView.setNestedScrollingEnabled(true);
+
+        // Initialize gridLayoutManager
+        mLayoutMgr = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+        // Set layoutManager
+        mRcView.setLayoutManager(mLayoutMgr);
+    }
+
 
     // region Room database
 
@@ -166,7 +178,7 @@ public class Watchlist_MovieTab extends Fragment {
                     data.getRating())).collect(Collectors.toCollection(ArrayList::new));
 
             // append data to adapter
-            moviesAdapter.setMovies(movieData_list);
+            mAdapter.setMovies(movieData_list);
 
             Log.d(LOG_TAG, "watchlist movies: data loaded successfully");
         };
@@ -206,7 +218,7 @@ public class Watchlist_MovieTab extends Fragment {
 
         if (movies.size() > 0) {
             // append data to adapter
-            moviesAdapter.appendMovies(movies);
+            mAdapter.appendMovies(movies);
 
             // attach onScrollListener to RecyclerView
             mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -246,7 +258,7 @@ public class Watchlist_MovieTab extends Fragment {
         mCurrentPage = 1;
 
         // remove data in adapter
-        moviesAdapter.removeAllMovies();
+        mAdapter.removeAllMovies();
 
         // Start fetching data
         fetchMovieWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);

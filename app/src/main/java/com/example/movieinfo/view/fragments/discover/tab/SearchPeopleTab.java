@@ -23,6 +23,7 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.person.PersonData;
 import com.example.movieinfo.view.PersonDetailsActivity;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.PeopleAdapter;
 import com.example.movieinfo.viewmodel.SearchKeywordViewModel;
 import com.example.movieinfo.viewmodel.SearchViewModel;
@@ -38,7 +39,7 @@ public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleLi
 
     private RecyclerView mRcView;
     private SwipeRefreshLayout pullToRefresh;
-    private PeopleAdapter peopleAdapter;
+    private PeopleAdapter mAdapter;
     private LinearLayoutManager mLayoutMgr;
     private int currentPage;
 
@@ -77,19 +78,12 @@ public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Get Views
+        // Initialize Views
         mRcView = view.findViewById(R.id.recycler_search);
         pullToRefresh = view.findViewById(R.id.swiperefresh_search);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
 
-        // Initialize Adapter
-        peopleAdapter = new PeopleAdapter(this);
-
-        // Initialize LayoutManager
-        mLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        // Set Adapter & LayoutManager to RecyclerView
-        mRcView.setAdapter(peopleAdapter);
-        mRcView.setLayoutManager(mLayoutMgr);
+        initRecyclerView(emptyDataView);
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
@@ -124,6 +118,25 @@ public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleLi
     }
 
     /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
+        // Initialize Adapter
+        mAdapter = new PeopleAdapter(this);
+
+        // Initialize LayoutManager
+        mLayoutMgr = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+        // Set Adapter & LayoutManager to RecyclerView
+        mRcView.setAdapter(mAdapter);
+        mRcView.setLayoutManager(mLayoutMgr);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
+    }
+
+    /**
      * Searching People
      *
      * @param keyword Searching keyword
@@ -143,7 +156,7 @@ public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleLi
 
             if (people.size() > 0){
                 // append data to adapter
-                peopleAdapter.appendPeople(people);
+                mAdapter.appendPeople(people);
 
                 // attach onScrollListener to RecyclerView
                 mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -180,7 +193,7 @@ public class SearchPeopleTab extends Fragment implements PeopleAdapter.IPeopleLi
      */
     private void clearResults() {
         currentPage = 1;
-        peopleAdapter.removeAll();
+        mAdapter.removeAll();
     }
 
     /**

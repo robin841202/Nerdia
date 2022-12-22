@@ -1,7 +1,6 @@
 package com.example.movieinfo.view.tab;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,19 +15,20 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.movieinfo.R;
-import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.movie.MovieData;
 import com.example.movieinfo.model.person.PersonDetailData;
 import com.example.movieinfo.model.person.PersonDetailData.CreditsMovieResponse;
-import com.example.movieinfo.view.MediaDetailsActivity;
+import com.example.movieinfo.view.adapter.EmptyDataObserver;
 import com.example.movieinfo.view.adapter.MoviesAdapter;
 import com.example.movieinfo.viewmodel.PersonDetailViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class PersonDetails_MovieTab extends Fragment{
+public class PersonDetails_MovieTab extends Fragment {
 
     private final String LOG_TAG = "PersonDetails_MovieTab";
 
@@ -38,7 +38,7 @@ public class PersonDetails_MovieTab extends Fragment{
 
     private ShimmerFrameLayout mShimmer;
     private RecyclerView mRcView;
-    private MoviesAdapter moviesAdapter;
+    private MoviesAdapter mAdapter;
     private GridLayoutManager mLayoutMgr;
 
     public PersonDetails_MovieTab() {
@@ -63,7 +63,7 @@ public class PersonDetails_MovieTab extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_person_details_movie_tab, container, false);
+        return inflater.inflate(R.layout.fragment_general_gridshimmer_list, container, false);
     }
 
     @Override
@@ -73,16 +73,32 @@ public class PersonDetails_MovieTab extends Fragment{
         // Initialize Views
         mRcView = view.findViewById(R.id.recycler);
         mShimmer = view.findViewById(R.id.shimmer);
+        SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.swiperefresh);
+        View emptyDataView = view.findViewById(R.id.empty_data_hint);
+
+        initRecyclerView(emptyDataView);
+
+        // Disable swipeRefresh
+        pullToRefresh.setEnabled(false);
 
         // show shimmer animation
         mShimmer.startShimmer();
         mShimmer.setVisibility(View.VISIBLE);
+    }
 
+    /**
+     * Initialize RecyclerView
+     */
+    private void initRecyclerView(View emptyDataView) {
         // Initialize Recycler Adapter
-        moviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
+        mAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
 
         // Set adapter
-        mRcView.setAdapter(moviesAdapter);
+        mRcView.setAdapter(mAdapter);
+
+        // Set EmptyStateObserver
+        EmptyDataObserver emptyDataObserver = new EmptyDataObserver(mRcView, emptyDataView);
+        mAdapter.registerAdapterDataObserver(emptyDataObserver);
 
         // Set NestedScrollingEnable
         mRcView.setNestedScrollingEnabled(true);
@@ -92,7 +108,6 @@ public class PersonDetails_MovieTab extends Fragment{
 
         // Set layoutManager
         mRcView.setLayoutManager(mLayoutMgr);
-
     }
 
     /**
@@ -105,7 +120,7 @@ public class PersonDetails_MovieTab extends Fragment{
             mShimmer.setVisibility(View.GONE);
 
             CreditsMovieResponse creditsMovieResponse = personDetailData.getCreditsMovieResponse();
-            if (creditsMovieResponse != null){
+            if (creditsMovieResponse != null) {
                 ArrayList<MovieData> allMovies = new ArrayList<>();
                 ArrayList<MovieData> castedMovies = creditsMovieResponse.getCastedMovie_list();
                 ArrayList<MovieData> crewedMovies = creditsMovieResponse.getCrewedMovie_list();
@@ -116,9 +131,9 @@ public class PersonDetails_MovieTab extends Fragment{
                 // sort by releaseDate
                 allMovies = creditsMovieResponse.sortByReleaseDate(allMovies);
 
-                if (allMovies.size() > 0){
+                if (allMovies.size() > 0) {
                     // set data to adapter
-                    moviesAdapter.setMovies(allMovies);
+                    mAdapter.setMovies(allMovies);
                 }
             }
 

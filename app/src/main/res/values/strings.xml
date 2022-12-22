@@ -96,4 +96,5 @@
     <string name="label_unwatched_list">待觀看清單</string>
     <string name="label_rated_list">已評清單</string>
     <string name="label_rated_list_not_login">已評清單\n請登入以使用此功能</string>
+    <string name="label_no_data_available">目前尚無資料</string>
 </resources>

@@ -28,5 +28,13 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
+        <include
+            android:id="@+id/empty_data_hint"
+            layout="@layout/item_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
     </LinearLayout>
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
