@@ -37,7 +37,7 @@
         <!-- Set "configChanges" to avoid screen rotation recreate the activity -->
         <activity
             android:name=".view.YoutubePlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
             android:name=".view.ImageDisplayActivity"

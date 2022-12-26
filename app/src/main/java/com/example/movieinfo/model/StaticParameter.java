@@ -11,7 +11,7 @@ public class StaticParameter {
     public static final String AuthLocalValidUrl = "movieinfo://" + AuthLocalValidUrlAuthority + "/" + AuthLocalValidUrlPath;
     public static final String TmdbAuthFormatUrl = "https://www.themoviedb.org/authenticate/%s?redirect_to=" + AuthLocalValidUrl;
     private static final String TmdbImageBaseUrl = "https://image.tmdb.org/t/p/";
-    private static final String YoutubeThumbnailBaseUrl = "https://img.youtube.com/vi/";
+    private static final String YoutubeThumbnailFormatUrl = "https://img.youtube.com/vi/%s/hqdefault.jpg";
     private static final String TmdbWebBaseUrl = "https://www.themoviedb.org/";
     private static final String ImdbWebBaseUrl = "https://www.imdb.com/";
     private static final String GravatarFormatUrl = "https://www.gravatar.com/avatar/%s?size=%d";
@@ -165,5 +165,15 @@ public class StaticParameter {
      */
     public static String getGravatarImageUrl(String hash, int size) {
         return String.format(Locale.TAIWAN, GravatarFormatUrl, hash, size);
+    }
+
+    /**
+     * Get Youtube Thumbnail Image Full Url
+     *
+     * @param videoId Youtube video Id
+     * @return Youtube Thumbnail Image Full Url
+     */
+    public static String getYtThumbnailUrl(String videoId){
+        return String.format(Locale.TAIWAN, YoutubeThumbnailFormatUrl, videoId);
     }
 }

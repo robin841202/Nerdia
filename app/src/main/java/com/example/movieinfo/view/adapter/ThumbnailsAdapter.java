@@ -13,17 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.example.movieinfo.BuildConfig;
 import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.VideosResponse.VideoData;
-import com.example.movieinfo.model.movie.MovieData;
-import com.example.movieinfo.model.VideosResponse;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeThumbnailLoader;
-import com.google.android.youtube.player.YouTubeThumbnailView;
 
 import java.util.ArrayList;
 
@@ -82,7 +76,8 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
      * ViewHolder which set data to views in one itemView
      */
     class ThumbnailsViewHolder extends RecyclerView.ViewHolder {
-        private final YouTubeThumbnailView thumbnailView;
+        private final ImageView thumbnail;
+        private final View itemView;
         private final TextView title;
         private final IThumbnailListener listener;
 
@@ -90,7 +85,8 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
 
         public ThumbnailsViewHolder(@NonNull View itemView, IThumbnailListener listener) {
             super(itemView);
-            this.thumbnailView = itemView.findViewById(R.id.thumbnail_item_video);
+            this.thumbnail = itemView.findViewById(R.id.thumbnail_item_video);
+            this.itemView = itemView;
             this.title = itemView.findViewById(R.id.text_item_video_thumbnail_title);
 
             this.listener = listener;
@@ -109,33 +105,16 @@ public class ThumbnailsAdapter extends RecyclerView.Adapter<ThumbnailsAdapter.Th
         }
 
         public void bind(VideoData videoData) {
-            // Initialize YoutubeThumbnailView
-            thumbnailView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
-                @Override
-                public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader youTubeThumbnailLoader) {
-                    // show shimmer drawable effect when thumbnail is not ready
-                    youTubeThumbnailView.setImageDrawable(shimmerDrawable);
-                    // set video thumbnail
-                    youTubeThumbnailLoader.setVideo(videoData.getVideoId());
-                    youTubeThumbnailLoader.setOnThumbnailLoadedListener(new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
-                        @Override
-                        public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                            // must release after loaded
-                            youTubeThumbnailLoader.release();
-                        }
+            String imgUrl = StaticParameter.getYtThumbnailUrl(videoData.getVideoId());
 
-                        @Override
-                        public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-                            Log.d(LOG_TAG, String.format("YoutubeThumbnailView Loading Error! Reason: %s",  errorReason.name()));
-                        }
-                    });
-                }
-
-                @Override
-                public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-                    Log.d(LOG_TAG, String.format("YoutubeThumbnailView Initialize Failed! Reason: %s",  youTubeInitializationResult.name()));
-                }
-            });
+            // set image poster
+            Glide.with(itemView)
+                    .load(imgUrl)
+                    .placeholder(shimmerDrawable)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_image_not_found)
+                    .centerCrop()
+                    .into(thumbnail);
 
             // set video title
             title.setText(videoData.getName());
