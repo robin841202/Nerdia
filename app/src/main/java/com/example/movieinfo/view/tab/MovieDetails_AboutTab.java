@@ -206,7 +206,7 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
         intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, video.getVideoId());
         startActivity(intent);
         // set the custom transition animation
-        getActivity().overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+        getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }
 

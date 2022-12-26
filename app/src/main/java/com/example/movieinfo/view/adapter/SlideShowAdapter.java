@@ -1,11 +1,13 @@
 package com.example.movieinfo.view.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,8 @@ import com.example.movieinfo.model.ImagesResponse.ImageData;
 import com.example.movieinfo.model.SlideShowItemData;
 import com.example.movieinfo.model.VideosResponse.VideoData;
 import com.example.movieinfo.model.StaticParameter;
+import com.example.movieinfo.view.ImageDisplayActivity;
+import com.example.movieinfo.view.YoutubePlayerActivity;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -24,29 +28,23 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.DefaultPlayerUiController;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
 
 import java.util.ArrayList;
 
 public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<SlideShowItemData> item_list;
-    private final ISlideShowListener listener;
     private Lifecycle lifecycle;
+    private final AppCompatActivity context;
 
-    public interface ISlideShowListener {
-        /**
-         * SlideShow item onClick Event
-         */
-        void onSlideShowItemClick(SlideShowItemData itemData);
-    }
-
-
-    public SlideShowAdapter(ISlideShowListener listener, Lifecycle lifecycle) {
+    public SlideShowAdapter(Lifecycle lifecycle, AppCompatActivity context) {
         this.item_list = new ArrayList<>();
-        this.listener = listener;
         this.lifecycle = lifecycle;
+        this.context = context;
     }
 
     @Override
@@ -63,11 +61,11 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 View videoItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_slideshow_video, parent, false);
                 YouTubePlayerView ytPlayerView = videoItemView.findViewById(R.id.youtubePlayerView_slideshow);
                 lifecycle.addObserver(ytPlayerView);
-                holder = new SlideShowVideoViewHolder(videoItemView, listener);
+                holder = new SlideShowVideoViewHolder(videoItemView, context);
                 break;
             case StaticParameter.SlideShowType.IMAGE:
                 View imageItemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_slideshow_image, parent, false);
-                holder = new SlideShowImageViewHolder(imageItemView, listener);
+                holder = new SlideShowImageViewHolder(imageItemView, context);
                 break;
         }
         assert holder != null;
@@ -128,19 +126,15 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * ViewHolder which set data to views in one itemView (Video)
      */
     static class SlideShowVideoViewHolder extends RecyclerView.ViewHolder {
-        private final View itemView;
         private final YouTubePlayerView ytPlayerView;
         private final ImageView volumeControl;
-        private final ISlideShowListener listener;
-        private String currentVideoId;
-        private YouTubePlayer ytPlayer;
-        private ShimmerFrameLayout video_Shimmer;
+        private final ShimmerFrameLayout video_Shimmer;
         private boolean isMuted;
+        private final AppCompatActivity context;
 
-        public SlideShowVideoViewHolder(@NonNull View itemView, ISlideShowListener listener) {
+        public SlideShowVideoViewHolder(@NonNull View itemView, AppCompatActivity context) {
             super(itemView);
-            this.itemView = itemView;
-            this.listener = listener;
+            this.context = context;
 
             // Initialize Views
             ytPlayerView = itemView.findViewById(R.id.youtubePlayerView_slideshow);
@@ -177,11 +171,7 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     // hide shimmer animation
                     video_Shimmer.stopShimmer();
                     video_Shimmer.setVisibility(View.GONE);
-                    // using pre-made custom ui
-                    DefaultPlayerUiController defaultPlayerUiController = new DefaultPlayerUiController(ytPlayerView, youTubePlayer);
-                    // hide specific menu item
-                    defaultPlayerUiController.showUi(true).showVideoTitle(false).showSeekBar(false).showDuration(false).showCurrentTime(false).showYouTubeButton(false).showFullscreenButton(false);
-                    ytPlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
+
                     // show the youtube player
                     ytPlayerView.setVisibility(View.VISIBLE);
                 }
@@ -195,6 +185,17 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ytPlayerView.getYouTubePlayerWhenReady(new YouTubePlayerCallback() {
                 @Override
                 public void onYouTubePlayer(@NonNull YouTubePlayer youTubePlayer) {
+                    // using pre-made custom ui
+                    DefaultPlayerUiController defaultPlayerUiController = new DefaultPlayerUiController(ytPlayerView, youTubePlayer);
+                    // hide specific menu item
+                    defaultPlayerUiController.showUi(true).showVideoTitle(false).showSeekBar(false).showDuration(false).showCurrentTime(false).showYouTubeButton(false).showFullscreenButton(true);
+                    // set fullscreen click listener
+                    defaultPlayerUiController.setFullScreenButtonClickListener(v -> {
+                        // navigate to YoutubePlayer Activity
+                        navigateToYoutubePlayer(itemData.getSource());
+                    });
+                    ytPlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
+
                     // mute the video as default
                     youTubePlayer.mute();
 
@@ -216,15 +217,18 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
 
-            // set item onClickListener
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // callback onSlideShowItemClick method and pass itemData
-                    listener.onSlideShowItemClick(itemData);
-                }
-            });
+        }
 
+        /**
+         * Navigate to YoutubePlayer
+         * @param videoId Youtube video Id
+         */
+        private void navigateToYoutubePlayer(String videoId){
+            Intent intent = new Intent(context, YoutubePlayerActivity.class);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, videoId);
+            context.startActivity(intent);
+            // set the custom transition animation
+            context.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
 
     }
@@ -236,20 +240,20 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class SlideShowImageViewHolder extends RecyclerView.ViewHolder {
         private final View itemView;
         private final ImageView imageView;
-        private final ISlideShowListener listener;
         private final ShimmerDrawable shimmerDrawable;
+        private final AppCompatActivity context;
 
-        public SlideShowImageViewHolder(@NonNull View itemView, ISlideShowListener listener) {
+        public SlideShowImageViewHolder(@NonNull View itemView, AppCompatActivity context) {
             super(itemView);
             this.itemView = itemView;
             this.imageView = itemView.findViewById(R.id.img_item_slideshow);
-            this.listener = listener;
+            this.context = context;
 
             // region Create image placeholder animation using shimmer
             Shimmer shimmer = new Shimmer.ColorHighlightBuilder()
-                    .setBaseColor(ContextCompat.getColor(itemView.getContext(), R.color.gray))
+                    .setBaseColor(ContextCompat.getColor(context, R.color.gray))
                     .setBaseAlpha(1)
-                    .setHighlightColor(ContextCompat.getColor(itemView.getContext(), R.color.lightGray))
+                    .setHighlightColor(ContextCompat.getColor(context, R.color.lightGray))
                     .setHighlightAlpha(1)
                     .setDropoff(50)
                     .build();
@@ -271,14 +275,23 @@ public class SlideShowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .into(imageView);
 
             // set item onClickListener
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // callback onSlideShowItemClick method and pass itemData
-                    listener.onSlideShowItemClick(itemData);
-                }
+            itemView.setOnClickListener(v -> {
+                // navigate to ImageDisplay
+                navigateToImageDisplay(itemData.getSource());
             });
 
+        }
+
+        /**
+         * Navigate to ImageDisplay
+         * @param imgPath image path
+         */
+        private void navigateToImageDisplay(String imgPath){
+            Intent intent = new Intent(context, ImageDisplayActivity.class);
+            intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_IMAGE_PATH_KEY, imgPath);
+            context.startActivity(intent);
+            // set the custom transition animation
+            context.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
 
     }

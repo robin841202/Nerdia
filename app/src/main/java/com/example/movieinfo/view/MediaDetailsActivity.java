@@ -62,7 +62,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 
-public class MediaDetailsActivity extends AppCompatActivity implements SlideShowAdapter.ISlideShowListener, RatingBottomSheet.IRatingListener {
+public class MediaDetailsActivity extends AppCompatActivity implements RatingBottomSheet.IRatingListener {
 
     private final String LOG_TAG = "MediaDetailsActivity";
     private Context context;
@@ -115,7 +115,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         ratingBtn = findViewById(R.id.btn_rating);
 
         // Initialize RecyclerView Adapter
-        slideshowAdapter = new SlideShowAdapter(this, getLifecycle());
+        slideshowAdapter = new SlideShowAdapter(getLifecycle(), this);
 
         // Initialize pagerAdapter
         CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), getLifecycle());
@@ -760,23 +760,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         }).attach();
     }
 
-    /**
-     * Callback when slideshow item get clicked
-     *
-     * @param itemData SlideShowItemData
-     */
-    @Override
-    public void onSlideShowItemClick(SlideShowItemData itemData) {
-        switch (itemData.getItemType()) {
-            case StaticParameter.SlideShowType.VIDEO:
-                playVideoInNewActivity(itemData.getSource());
-                break;
-            case StaticParameter.SlideShowType.IMAGE:
-                displayImageFullScreen(itemData.getSource());
-                break;
-        }
-    }
-
     // endregion
 
     /**
@@ -791,19 +774,6 @@ public class MediaDetailsActivity extends AppCompatActivity implements SlideShow
         // set the custom transition animation
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
-
-
-    /**
-     * Play youtube video in new activity
-     */
-    private void playVideoInNewActivity(String videoId) {
-        Intent intent = new Intent(context, YoutubePlayerActivity.class);
-        intent.putExtra(StaticParameter.ExtraDataKey.EXTRA_DATA_VIDEO_ID_KEY, videoId);
-        startActivity(intent);
-        // set the custom transition animation
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-    }
-
 
     /**
      * Show Rate Details Bottom Sheet Modal
