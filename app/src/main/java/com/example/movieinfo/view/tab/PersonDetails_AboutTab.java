@@ -116,8 +116,10 @@ public class PersonDetails_AboutTab extends Fragment implements ProfileImageAdap
      */
     private Observer<PersonDetailData> getDataObserver() {
         return personDetail -> {
-            // populate data to UI
-            populateUI(personDetail);
+            if (personDetail != null){
+                // populate data to UI
+                populateUI(personDetail);
+            }
         };
     }
 

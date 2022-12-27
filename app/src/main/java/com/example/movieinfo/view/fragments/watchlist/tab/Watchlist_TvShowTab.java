@@ -208,41 +208,43 @@ public class Watchlist_TvShowTab extends Fragment {
      * Observe when tvShow watchlist from TMDB LiveData changed
      */
     private final Observer<ArrayList<TvShowData>> tvShowWatchlistTMDBObserver = tvShows -> {
-        // hide shimmer animation
-        mShimmer.stopShimmer();
-        mShimmer.setVisibility(View.GONE);
+        if (tvShows != null){
+            // hide shimmer animation
+            mShimmer.stopShimmer();
+            mShimmer.setVisibility(View.GONE);
 
-        if (tvShows.size() > 0) {
-            // append data to adapter
-            mAdapter.appendTvShows(tvShows);
+            if (tvShows.size() > 0) {
+                // append data to adapter
+                mAdapter.appendTvShows(tvShows);
 
-            // attach onScrollListener to RecyclerView
-            mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // when scrolling up
-                    if (dy > 0) {
-                        final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
+                // attach onScrollListener to RecyclerView
+                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // when scrolling up
+                        if (dy > 0) {
+                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                        // get the number of all items in recyclerView
-                        int totalItemCount = mLayoutMgr.getItemCount();
-                        // get the last visible item's position
-                        int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
+                            // get the number of all items in recyclerView
+                            int totalItemCount = mLayoutMgr.getItemCount();
+                            // get the last visible item's position
+                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
 
-                        if (totalItemCount <= lastVisibleItem + visibleThreshold) {
-                            // detach current OnScrollListener
-                            mRcView.removeOnScrollListener(this);
+                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                // detach current OnScrollListener
+                                mRcView.removeOnScrollListener(this);
 
-                            // append nextPage data to recyclerView
-                            mCurrentPage++;
-                            fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
+                                // append nextPage data to recyclerView
+                                mCurrentPage++;
+                                fetchTvShowWatchlistFromTMDB(mLoginInfo.getUserId(), mLoginInfo.getSession(), mSortMode, mCurrentPage);
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        Log.d(LOG_TAG, "tvShow watchlist: data fetched successfully");
+            Log.d(LOG_TAG, "tvShow watchlist: data fetched successfully");
+        }
     };
 
 

@@ -119,8 +119,10 @@ public class PersonDetailsActivity extends AppCompatActivity {
      */
     public Observer<PersonDetailData> getPersonDetailObserver() {
         return personDetailData -> {
-            // populate data to UI
-            populateDetails(personDetailData);
+            if (personDetailData != null){
+                // populate data to UI
+                populateDetails(personDetailData);
+            }
         };
     }
 

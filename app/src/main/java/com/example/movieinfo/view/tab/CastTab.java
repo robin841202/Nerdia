@@ -121,8 +121,10 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
      */
     private Observer<MovieDetailData> getMovieDataObserver() {
         return movieDetail -> {
-            // populate data to UI
-            populateUI(movieDetail);
+            if (movieDetail != null){
+                // populate data to UI
+                populateUI(movieDetail);
+            }
         };
     }
 
@@ -131,8 +133,10 @@ public class CastTab extends Fragment implements CastsAdapter.ICastListener {
      */
     private Observer<TvShowDetailData> getTvShowDataObserver() {
         return tvShowDetail -> {
-            // populate data to UI
-            populateUI(tvShowDetail);
+            if (tvShowDetail != null) {
+                // populate data to UI
+                populateUI(tvShowDetail);
+            }
         };
     }
 

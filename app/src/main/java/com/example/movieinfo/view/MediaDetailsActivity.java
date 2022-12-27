@@ -248,56 +248,57 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
      */
     public Observer<MovieDetailData> getMovieDetailObserver() {
         return movieDetailData -> {
-            // populate data to UI
-            populateDetails(movieDetailData);
+            if (movieDetailData != null){
+                // populate data to UI
+                populateDetails(movieDetailData);
 
-            // region Set watchlist toggle button initial status
-            if (mLoginInfo.isLogin()) { // LOGIN TMDB
-                AccountStatesOnMedia accountStates = movieDetailData.getAccountStatesOnMedia();
-                if (accountStates != null) {
-                    // region watchlist toggle button
-                    // show watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.VISIBLE);
-                    // Set watchlist toggle button default status
-                    watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                // region Set watchlist toggle button initial status
+                if (mLoginInfo.isLogin()) { // LOGIN TMDB
+                    AccountStatesOnMedia accountStates = movieDetailData.getAccountStatesOnMedia();
+                    if (accountStates != null) {
+                        // region watchlist toggle button
+                        // show watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.VISIBLE);
+                        // Set watchlist toggle button default status
+                        watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                        // endregion
+                    } else {
+                        // hide watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.GONE);
+                    }
+                } else { // NOT LOGIN
+                    // region Check and observe whether movie is already in local database watchlist or not
+                    try {
+                        boolean isExisted = mediaDetailViewModel.checkMovieExistInRoomWatchlist(movieDetailData.getId()).get();
+                        // show watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.VISIBLE);
+                        // Set watchlist toggle button default status
+                        watchlistToggleBtn.setChecked(isExisted);
+                    } catch (ExecutionException | InterruptedException e) {
+                        // hide watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.GONE);
+                        e.printStackTrace();
+                    }
                     // endregion
-                } else {
-                    // hide watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.GONE);
-                }
-            } else { // NOT LOGIN
-                // region Check and observe whether movie is already in local database watchlist or not
-                try {
-                    boolean isExisted = mediaDetailViewModel.checkMovieExistInRoomWatchlist(movieDetailData.getId()).get();
-                    // show watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.VISIBLE);
-                    // Set watchlist toggle button default status
-                    watchlistToggleBtn.setChecked(isExisted);
-                } catch (ExecutionException | InterruptedException e) {
-                    // hide watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.GONE);
-                    e.printStackTrace();
                 }
                 // endregion
+
+                // region Set toggle button onChange listener
+                watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) { // INSERT
+                        insertMovieToWatchlist(movieDetailData);
+                    } else { // DELETE
+                        deleteMovieFromWatchlist(movieDetailData);
+                    }
+                });
+                // endregion
+
+                // region Set rating Button click event
+                ratingBtn.setOnClickListener(v -> {
+                    showRatingBottomSheet();
+                });
+                // endregion
             }
-            // endregion
-
-            // region Set toggle button onChange listener
-            watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) { // INSERT
-                    insertMovieToWatchlist(movieDetailData);
-                } else { // DELETE
-                    deleteMovieFromWatchlist(movieDetailData);
-                }
-            });
-            // endregion
-
-            // region Set rating Button click event
-            ratingBtn.setOnClickListener(v -> {
-                showRatingBottomSheet();
-            });
-            // endregion
-
         };
     }
 
@@ -479,57 +480,59 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
      */
     public Observer<TvShowDetailData> getTvShowDetailObserver() {
         return tvShowDetailData -> {
-            // populate data to UI
-            populateDetails(tvShowDetailData);
+            if (tvShowDetailData != null){
+                // populate data to UI
+                populateDetails(tvShowDetailData);
 
-            // region Set watchlist toggle button initial status
-            if (mLoginInfo.isLogin()) { // LOGIN TMDB
-                AccountStatesOnMedia accountStates = tvShowDetailData.getAccountStatesOnMedia();
-                if (accountStates != null) {
+                // region Set watchlist toggle button initial status
+                if (mLoginInfo.isLogin()) { // LOGIN TMDB
+                    AccountStatesOnMedia accountStates = tvShowDetailData.getAccountStatesOnMedia();
+                    if (accountStates != null) {
 
-                    // region watchlist toggle button
-                    // show watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.VISIBLE);
-                    // Set watchlist toggle button default status
-                    watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                        // region watchlist toggle button
+                        // show watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.VISIBLE);
+                        // Set watchlist toggle button default status
+                        watchlistToggleBtn.setChecked(accountStates.isInWatchlist());
+                        // endregion
+
+                    } else {
+                        // hide watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.GONE);
+                    }
+                } else { // NOT LOGIN
+                    // region Check and observe whether movie is already in local database watchlist or not
+                    try {
+                        boolean isExisted = mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowDetailData.getId()).get();
+                        // show watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.VISIBLE);
+                        // Set toggle button default status
+                        watchlistToggleBtn.setChecked(isExisted);
+                    } catch (ExecutionException | InterruptedException e) {
+                        // hide watchlist toggle button
+                        watchlistToggleBtn.setVisibility(View.GONE);
+                        e.printStackTrace();
+                    }
                     // endregion
-
-                } else {
-                    // hide watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.GONE);
-                }
-            } else { // NOT LOGIN
-                // region Check and observe whether movie is already in local database watchlist or not
-                try {
-                    boolean isExisted = mediaDetailViewModel.checkTvShowExistInWatchlist(tvShowDetailData.getId()).get();
-                    // show watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.VISIBLE);
-                    // Set toggle button default status
-                    watchlistToggleBtn.setChecked(isExisted);
-                } catch (ExecutionException | InterruptedException e) {
-                    // hide watchlist toggle button
-                    watchlistToggleBtn.setVisibility(View.GONE);
-                    e.printStackTrace();
                 }
                 // endregion
+
+                // region Set toggle button onChange listener
+                watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) { // INSERT
+                        insertTvShowToWatchlist(tvShowDetailData);
+                    } else { // DELETE
+                        deleteTvShowFromWatchlist(tvShowDetailData);
+                    }
+                });
+                // endregion
+
+                // region Set rating Button click event
+                ratingBtn.setOnClickListener(v -> {
+                    showRatingBottomSheet();
+                });
+                // endregion
             }
-            // endregion
-
-            // region Set toggle button onChange listener
-            watchlistToggleBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) { // INSERT
-                    insertTvShowToWatchlist(tvShowDetailData);
-                } else { // DELETE
-                    deleteTvShowFromWatchlist(tvShowDetailData);
-                }
-            });
-            // endregion
-
-            // region Set rating Button click event
-            ratingBtn.setOnClickListener(v -> {
-                showRatingBottomSheet();
-            });
-            // endregion
         };
     }
 

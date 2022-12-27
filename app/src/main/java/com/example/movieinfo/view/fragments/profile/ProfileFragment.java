@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,6 +24,8 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.user.LoginInfo;
 import com.example.movieinfo.model.user.UserData;
+import com.example.movieinfo.utils.ConnectionHelper;
+import com.example.movieinfo.utils.ConnectionReceiver;
 import com.example.movieinfo.utils.SharedPreferenceStringLiveData;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.google.android.material.button.MaterialButton;
@@ -30,7 +33,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements ConnectionReceiver.ReceiverListener {
 
     private final String LOG_TAG = "ProfileFragment";
     private Context context;
@@ -109,7 +112,12 @@ public class ProfileFragment extends Fragment {
 
         // Set login btn onClick listener
         loginBtn.setOnClickListener(v -> {
-            navigateTo(R.id.action_profileFragment_to_loginTmdbFragment);
+            boolean isNetworkConnected = ConnectionHelper.checkConnection(context, this);
+            if (isNetworkConnected) { // INTERNET AVAILABLE
+                navigateTo(R.id.action_profileFragment_to_loginTmdbFragment);
+            } else { // NO INTERNET AVAILABLE
+                showSnackBar(view, getString(R.string.msg_no_internet_available), context.getColor(R.color.white), context.getColor(R.color.red));
+            }
         });
 
         // Set logout btn onClick listener
@@ -123,11 +131,7 @@ public class ProfileFragment extends Fragment {
                 // Clear the session & user data stored in sharedPreference
                 logoutSharedPreference();
                 // Show the snackbar message
-                Snackbar.make(view, getString(R.string.msg_logout_successful), Snackbar.LENGTH_LONG)
-                        .setTextColor(context.getColor(R.color.white))
-                        .setBackgroundTint(context.getColor(R.color.green))
-                        .setAnchorView(R.id.bottomNavView) // set snackbar above bottomNav
-                        .show();
+                showSnackBar(view, getString(R.string.msg_logout_successful), context.getColor(R.color.white), context.getColor(R.color.green));
             });
             builder.setNegativeButton(R.string.label_cancel, (dialog, id) -> {
                 // User cancelled the dialog, do nothing
@@ -145,11 +149,7 @@ public class ProfileFragment extends Fragment {
             // Show the Snackbar message
             String msg = isSuccess ? getString(R.string.msg_login_successful) : getString(R.string.msg_login_failed);
             int bgColor = isSuccess ? context.getColor(R.color.green) : context.getColor(R.color.red);
-            Snackbar.make(view, msg, Snackbar.LENGTH_LONG)
-                    .setTextColor(context.getColor(R.color.white))
-                    .setBackgroundTint(bgColor)
-                    .setAnchorView(R.id.bottomNavView) // set snackbar above bottomNav
-                    .show();
+            showSnackBar(view, msg, context.getColor(R.color.white), bgColor);
         });
 
         // Set watchlist btn onClick listener
@@ -226,4 +226,32 @@ public class ProfileFragment extends Fragment {
         NavHostFragment.findNavController(this)
                 .navigate(actionId);
     }
+
+    /**
+     * Show SnackBar Message
+     *
+     * @param view     The view to find a parent from
+     * @param msg      Message text
+     * @param txtColor Text Color
+     * @param bgColor  Background Color
+     */
+    private void showSnackBar(View view, String msg, int txtColor, int bgColor) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG)
+                .setTextColor(txtColor)
+                .setBackgroundTint(bgColor)
+                .setAnchorView(R.id.bottomNavView) // set snackbar above bottomNav
+                .show();
+    }
+
+    /**
+     * Triggered when network state change
+     *
+     * @param isConnected connection status
+     */
+    @Override
+    public void onNetworkChange(boolean isConnected) {
+
+    }
+
+
 }

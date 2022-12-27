@@ -2,8 +2,11 @@ package com.example.movieinfo.view.fragments.profile;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
@@ -26,6 +30,8 @@ import com.example.movieinfo.R;
 import com.example.movieinfo.model.StaticParameter;
 import com.example.movieinfo.model.auth.RequestTokenResponse;
 import com.example.movieinfo.model.user.UserData;
+import com.example.movieinfo.utils.ConnectionHelper;
+import com.example.movieinfo.utils.ConnectionReceiver;
 import com.example.movieinfo.utils.SharedPreferenceUtils;
 import com.example.movieinfo.viewmodel.LoginTmdbViewModel;
 import com.google.common.base.Strings;
@@ -33,7 +39,7 @@ import com.google.gson.Gson;
 
 import java.util.Date;
 
-public class LoginTmdbFragment extends Fragment {
+public class LoginTmdbFragment extends Fragment{
     private final String LOG_TAG = "LoginTmdbFragment";
     private Context context;
 

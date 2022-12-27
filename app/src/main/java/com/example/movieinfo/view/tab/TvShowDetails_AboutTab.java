@@ -99,6 +99,9 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         // Set layoutManager
         videoThumbnail_RcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
 
+        // show shimmer animation
+        videoThumbnail_Shimmer.startShimmer();
+        videoThumbnail_Shimmer.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -106,11 +109,10 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
      */
     private Observer<TvShowDetailData> getDataObserver() {
         return tvShowDetail -> {
-            // show shimmer animation
-            videoThumbnail_Shimmer.startShimmer();
-            videoThumbnail_Shimmer.setVisibility(View.VISIBLE);
-            // populate data to UI
-            populateUI(tvShowDetail);
+            if (tvShowDetail != null){
+                // populate data to UI
+                populateUI(tvShowDetail);
+            }
         };
     }
 

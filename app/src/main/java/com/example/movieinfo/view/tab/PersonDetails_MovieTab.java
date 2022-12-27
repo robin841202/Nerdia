@@ -115,29 +115,31 @@ public class PersonDetails_MovieTab extends Fragment {
      */
     public Observer<PersonDetailData> getPersonDetailsObserver() {
         return personDetailData -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
+            if (personDetailData != null){
+                // hide shimmer animation
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
-            CreditsMovieResponse creditsMovieResponse = personDetailData.getCreditsMovieResponse();
-            if (creditsMovieResponse != null) {
-                ArrayList<MovieData> allMovies = new ArrayList<>();
-                ArrayList<MovieData> castedMovies = creditsMovieResponse.getCastedMovie_list();
-                ArrayList<MovieData> crewedMovies = creditsMovieResponse.getCrewedMovie_list();
-                allMovies.addAll(castedMovies);
-                allMovies.addAll(crewedMovies);
-                // get data without duplicated id
-                allMovies = creditsMovieResponse.getMoviesWithoutDuplicatedId(allMovies);
-                // sort by releaseDate
-                allMovies = creditsMovieResponse.sortByReleaseDate(allMovies);
+                CreditsMovieResponse creditsMovieResponse = personDetailData.getCreditsMovieResponse();
+                if (creditsMovieResponse != null) {
+                    ArrayList<MovieData> allMovies = new ArrayList<>();
+                    ArrayList<MovieData> castedMovies = creditsMovieResponse.getCastedMovie_list();
+                    ArrayList<MovieData> crewedMovies = creditsMovieResponse.getCrewedMovie_list();
+                    allMovies.addAll(castedMovies);
+                    allMovies.addAll(crewedMovies);
+                    // get data without duplicated id
+                    allMovies = creditsMovieResponse.getMoviesWithoutDuplicatedId(allMovies);
+                    // sort by releaseDate
+                    allMovies = creditsMovieResponse.sortByReleaseDate(allMovies);
 
-                if (allMovies.size() > 0) {
-                    // set data to adapter
-                    mAdapter.setMovies(allMovies);
+                    if (allMovies.size() > 0) {
+                        // set data to adapter
+                        mAdapter.setMovies(allMovies);
+                    }
                 }
-            }
 
-            Log.d(LOG_TAG, "PersonDetails: liveData changed");
+                Log.d(LOG_TAG, "PersonDetails: liveData changed");
+            }
         };
     }
 

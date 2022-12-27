@@ -117,11 +117,13 @@ public class GenresListFragment extends Fragment implements GenresAdapter.IGenre
      */
     public Observer<ArrayList<GenreData>> getGenresObserver() {
         return genres -> {
-            if (genres.size() > 0) {
-                // set data to adapter
-                genresAdapter.setGenres(genres);
+            if (genres != null){
+                if (genres.size() > 0) {
+                    // set data to adapter
+                    genresAdapter.setGenres(genres);
+                }
+                Log.d(LOG_TAG, "genres: data fetched successfully");
             }
-            Log.d(LOG_TAG, "genres: data fetched successfully");
         };
     }
 

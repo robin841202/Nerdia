@@ -185,41 +185,43 @@ public class SimilarTab extends Fragment {
      */
     public Observer<ArrayList<MovieData>> getSimilarMoviesObserver() {
         return movies -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
+            if (movies != null){
+                // hide shimmer animation
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
-            if (movies.size() > 0) {
-                // append data to adapter
-                moviesAdapter.appendMovies(movies);
+                if (movies.size() > 0) {
+                    // append data to adapter
+                    moviesAdapter.appendMovies(movies);
 
-                // attach onScrollListener to RecyclerView
-                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // when scrolling up
-                        if (dy > 0) {
-                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
+                    // attach onScrollListener to RecyclerView
+                    mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            // when scrolling up
+                            if (dy > 0) {
+                                final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                            // get the number of all items in recyclerView
-                            int totalItemCount = mLayoutMgr.getItemCount();
-                            // get the last visible item's position
-                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
+                                // get the number of all items in recyclerView
+                                int totalItemCount = mLayoutMgr.getItemCount();
+                                // get the last visible item's position
+                                int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
 
-                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
-                                // detach current OnScrollListener
-                                mRcView.removeOnScrollListener(this);
+                                if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                    // detach current OnScrollListener
+                                    mRcView.removeOnScrollListener(this);
 
-                                // append nextPage data to recyclerView
-                                currentPage++;
-                                fetchSimilarMovies(id, currentPage);
+                                    // append nextPage data to recyclerView
+                                    currentPage++;
+                                    fetchSimilarMovies(id, currentPage);
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-            Log.d(LOG_TAG, "similar movies: data fetched successfully");
+                Log.d(LOG_TAG, "similar movies: data fetched successfully");
+            }
         };
     }
 
@@ -248,41 +250,43 @@ public class SimilarTab extends Fragment {
      */
     public Observer<ArrayList<TvShowData>> getSimilarTvShowsObserver() {
         return tvShows -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
+            if (tvShows != null) {
+                // hide shimmer animation
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
-            if (tvShows.size() > 0) {
-                // append data to adapter
-                tvShowsAdapter.appendTvShows(tvShows);
+                if (tvShows.size() > 0) {
+                    // append data to adapter
+                    tvShowsAdapter.appendTvShows(tvShows);
 
-                // attach onScrollListener to RecyclerView
-                mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // when scrolling up
-                        if (dy > 0) {
-                            final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
+                    // attach onScrollListener to RecyclerView
+                    mRcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            // when scrolling up
+                            if (dy > 0) {
+                                final int visibleThreshold = 5 * mLayoutMgr.getSpanCount();
 
-                            // get the number of all items in recyclerView
-                            int totalItemCount = mLayoutMgr.getItemCount();
-                            // get the last visible item's position
-                            int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
+                                // get the number of all items in recyclerView
+                                int totalItemCount = mLayoutMgr.getItemCount();
+                                // get the last visible item's position
+                                int lastVisibleItem = mLayoutMgr.findLastCompletelyVisibleItemPosition();
 
-                            if (totalItemCount <= lastVisibleItem + visibleThreshold) {
-                                // detach current OnScrollListener
-                                mRcView.removeOnScrollListener(this);
+                                if (totalItemCount <= lastVisibleItem + visibleThreshold) {
+                                    // detach current OnScrollListener
+                                    mRcView.removeOnScrollListener(this);
 
-                                // append nextPage data to recyclerView
-                                currentPage++;
-                                fetchSimilarTvShows(id, currentPage);
+                                    // append nextPage data to recyclerView
+                                    currentPage++;
+                                    fetchSimilarTvShows(id, currentPage);
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-            Log.d(LOG_TAG, "similar tvShows: data fetched successfully");
+                Log.d(LOG_TAG, "similar tvShows: data fetched successfully");
+            }
         };
     }
 

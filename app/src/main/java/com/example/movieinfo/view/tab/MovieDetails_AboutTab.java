@@ -109,8 +109,10 @@ public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter
      */
     private Observer<MovieDetailData> getDataObserver() {
         return movieDetail -> {
-            // populate data to UI
-            populateUI(movieDetail);
+            if (movieDetail != null){
+                // populate data to UI
+                populateUI(movieDetail);
+            }
         };
     }
 

@@ -115,29 +115,31 @@ public class PersonDetails_TvShowTab extends Fragment {
      */
     public Observer<PersonDetailData> getPersonDetailsObserver() {
         return personDetailData -> {
-            // hide shimmer animation
-            mShimmer.stopShimmer();
-            mShimmer.setVisibility(View.GONE);
+            if (personDetailData != null) {
+                // hide shimmer animation
+                mShimmer.stopShimmer();
+                mShimmer.setVisibility(View.GONE);
 
-            CreditsTvShowResponse creditsTvShowResponse = personDetailData.getCreditsTvShowResponse();
-            if (creditsTvShowResponse != null) {
-                ArrayList<TvShowData> allTvShows = new ArrayList<>();
-                ArrayList<TvShowData> castedTvShows = creditsTvShowResponse.getCastedTvShow_list();
-                ArrayList<TvShowData> crewedTvShows = creditsTvShowResponse.getCrewedTvShow_list();
-                allTvShows.addAll(castedTvShows);
-                allTvShows.addAll(crewedTvShows);
-                // get data without duplicated id
-                allTvShows = creditsTvShowResponse.getTvShowsWithoutDuplicatedId(allTvShows);
-                // sort by releaseDate
-                allTvShows = creditsTvShowResponse.sortByReleaseDate(allTvShows);
+                CreditsTvShowResponse creditsTvShowResponse = personDetailData.getCreditsTvShowResponse();
+                if (creditsTvShowResponse != null) {
+                    ArrayList<TvShowData> allTvShows = new ArrayList<>();
+                    ArrayList<TvShowData> castedTvShows = creditsTvShowResponse.getCastedTvShow_list();
+                    ArrayList<TvShowData> crewedTvShows = creditsTvShowResponse.getCrewedTvShow_list();
+                    allTvShows.addAll(castedTvShows);
+                    allTvShows.addAll(crewedTvShows);
+                    // get data without duplicated id
+                    allTvShows = creditsTvShowResponse.getTvShowsWithoutDuplicatedId(allTvShows);
+                    // sort by releaseDate
+                    allTvShows = creditsTvShowResponse.sortByReleaseDate(allTvShows);
 
-                if (allTvShows.size() > 0) {
-                    // set data to adapter
-                    mAdapter.setTvShows(allTvShows);
+                    if (allTvShows.size() > 0) {
+                        // set data to adapter
+                        mAdapter.setTvShows(allTvShows);
+                    }
                 }
-            }
 
-            Log.d(LOG_TAG, "PersonDetails: liveData changed");
+                Log.d(LOG_TAG, "PersonDetails: liveData changed");
+            }
         };
     }
 

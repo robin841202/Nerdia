@@ -4,6 +4,7 @@
     package="com.example.movieinfo">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <!-- Add this to be able to access other apps since Android 11 or higher version had more restriction -->
     <queries>

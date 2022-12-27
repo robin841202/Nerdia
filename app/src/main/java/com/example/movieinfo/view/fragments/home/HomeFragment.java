@@ -592,37 +592,38 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getUpcomingMoviesObserver() {
         return movies -> {
-            // hide shimmer animation
-            upcomingMovies_Shimmer.stopShimmer();
-            upcomingMovies_Shimmer.setVisibility(View.GONE);
+            if (movies != null){
+                // hide shimmer animation
+                upcomingMovies_Shimmer.stopShimmer();
+                upcomingMovies_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            upcomingMoviesAdapter.appendMovies(movies);
+                // append data to adapter
+                upcomingMoviesAdapter.appendMovies(movies);
 
-            // attach onScrollListener to RecyclerView
-            upcomingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = upcomingMoviesLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = upcomingMoviesLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = upcomingMoviesLayoutMgr.findFirstVisibleItemPosition();
+                // attach onScrollListener to RecyclerView
+                upcomingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = upcomingMoviesLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = upcomingMoviesLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = upcomingMoviesLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        upcomingMovies_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            upcomingMovies_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        upcomingMoviesPage++;
-                        getUpcomingMovies(upcomingMoviesPage);
+                            // append nextPage data to recyclerView
+                            upcomingMoviesPage++;
+                            getUpcomingMovies(upcomingMoviesPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "upcoming movies: data fetched successfully");
-
+                Log.d(LOG_TAG, "upcoming movies: data fetched successfully");
+            }
         };
     }
 
@@ -645,36 +646,37 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getNowPlayingMoviesObserver() {
         return movies -> {
-            // hide shimmer animation
-            nowPlayingMovies_Shimmer.stopShimmer();
-            nowPlayingMovies_Shimmer.setVisibility(View.GONE);
+            if (movies != null){
+                // hide shimmer animation
+                nowPlayingMovies_Shimmer.stopShimmer();
+                nowPlayingMovies_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            nowPlayingMoviesAdapter.appendMovies(movies);
-            // attach onScrollListener to RecyclerView
-            nowPlayingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = nowPlayingMoviesLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = nowPlayingMoviesLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = nowPlayingMoviesLayoutMgr.findFirstVisibleItemPosition();
+                // append data to adapter
+                nowPlayingMoviesAdapter.appendMovies(movies);
+                // attach onScrollListener to RecyclerView
+                nowPlayingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = nowPlayingMoviesLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = nowPlayingMoviesLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = nowPlayingMoviesLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        nowPlayingMovies_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            nowPlayingMovies_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        nowPlayingMoviesPage++;
-                        getNowPlayingMovies(nowPlayingMoviesPage);
+                            // append nextPage data to recyclerView
+                            nowPlayingMoviesPage++;
+                            getNowPlayingMovies(nowPlayingMoviesPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "nowPlaying movies: data fetched successfully");
-
+                Log.d(LOG_TAG, "nowPlaying movies: data fetched successfully");
+            }
         };
     }
 
@@ -697,35 +699,37 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getTrendingMoviesObserver() {
         return movies -> {
-            // hide shimmer animation
-            trendingMovies_Shimmer.stopShimmer();
-            trendingMovies_Shimmer.setVisibility(View.GONE);
+            if (movies != null){
+                // hide shimmer animation
+                trendingMovies_Shimmer.stopShimmer();
+                trendingMovies_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            trendingMoviesAdapter.appendMovies(movies);
-            // attach onScrollListener to RecyclerView
-            trendingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = trendingMoviesLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = trendingMoviesLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = trendingMoviesLayoutMgr.findFirstVisibleItemPosition();
+                // append data to adapter
+                trendingMoviesAdapter.appendMovies(movies);
+                // attach onScrollListener to RecyclerView
+                trendingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = trendingMoviesLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = trendingMoviesLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = trendingMoviesLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        trendingMovies_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            trendingMovies_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        trendingMoviesPage++;
-                        getTrendingMovies(trendingMoviesPage);
+                            // append nextPage data to recyclerView
+                            trendingMoviesPage++;
+                            getTrendingMovies(trendingMoviesPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "trending movies: data fetched successfully");
+                Log.d(LOG_TAG, "trending movies: data fetched successfully");
+            }
         };
     }
 
@@ -748,36 +752,37 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getPopularMoviesObserver() {
         return movies -> {
-            // hide shimmer animation
-            popularMovies_Shimmer.stopShimmer();
-            popularMovies_Shimmer.setVisibility(View.GONE);
+            if (movies != null){
+                // hide shimmer animation
+                popularMovies_Shimmer.stopShimmer();
+                popularMovies_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            popularMoviesAdapter.appendMovies(movies);
-            // attach onScrollListener to RecyclerView
-            popularMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = popularMoviesLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = popularMoviesLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = popularMoviesLayoutMgr.findFirstVisibleItemPosition();
+                // append data to adapter
+                popularMoviesAdapter.appendMovies(movies);
+                // attach onScrollListener to RecyclerView
+                popularMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = popularMoviesLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = popularMoviesLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = popularMoviesLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        popularMovies_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            popularMovies_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        popularMoviesPage++;
-                        getPopularMovies(popularMoviesPage);
+                            // append nextPage data to recyclerView
+                            popularMoviesPage++;
+                            getPopularMovies(popularMoviesPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "popular movies: data fetched successfully");
-
+                Log.d(LOG_TAG, "popular movies: data fetched successfully");
+            }
         };
     }
 
@@ -800,36 +805,37 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<TvShowData>> getPopularTvShowsObserver() {
         return tvShows -> {
-            // hide shimmer animation
-            popularTvShows_Shimmer.stopShimmer();
-            popularTvShows_Shimmer.setVisibility(View.GONE);
+            if (tvShows != null){
+                // hide shimmer animation
+                popularTvShows_Shimmer.stopShimmer();
+                popularTvShows_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            popularTvShowsAdapter.appendTvShows(tvShows);
-            // attach onScrollListener to RecyclerView
-            popularTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = popularTvShowsLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = popularTvShowsLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = popularTvShowsLayoutMgr.findFirstVisibleItemPosition();
+                // append data to adapter
+                popularTvShowsAdapter.appendTvShows(tvShows);
+                // attach onScrollListener to RecyclerView
+                popularTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = popularTvShowsLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = popularTvShowsLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = popularTvShowsLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        popularTvShows_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            popularTvShows_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        popularTvShowsPage++;
-                        getPopularTvShows(popularTvShowsPage);
+                            // append nextPage data to recyclerView
+                            popularTvShowsPage++;
+                            getPopularTvShows(popularTvShowsPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "popular tvShows: data fetched successfully");
-
+                Log.d(LOG_TAG, "popular tvShows: data fetched successfully");
+            }
         };
     }
 
@@ -852,35 +858,37 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<TvShowData>> getTrendingTvShowsObserver() {
         return tvShows -> {
-            // hide shimmer animation
-            trendingTvShows_Shimmer.stopShimmer();
-            trendingTvShows_Shimmer.setVisibility(View.GONE);
+            if (tvShows != null){
+                // hide shimmer animation
+                trendingTvShows_Shimmer.stopShimmer();
+                trendingTvShows_Shimmer.setVisibility(View.GONE);
 
-            // append data to adapter
-            trendingTvShowsAdapter.appendTvShows(tvShows);
-            // attach onScrollListener to RecyclerView
-            trendingTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    // get the number of all items in recyclerView
-                    int totalItemCount = trendingTvShowsLayoutMgr.getItemCount();
-                    // get the number of current items attached to recyclerView
-                    int visibleItemCount = trendingTvShowsLayoutMgr.getChildCount();
-                    // get the first visible item's position
-                    int firstVisibleItem = trendingTvShowsLayoutMgr.findFirstVisibleItemPosition();
+                // append data to adapter
+                trendingTvShowsAdapter.appendTvShows(tvShows);
+                // attach onScrollListener to RecyclerView
+                trendingTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = trendingTvShowsLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = trendingTvShowsLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = trendingTvShowsLayoutMgr.findFirstVisibleItemPosition();
 
-                    if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                        // detach current OnScrollListener
-                        trendingTvShows_RcView.removeOnScrollListener(this);
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            trendingTvShows_RcView.removeOnScrollListener(this);
 
-                        // append nextPage data to recyclerView
-                        trendingTvShowsPage++;
-                        getTrendingTvShows(trendingTvShowsPage);
+                            // append nextPage data to recyclerView
+                            trendingTvShowsPage++;
+                            getTrendingTvShows(trendingTvShowsPage);
+                        }
                     }
-                }
-            });
+                });
 
-            Log.d(LOG_TAG, "trending tvShows: data fetched successfully");
+                Log.d(LOG_TAG, "trending tvShows: data fetched successfully");
+            }
         };
     }
 

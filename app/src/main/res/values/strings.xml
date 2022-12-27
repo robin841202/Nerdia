@@ -87,6 +87,7 @@
     <string name="msg_login_successful">登入成功</string>
     <string name="msg_login_failed">登入失敗</string>
     <string name="msg_logout_successful">成功登出</string>
+    <string name="msg_no_internet_available">無網際網路連線</string>
     <string name="label_apply">送出</string>
     <string name="label_remove">移除</string>
     <string name="label_rating">進行評分</string>
