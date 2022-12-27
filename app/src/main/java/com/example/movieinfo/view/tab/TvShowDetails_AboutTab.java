@@ -39,17 +39,15 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
 
     private Context context;
 
-    private MediaDetailViewModel mediaDetailViewModel;
-
     private ExpandableTextView overViewTextView;
     private ViewGroup genresGroup;
+    private ViewGroup videosGroup;
     private TextView statusTextView;
     private TextView firstAirDateTextView;
     private TextView lastAirDateTextView;
     private TextView numOfEpisodesTextView;
 
     private ShimmerFrameLayout videoThumbnail_Shimmer;
-    private RecyclerView videoThumbnail_RcView;
     private ThumbnailsAdapter videoThumbnailAdapter;
 
     public TvShowDetails_AboutTab() {
@@ -64,7 +62,7 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         context = getContext();
 
         // Get the same viewModel that created in parent activity, in order to share the data
-        mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
+        MediaDetailViewModel mediaDetailViewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
 
         // Set tvShowDetail observer
         mediaDetailViewModel.getTvShowDetailLiveData().observe(this, getDataObserver());
@@ -84,11 +82,12 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
         // Initialize Views
         overViewTextView = view.findViewById(R.id.expandText_tvShow_overview);
         genresGroup = view.findViewById(R.id.group_genres);
+        videosGroup = view.findViewById(R.id.group_videos);
         statusTextView = view.findViewById(R.id.text_status);
         firstAirDateTextView = view.findViewById(R.id.text_first_air_date);
         lastAirDateTextView = view.findViewById(R.id.text_last_air_date);
         numOfEpisodesTextView = view.findViewById(R.id.text_numOfEpisodes);
-        videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
+        RecyclerView videoThumbnail_RcView = view.findViewById(R.id.recycler_videos);
         videoThumbnail_Shimmer = view.findViewById(R.id.shimmer_videos);
 
         // Initialize Recycler Adapter
@@ -134,12 +133,18 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
 
         // set genres
         if (genre_List != null) {
-            for (int i = 0; i < genre_List.size(); i++) {
-                GenreData genre = genre_List.get(i);
-                if (genre != null) {
-                    // add a TextView dynamically
-                    addGenreTextViewToGroup(genre, genresGroup);
+            if (genre_List.size() > 0){
+                for (int i = 0; i < genre_List.size(); i++) {
+                    GenreData genre = genre_List.get(i);
+                    if (genre != null) {
+                        // add a TextView dynamically
+                        addGenreTextViewToGroup(genre, genresGroup);
+                    }
                 }
+            }else{ // no data available
+                TextView emptyTextView = new TextView(context);
+                emptyTextView.setText(R.string.label_empty);
+                genresGroup.addView(emptyTextView);
             }
         }
 
@@ -164,7 +169,12 @@ public class TvShowDetails_AboutTab extends Fragment implements ThumbnailsAdapte
             videos = videosResponse.sortVideos(videos);
             // get videos only provided by youtube
             videos = videosResponse.getVideosBySourceSite(videos, StaticParameter.VideoSourceSite.YOUTUBE);
-            videoThumbnailAdapter.setVideos(videos);
+            if (videos.size() > 0){
+                videosGroup.setVisibility(View.VISIBLE);
+                videoThumbnailAdapter.setVideos(videos);
+            }else{ // no data available
+                videosGroup.setVisibility(View.GONE);
+            }
         }
     }
 
