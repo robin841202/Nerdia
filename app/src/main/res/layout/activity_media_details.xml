@@ -223,7 +223,9 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:tabGravity="fill"
+            app:tabMode="scrollable"
+            app:tabGravity="center"
+            app:tabIndicatorFullWidth="false"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <androidx.viewpager2.widget.ViewPager2

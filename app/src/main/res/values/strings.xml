@@ -47,6 +47,7 @@
     <string name="label_profile_img">頭像</string>
     <string name="label_similar">類似影片</string>
     <string name="label_review">評論</string>
+    <string name="label_seasons">季數</string>
     <string name="toastMsg_link_not_exist">連結不存在!</string>
     <string name="label_biography">個人簡介</string>
     <string name="label_other_names">其他名稱</string>
@@ -98,4 +99,5 @@
     <string name="label_rated_list">已評清單</string>
     <string name="label_rated_list_not_login">已評清單\n請登入以使用此功能</string>
     <string name="label_no_data_available">目前尚無資料</string>
+    <string name="label_on_air_date">上線日期</string>
 </resources>

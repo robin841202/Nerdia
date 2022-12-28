@@ -42,6 +42,7 @@ import com.example.movieinfo.view.bottomsheet.RatingBottomSheet;
 import com.example.movieinfo.view.tab.CastTab;
 import com.example.movieinfo.view.tab.MovieDetails_AboutTab;
 import com.example.movieinfo.view.tab.ReviewsTab;
+import com.example.movieinfo.view.tab.SeasonsTab;
 import com.example.movieinfo.view.tab.SimilarTab;
 import com.example.movieinfo.view.tab.TvShowDetails_AboutTab;
 import com.example.movieinfo.viewmodel.MediaDetailViewModel;
@@ -248,7 +249,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
      */
     public Observer<MovieDetailData> getMovieDetailObserver() {
         return movieDetailData -> {
-            if (movieDetailData != null){
+            if (movieDetailData != null) {
                 // populate data to UI
                 populateDetails(movieDetailData);
 
@@ -480,7 +481,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
      */
     public Observer<TvShowDetailData> getTvShowDetailObserver() {
         return tvShowDetailData -> {
-            if (tvShowDetailData != null){
+            if (tvShowDetailData != null) {
                 // populate data to UI
                 populateDetails(tvShowDetailData);
 
@@ -728,6 +729,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
         Each page is represented by its own fragment.
         */
         pagerAdapter.addFragment(new TvShowDetails_AboutTab(), getString(R.string.label_about));
+        pagerAdapter.addFragment(SeasonsTab.newInstance(), getString(R.string.label_seasons));
         pagerAdapter.addFragment(CastTab.newInstance(StaticParameter.MediaType.TV), getString(R.string.label_cast));
         pagerAdapter.addFragment(SimilarTab.newInstance(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_similar));
         pagerAdapter.addFragment(ReviewsTab.newInstance(StaticParameter.MediaType.TV, tvShowId), getString(R.string.label_review));

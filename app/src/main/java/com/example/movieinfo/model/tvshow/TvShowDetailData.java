@@ -58,6 +58,9 @@ public class TvShowDetailData {
     @SerializedName("vote_count")
     private int voteCount;
 
+    @SerializedName("seasons")
+    private ArrayList<SeasonData> seasons;
+
 
     @SerializedName("videos")
     private VideosResponse videosResponse;
@@ -73,7 +76,6 @@ public class TvShowDetailData {
 
     @SerializedName("account_states")
     private AccountStatesOnMedia accountStatesOnMedia;
-
 
 
     /**
@@ -210,6 +212,14 @@ public class TvShowDetailData {
      */
     public String getStatus() {
         return status;
+    }
+
+    /**
+     * Get Seasons
+     * @return
+     */
+    public ArrayList<SeasonData> getSeasons() {
+        return seasons;
     }
 
     /**
