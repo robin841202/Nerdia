@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.movieinfo">
+    package="com.robinhsueh.movieinfo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -37,24 +37,24 @@
 
         <!-- Set "configChanges" to avoid screen rotation recreate the activity -->
         <activity
-            android:name=".view.YoutubePlayerActivity"
+            android:name="com.robinhsueh.movieinfo.view.YoutubePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
-            android:name=".view.ImageDisplayActivity"
+            android:name="com.robinhsueh.movieinfo.view.ImageDisplayActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".view.MediaDetailsActivity"
+            android:name="com.robinhsueh.movieinfo.view.MediaDetailsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".view.PersonDetailsActivity"
+            android:name="com.robinhsueh.movieinfo.view.PersonDetailsActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <!-- Set "windowSoftInputMode" to "adjustPan" to avoid bottomNavigationView push up when keyboard show up -->
         <activity
-            android:name=".view.MainActivity"
+            android:name="com.robinhsueh.movieinfo.view.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
