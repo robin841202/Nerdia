@@ -25,6 +25,7 @@
     <string name="label_search_movies_tvshows_people">搜尋電影, 影集, 人物</string>
     <string name="label_about">關於</string>
     <string name="label_cast">演員</string>
+    <string name="label_crew">製作團隊</string>
     <string name="label_genre">類別</string>
     <string name="label_watchlist">待觀看</string>
     <string name="label_history">已觀看</string>

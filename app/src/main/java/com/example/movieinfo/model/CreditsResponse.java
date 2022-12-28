@@ -1,8 +1,12 @@
 package com.example.movieinfo.model;
 
+import com.google.common.collect.Collections2;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.regex.Pattern;
 
 /**
  * Response Data Model, using @SerializedName to map to json key
@@ -26,6 +30,28 @@ public class CreditsResponse {
 
     public ArrayList<CrewData> getCrew_list() {
         return crew_list;
+    }
+
+    /**
+     * Filter Main Crew
+     *
+     * @param target target list
+     * @return List of CrewData
+     */
+    public ArrayList<CrewData> filterMainCrew(ArrayList<CrewData> target) {
+        String mainCrewJobRegex = "^Director$|^Producer$|^Writer$";
+        return new ArrayList<>(Collections2.filter(target, input -> {
+            Pattern pattern = Pattern.compile(mainCrewJobRegex);
+            return pattern.matcher(input.getJob()).find();
+        }));
+    }
+
+    /**
+     * Sort Crew By Job
+     */
+    public ArrayList<CrewData> sortCrewByJob(ArrayList<CrewData> target) {
+        Collections.sort(target, (o1, o2) -> o1.getJob().compareTo(o2.getJob()));
+        return target;
     }
 
     /**

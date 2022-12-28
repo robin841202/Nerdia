@@ -43,7 +43,7 @@ public class VideosResponse {
      * @return List of VideoData
      */
     public ArrayList<VideoData> getVideosBySourceSite(ArrayList<VideoData> target, String sourceSite) {
-        return new ArrayList<VideoData>(Collections2.filter(target, input -> {
+        return new ArrayList<>(Collections2.filter(target, input -> {
             Pattern pattern = Pattern.compile(sourceSite);
             return pattern.matcher(input.getSourceSite()).find();
         }));
@@ -56,7 +56,7 @@ public class VideosResponse {
      * @return List of VideoData
      */
     public ArrayList<VideoData> getVideosByVideoType(ArrayList<VideoData> target, String videoType) {
-        return new ArrayList<VideoData>(Collections2.filter(target, input -> {
+        return new ArrayList<>(Collections2.filter(target, input -> {
             Pattern pattern = Pattern.compile(videoType);
             return pattern.matcher(input.getVideoType()).find();
         }));
