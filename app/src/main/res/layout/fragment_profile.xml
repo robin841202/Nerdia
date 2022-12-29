@@ -1,170 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:fillViewport="true"
     tools:context="com.robinhsueh.nerdia.view.fragments.profile.ProfileFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/group_anonymous"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/img_anonymous"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/rounded_corner"
-            android:src="@drawable/ic_profile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/text_name_anonymous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/label_my_profile"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintBottom_toTopOf="@+id/text_description_anonymous"
-            app:layout_constraintStart_toEndOf="@+id/img_anonymous"
-            app:layout_constraintTop_toTopOf="@+id/img_anonymous" />
-
-        <TextView
-            android:id="@+id/text_description_anonymous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/label_anonymous_description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
-            app:layout_constraintBottom_toBottomOf="@+id/img_anonymous"
-            app:layout_constraintStart_toEndOf="@+id/img_anonymous"
-            app:layout_constraintTop_toBottomOf="@+id/text_name_anonymous" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_login"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            android:text="@string/label_login_to_tmdb"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="?attr/colorPrimary"
-            app:cornerRadius="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_anonymous"
-            app:strokeColor="?attr/colorPrimary"
-            app:strokeWidth="2dp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/group_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/img_profile"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/rounded_corner"
-            android:src="@drawable/ic_profile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/text_profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/label_my_profile"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintBottom_toTopOf="@+id/text_profile_description"
-            app:layout_constraintStart_toEndOf="@+id/img_profile"
-            app:layout_constraintTop_toTopOf="@+id/img_profile" />
-
-        <TextView
-            android:id="@+id/text_profile_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/label_profile_description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintBottom_toBottomOf="@+id/img_profile"
-            app:layout_constraintStart_toEndOf="@+id/img_profile"
-            app:layout_constraintTop_toBottomOf="@+id/text_profile_name" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_logout"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            android:text="@string/label_logout"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/red"
-            app:cornerRadius="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_profile"
-            app:rippleColor="@color/red_transparent"
-            app:strokeColor="@color/red"
-            app:strokeWidth="2dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_border"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_watchlist"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/group_anonymous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_anonymous"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/rounded_corner"
+                android:src="@drawable/ic_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_name_anonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/label_my_profile"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintBottom_toTopOf="@+id/text_description_anonymous"
+                app:layout_constraintStart_toEndOf="@+id/img_anonymous"
+                app:layout_constraintTop_toTopOf="@+id/img_anonymous" />
+
+            <TextView
+                android:id="@+id/text_description_anonymous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/label_anonymous_description"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+
+                app:layout_constraintBottom_toBottomOf="@+id/img_anonymous"
+                app:layout_constraintStart_toEndOf="@+id/img_anonymous"
+                app:layout_constraintTop_toBottomOf="@+id/text_name_anonymous" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_login"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="@string/label_login_to_tmdb"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/colorPrimary"
+                app:cornerRadius="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_anonymous"
+                app:strokeColor="?attr/colorPrimary"
+                app:strokeWidth="2dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/group_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_list_style"
-            android:gravity="start"
-            android:paddingVertical="12dp"
-            android:text="@string/label_unwatched_list"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@drawable/btn_list_text_color"
-            app:backgroundTint="@null"
-            app:icon="@drawable/ic_watchlist_toggle_btn_off"
-            app:iconGravity="start"
-            app:iconSize="28dp"
-            app:iconTint="@color/white"
-            app:rippleColor="@color/gray_transparent" />
+            android:visibility="gone">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_rated_list"
+            <ImageView
+                android:id="@+id/img_profile"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/rounded_corner"
+                android:src="@drawable/ic_profile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/label_my_profile"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintBottom_toTopOf="@+id/text_profile_description"
+                app:layout_constraintStart_toEndOf="@+id/img_profile"
+                app:layout_constraintTop_toTopOf="@+id/img_profile" />
+
+            <TextView
+                android:id="@+id/text_profile_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/label_profile_description"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintBottom_toBottomOf="@+id/img_profile"
+                app:layout_constraintStart_toEndOf="@+id/img_profile"
+                app:layout_constraintTop_toBottomOf="@+id/text_profile_name" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_logout"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="@string/label_logout"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/red"
+                app:cornerRadius="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img_profile"
+                app:rippleColor="@color/red_transparent"
+                app:strokeColor="@color/red"
+                app:strokeWidth="2dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_list_style"
-            android:enabled="false"
-            android:gravity="start"
-            android:paddingVertical="12dp"
-            android:text="@string/label_rated_list_not_login"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@drawable/btn_list_text_color"
-            app:backgroundTint="@null"
-            app:icon="@drawable/ic_rated"
-            app:iconGravity="start"
-            app:iconSize="28dp"
-            app:iconTint="@color/white"
-            app:rippleColor="@color/gray_transparent" />
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_border"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_watchlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_list_style"
+                android:gravity="start"
+                android:paddingVertical="12dp"
+                android:text="@string/label_unwatched_list"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@drawable/btn_list_text_color"
+                app:backgroundTint="@null"
+                app:icon="@drawable/ic_watchlist_toggle_btn_off"
+                app:iconGravity="start"
+                app:iconSize="28dp"
+                app:iconTint="@color/white"
+                app:rippleColor="@color/gray_transparent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_rated_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_list_style"
+                android:enabled="false"
+                android:gravity="start"
+                android:paddingVertical="12dp"
+                android:text="@string/label_rated_list_not_login"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@drawable/btn_list_text_color"
+                app:backgroundTint="@null"
+                app:icon="@drawable/ic_rated"
+                app:iconGravity="start"
+                app:iconSize="28dp"
+                app:iconTint="@color/white"
+                app:rippleColor="@color/gray_transparent" />
+        </LinearLayout>
+
+
     </LinearLayout>
-
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

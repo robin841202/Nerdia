@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.robinhsueh.nerdia.R;
 import com.robinhsueh.nerdia.viewmodel.MediaDetailViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -41,6 +42,13 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
          * Rating Submit Event
          */
         void onRatingSubmit(boolean isSubmit, double score);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //this forces the sheet to appear at max height even on landscape
+        BottomSheetBehavior.from((View) requireView().getParent()).setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override

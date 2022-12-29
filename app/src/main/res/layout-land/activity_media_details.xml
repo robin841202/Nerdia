@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.robinhsueh.nerdia.view.MediaDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewpager_slideshow"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/guideline_backdrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout_slideshow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@null"
+                    app:layout_constraintBottom_toBottomOf="@+id/guideline_backdrop"
+                    app:layout_constraintStart_toEndOf="@+id/card_movie_poster"
+                    app:tabBackground="@drawable/slideshow_indicator_selector"
+                    app:tabGravity="start"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabMode="fixed"
+                    app:tabPaddingEnd="5dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_movie_poster"
+                    android:layout_width="128dp"
+                    android:layout_height="172dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/guideline_backdrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/guideline_backdrop">
+
+                    <ImageView
+                        android:id="@+id/img_movie_poster"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_backdrop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.65" />
+
+                <TextView
+                    android:id="@+id/text_movie_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/card_movie_poster"
+                    app:layout_constraintTop_toBottomOf="@+id/guideline_backdrop"
+                    tools:text="電影標題" />
+
+                <TextView
+                    android:id="@+id/text_movie_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#757575"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/text_movie_title"
+                    app:layout_constraintTop_toBottomOf="@+id/text_movie_title"
+                    tools:text="上映日期" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/group_vote"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintBottom_toTopOf="@id/barrier_movie_poster"
+                    app:layout_constraintEnd_toEndOf="@+id/card_movie_poster"
+                    app:layout_constraintStart_toStartOf="@+id/card_movie_poster"
+                    app:layout_constraintTop_toBottomOf="@+id/card_movie_poster">
+
+                    <RatingBar
+                        android:id="@+id/ratingBar_movie_rating"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/text_score"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:layout_width="55dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_tmdb_logo_alt"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ratingBar_movie_rating" />
+
+                    <TextView
+                        android:id="@+id/text_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="2dp"
+                        android:gravity="bottom"
+                        android:textColor="?attr/colorPrimaryVariant"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/ratingBar_movie_rating"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="100%" />
+
+                    <TextView
+                        android:id="@+id/text_vote_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/img_icon_people"
+                        android:layout_marginEnd="2dp"
+                        android:layout_toStartOf="@+id/img_icon_people"
+                        android:textColor="?attr/colorPrimaryVariant"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/img_icon_people"
+                        app:layout_constraintTop_toBottomOf="@+id/text_score"
+                        tools:text="987" />
+
+                    <ImageView
+                        android:id="@+id/img_icon_people"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_below="@+id/text_score"
+                        android:layout_alignParentEnd="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_score"
+                        app:srcCompat="@drawable/ic_people" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="?attr/colorOnPrimary"
+                    android:gravity="center"
+                    android:text="@string/label_rating"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    android:visibility="gone"
+                    app:backgroundTint="@drawable/watchlist_material_btn"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_add"
+                    app:iconSize="36dp"
+                    app:iconTint="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/toggleBtn_watchlist"
+                    tools:visibility="visible" />
+
+                <ToggleButton
+                    android:id="@+id/toggleBtn_watchlist"
+                    android:layout_width="@dimen/toggleBtn_size"
+                    android:layout_height="@dimen/toggleBtn_size"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/watchlist_toggle_btn"
+                    android:textOff="@null"
+                    android:textOn="@null"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_movie_poster"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="group_vote" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:tabGravity="center"
+            app:tabIndicatorFullWidth="false"
+            app:tabMode="scrollable"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager_details"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

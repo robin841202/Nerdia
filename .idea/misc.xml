@@ -23,6 +23,9 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/slideshow_indicator_selected_dot.xml" value="0.492" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/slideshow_indicator_selector.xml" value="0.492" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/drawable/tab_pager_selector.xml" value="0.492" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout-land/activity_media_details.xml" value="0.4251313485113835" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout-land/bottom_sheet_rating.xml" value="0.4251313485113835" />
+        <entry key="..\:/Android/MovieInfo/app/src/main/res/layout-land/fragment_profile.xml" value="0.4251313485113835" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout-land/fragment_search.xml" value="0.1734375" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout-v26/item_media.xml" value="0.35208333333333336" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/activity_image_display.xml" value="0.353125" />

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.robinhsueh.nerdia.R;
 import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.database.entity.MovieWatchlistEntity;
@@ -52,6 +53,13 @@ public class OperateMediaBottomSheet extends BottomSheetDialogFragment {
     public OperateMediaBottomSheet(String mediaType, TvShowData tvShowData) {
         this.mediaType = mediaType;
         this.tvShowData = tvShowData;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //this forces the sheet to appear at max height even on landscape
+        BottomSheetBehavior.from((View) requireView().getParent()).setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override

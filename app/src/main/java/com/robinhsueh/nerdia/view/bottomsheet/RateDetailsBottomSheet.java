@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.robinhsueh.nerdia.R;
 
 import com.robinhsueh.nerdia.model.ExternalIdResponse;
@@ -47,6 +48,13 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
 
     public RateDetailsBottomSheet(String mediaType) {
         this.mediaType = mediaType;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //this forces the sheet to appear at max height even on landscape
+        BottomSheetBehavior.from((View) requireView().getParent()).setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
     @Override
@@ -227,7 +235,7 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
                     } else {
                         Log.d(LOG_TAG, "no Activity on this device can handle this action!");
                     }
-                }else{
+                } else {
                     Toast.makeText(context, R.string.toastMsg_link_not_exist, Toast.LENGTH_SHORT).show();
                 }
             });
