@@ -9,7 +9,7 @@
         app:startDestination="@id/homeFragment">
         <fragment
             android:id="@+id/homeFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.home.HomeFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.home.HomeFragment"
             android:label="@string/title_home"
             tools:layout="@layout/fragment_home">
             <action
@@ -20,7 +20,7 @@
         </fragment>
         <fragment
             android:id="@+id/verticalBrowseFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.home.VerticalBrowseFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.home.VerticalBrowseFragment"
             tools:layout="@layout/fragment_general_gridshimmer_list">
             <action
                 android:id="@+id/action_verticalBrowseFragment_to_homeFragment"
@@ -34,7 +34,7 @@
         app:startDestination="@id/discoverFragment">
         <fragment
             android:id="@+id/genreResultFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.discover.GenreResultsFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.discover.GenreResultsFragment"
             tools:layout="@layout/fragment_genres_list">
             <action
                 android:id="@+id/action_genreResultFragment_to_genresListFragment"
@@ -44,7 +44,7 @@
         </fragment>
         <fragment
             android:id="@+id/genresListFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.discover.GenresListFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.discover.GenresListFragment"
             android:label="@string/title_genres"
             tools:layout="@layout/fragment_genres_list">
             <action
@@ -60,7 +60,7 @@
         </fragment>
         <fragment
             android:id="@+id/discoverFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.discover.DiscoverFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.discover.DiscoverFragment"
             android:label="@string/title_discover"
             tools:layout="@layout/fragment_discover">
             <action
@@ -76,7 +76,7 @@
         </fragment>
         <fragment
             android:id="@+id/searchFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.discover.SearchFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.discover.SearchFragment"
             android:label="@string/title_search"
             tools:layout="@layout/fragment_search">
             <action
@@ -88,7 +88,7 @@
     </navigation>
     <fragment
         android:id="@+id/watchlistFragment"
-        android:name="com.robinhsueh.movieinfo.view.fragments.watchlist.WatchlistFragment"
+        android:name="com.robinhsueh.nerdia.view.fragments.watchlist.WatchlistFragment"
         android:label="@string/title_watchlist"
         tools:layout="@layout/fragment_watch_list" />
     <navigation
@@ -96,7 +96,7 @@
         app:startDestination="@+id/profileFragment">
         <fragment
             android:id="@+id/profileFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.profile.ProfileFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.profile.ProfileFragment"
             android:label="@string/title_profile"
             tools:layout="@layout/fragment_profile">
             <action
@@ -113,7 +113,7 @@
         </fragment>
         <fragment
             android:id="@+id/loginTmdbFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.profile.LoginTmdbFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.profile.LoginTmdbFragment"
             android:label="@string/label_login"
             tools:layout="@layout/fragment_login_tmdb">
             <action
@@ -124,7 +124,7 @@
         </fragment>
         <fragment
             android:id="@+id/watchlistTab"
-            android:name="com.robinhsueh.movieinfo.view.fragments.watchlist.tab.WatchlistTab"
+            android:name="com.robinhsueh.nerdia.view.fragments.watchlist.tab.WatchlistTab"
             android:label="@string/label_unwatched_list"
             tools:layout="@layout/fragment_general_layout_with_tab">
             <action
@@ -135,7 +135,7 @@
         </fragment>
         <fragment
             android:id="@+id/ratedListFragment"
-            android:name="com.robinhsueh.movieinfo.view.fragments.profile.ratedlist.RatedListFragment"
+            android:name="com.robinhsueh.nerdia.view.fragments.profile.ratedlist.RatedListFragment"
             android:label="@string/label_rated_list"
             tools:layout="@layout/fragment_general_layout_with_tab">
             <action

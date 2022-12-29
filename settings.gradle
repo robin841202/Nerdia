@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' } // In order to use ExpandableTextView library
     }
 }
-rootProject.name = "MovieInfo"
+rootProject.name = "Nerdia"
 include ':app'

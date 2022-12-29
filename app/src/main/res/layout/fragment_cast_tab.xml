@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="com.robinhsueh.movieinfo.view.tab.CastTab">
+    tools:context="com.robinhsueh.nerdia.view.tab.CastTab">
 
     <TextView
         android:id="@+id/text_count"
