@@ -2,9 +2,11 @@ package com.robinhsueh.nerdia.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -99,6 +101,15 @@ public class PersonDetailsActivity extends AppCompatActivity {
 
         // set custom transition animation
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
 
     // region Get Person Detail (MVVM using LiveData)
