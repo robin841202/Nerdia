@@ -101,4 +101,5 @@
     <string name="label_rated_list_not_login">已評清單\n請登入以使用此功能</string>
     <string name="label_no_data_available">目前尚無資料</string>
     <string name="label_on_air_date">上線日期</string>
+    <string name="label_app_version">應用程式版本</string>
 </resources>

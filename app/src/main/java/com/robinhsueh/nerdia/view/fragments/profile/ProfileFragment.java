@@ -3,6 +3,8 @@ package com.robinhsueh.nerdia.view.fragments.profile;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,6 +110,7 @@ public class ProfileFragment extends Fragment implements ConnectionReceiver.Rece
         MaterialButton logoutBtn = view.findViewById(R.id.btn_logout);
         MaterialButton watchlistBtn = view.findViewById(R.id.btn_watchlist);
         ratedListBtn = view.findViewById(R.id.btn_rated_list);
+        TextView versionTextView = view.findViewById(R.id.text_app_version);
 
         // Set login btn onClick listener
         loginBtn.setOnClickListener(v -> {
@@ -160,6 +164,17 @@ public class ProfileFragment extends Fragment implements ConnectionReceiver.Rece
             navigateTo(R.id.action_profileFragment_to_ratedListFragment);
         });
 
+        // Set app version text
+        PackageManager pm = context.getPackageManager();
+        String pkgName = context.getPackageName();
+        try {
+            PackageInfo pkgInfo = pm.getPackageInfo(pkgName, 0);
+            String versionName = pkgInfo.versionName;
+            versionTextView.setText(versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(LOG_TAG, "PackageNameNotFound: "+e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
