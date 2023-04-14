@@ -9,4 +9,5 @@
     <dimen name="fragment_vertical_margin">16dp</dimen>
     <dimen name="statusBarHeight">32dp</dimen>
     <dimen name="statusBarHeight_padding10">42dp</dimen>
+    <dimen name="statusBarHeight_padding20">52dp</dimen>
 </resources>

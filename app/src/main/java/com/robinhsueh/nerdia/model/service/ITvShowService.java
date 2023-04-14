@@ -1,6 +1,7 @@
 package com.robinhsueh.nerdia.model.service;
 
 import com.robinhsueh.nerdia.model.ReviewsResponse;
+import com.robinhsueh.nerdia.model.WatchProvidersResponse;
 import com.robinhsueh.nerdia.model.tvshow.TvShowDetailData;
 import com.robinhsueh.nerdia.model.tvshow.TvShowsResponse;
 
@@ -261,6 +262,21 @@ public interface ITvShowService {
                     String apiKey,
             @Query("page")
                     int page
+    );
+
+    /**
+     * Get TvShow watch provider
+     *
+     * @param id     TvShow Id
+     * @param apiKey TMDB API Key
+     * @return
+     */
+    @GET("tv/{tv_id}/watch/providers")
+    Call<WatchProvidersResponse> getWatchProviderByTvShow(
+            @Path("tv_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey
     );
 
 }

@@ -1,6 +1,7 @@
 package com.robinhsueh.nerdia.model.service;
 
 import com.robinhsueh.nerdia.model.ReviewsResponse;
+import com.robinhsueh.nerdia.model.WatchProvidersResponse;
 import com.robinhsueh.nerdia.model.movie.MovieDetailData;
 import com.robinhsueh.nerdia.model.movie.MoviesResponse;
 
@@ -302,6 +303,22 @@ public interface IMovieService {
                     String apiKey,
             @Query("page")
                     int page
+    );
+
+
+    /**
+     * Get Movie watch provider
+     *
+     * @param id     Movie Id
+     * @param apiKey TMDB API Key
+     * @return
+     */
+    @GET("movie/{movie_id}/watch/providers")
+    Call<WatchProvidersResponse> getWatchProviderByMovie(
+            @Path("movie_id")
+                    long id,
+            @Query("api_key")
+                    String apiKey
     );
 
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.robinhsueh.nerdia.BuildConfig;
 import com.robinhsueh.nerdia.model.ReviewsResponse;
 import com.robinhsueh.nerdia.model.StaticParameter;
+import com.robinhsueh.nerdia.model.WatchProvidersResponse;
 import com.robinhsueh.nerdia.model.movie.MovieData;
 import com.robinhsueh.nerdia.model.movie.MovieDetailData;
 import com.robinhsueh.nerdia.model.movie.MoviesResponse;
@@ -54,6 +55,10 @@ public class MovieRepository {
 
     // region ReviewData List LiveData
     private final MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> reviewsLiveData = new MutableLiveData<>();
+    // endregion
+
+    // region WatchProvidersResponse LiveData
+    private final MutableLiveData<WatchProvidersResponse> watchProvidersLiveData = new MutableLiveData<>();
     // endregion
 
     public MovieRepository() {
@@ -598,6 +603,47 @@ public class MovieRepository {
      */
     public MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> getReviewsLiveData() {
         return reviewsLiveData;
+    }
+
+    // endregion
+
+    // region WATCH PROVIDER RESPONSE
+
+    /**
+     * Get Movie watch provider (using LiveData)
+     *
+     * @param movieId Movie Id
+     */
+    public void getWatchProviderByMovie(long movieId) {
+        Call<WatchProvidersResponse> call = service.getWatchProviderByMovie(movieId, apiKey);
+        Callback<WatchProvidersResponse> requestHandler = new Callback<WatchProvidersResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WatchProvidersResponse> call, @NonNull Response<WatchProvidersResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    WatchProvidersResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        watchProvidersLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<WatchProvidersResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                watchProvidersLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        };
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get WatchProviders Response Live Data
+     * @return
+     */
+    public MutableLiveData<WatchProvidersResponse> getWatchProvidersLiveData() {
+        return watchProvidersLiveData;
     }
 
     // endregion
