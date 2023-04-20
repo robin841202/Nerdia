@@ -78,13 +78,11 @@ public class VideosResponse {
                     // region Assure VideoType TRAILER will always come first, TEASER comes second
                     if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
                         return -1;
-                    if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
-                        return 1;
                     if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
                         return -1;
-                    if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
-                        return 1;
-                    return vt1.compareTo(vt2);
+                    if (vt1.equalsIgnoreCase(vt2))
+                        return 0;
+                    return 1;
                     // endregion
                 }
 
@@ -98,15 +96,12 @@ public class VideosResponse {
                 // region Assure VideoType TRAILER will always come first, TEASER comes second
                 if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
                     return -1;
-                if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
-                    return 1;
                 if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
                     return -1;
-                if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
-                    return 1;
-                return vt1.compareTo(vt2);
+                if (vt1.equalsIgnoreCase(vt2))
+                    return 0;
+                return 1;
                 // endregion
-
             }
         };
     }

@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -39,6 +41,7 @@ import com.robinhsueh.nerdia.view.adapter.CustomPagerAdapter;
 import com.robinhsueh.nerdia.view.adapter.SlideShowAdapter;
 import com.robinhsueh.nerdia.view.bottomsheet.RateDetailsBottomSheet;
 import com.robinhsueh.nerdia.view.bottomsheet.RatingBottomSheet;
+import com.robinhsueh.nerdia.view.bottomsheet.WatchProviderBottomSheet;
 import com.robinhsueh.nerdia.view.tab.CastTab;
 import com.robinhsueh.nerdia.view.tab.CrewTab;
 import com.robinhsueh.nerdia.view.tab.MovieDetails_AboutTab;
@@ -78,6 +81,8 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
     private ViewGroup ratingGroup;
     private ToggleButton watchlistToggleBtn;
     private MaterialButton ratingBtn;
+    private MaterialButton watchProviderBtn;
+    private Animation bounceAnimation;
 
     private MediaDetailViewModel mediaDetailViewModel;
 
@@ -90,6 +95,9 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
         setContentView(R.layout.activity_media_details);
 
         context = this;
+
+        // Loading bounce animation
+        bounceAnimation = AnimationUtils.loadAnimation(context, R.anim.bounce);
 
         // Get SharedPreference file
         SharedPreferences sp = SharedPreferenceUtils.getOrCreateSharedPreference(StaticParameter.SharedPreferenceFileKey.SP_FILE_TMDB_KEY, context);
@@ -111,6 +119,7 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
         TabLayout tabLayoutSlideshow = findViewById(R.id.tabLayout_slideshow);
         watchlistToggleBtn = findViewById(R.id.toggleBtn_watchlist);
         ratingBtn = findViewById(R.id.btn_rating);
+        watchProviderBtn = findViewById(R.id.btn_watch_provider);
 
         // Initialize RecyclerView Adapter
         slideshowAdapter = new SlideShowAdapter(getLifecycle(), this);
@@ -302,6 +311,13 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
                 // region Set rating Button click event
                 ratingBtn.setOnClickListener(v -> {
                     showRatingBottomSheet();
+                });
+                // endregion
+
+                // region Set watchProvider Button click event
+                watchProviderBtn.setOnClickListener(v -> {
+                    watchProviderBtn.startAnimation(bounceAnimation);
+                    showWatchProviderBottomSheet(movieDetailData.getId(), movieDetailData.getTitle());
                 });
                 // endregion
             }
@@ -536,6 +552,13 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
                 // region Set rating Button click event
                 ratingBtn.setOnClickListener(v -> {
                     showRatingBottomSheet();
+                });
+                // endregion
+
+                // region Set watchProvider Button click event
+                watchProviderBtn.setOnClickListener(v -> {
+                    watchProviderBtn.startAnimation(bounceAnimation);
+                    showWatchProviderBottomSheet(tvShowDetailData.getId(), tvShowDetailData.getTitle());
                 });
                 // endregion
             }
@@ -799,6 +822,16 @@ public class MediaDetailsActivity extends AppCompatActivity implements RatingBot
      */
     private void showRatingBottomSheet() {
         RatingBottomSheet blankFragment = new RatingBottomSheet(this);
+        blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
+    }
+
+    /**
+     * Show WatchProvider Bottom Sheet Modal
+     *
+     * @param mediaId Movie or TvShow Id
+     */
+    private void showWatchProviderBottomSheet(long mediaId, String mediaTitle) {
+        WatchProviderBottomSheet blankFragment = new WatchProviderBottomSheet(mediaType, mediaId, mediaTitle);
         blankFragment.show(getSupportFragmentManager(), blankFragment.getTag());
     }
 

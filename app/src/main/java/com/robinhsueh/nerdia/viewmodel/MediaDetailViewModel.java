@@ -13,6 +13,7 @@ import com.robinhsueh.nerdia.model.OmdbData;
 import com.robinhsueh.nerdia.model.ReviewsResponse;
 import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.TmdbStatusResponse;
+import com.robinhsueh.nerdia.model.WatchProvidersResponse;
 import com.robinhsueh.nerdia.model.database.entity.MovieWatchlistEntity;
 import com.robinhsueh.nerdia.model.database.entity.TvShowWatchlistEntity;
 import com.robinhsueh.nerdia.model.movie.MovieDetailData;
@@ -76,6 +77,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
     private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
     private LiveData<ArrayList<ReviewsResponse.ReviewData>> movieReviewsLiveData;
     private LiveData<ArrayList<ReviewsResponse.ReviewData>> tvShowReviewsLiveData;
+    private LiveData<WatchProvidersResponse> movieWatchProvidersLiveData;
+    private LiveData<WatchProvidersResponse> tvShowWatchProvidersLiveData;
 
     // Used to observe MovieDetailData.accountStatesOnMedia.score
     private final MediatorLiveData<Double> ratedScore = new MediatorLiveData<>();
@@ -97,6 +100,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
         tvShowDetailLiveData = tvShowRepository.getTvShowDetailLiveData();
         movieReviewsLiveData = movieRepository.getReviewsLiveData();
         tvShowReviewsLiveData = tvShowRepository.getReviewsLiveData();
+        movieWatchProvidersLiveData = movieRepository.getWatchProvidersLiveData();
+        tvShowWatchProvidersLiveData = tvShowRepository.getWatchProvidersLiveData();
         omdbLiveData = omdbRepository.getOmdbLiveData();
         watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
         ratedScore.addSource(Transformations.map(movieDetailLiveData, input -> input != null ? input.getAccountStatesOnMedia().getScore() : 0.0), score -> ratedScore.postValue(score));
@@ -211,6 +216,50 @@ public class MediaDetailViewModel extends AndroidViewModel {
      */
     public LiveData<ArrayList<ReviewsResponse.ReviewData>> getTvShowReviewsLiveData() {
         return tvShowReviewsLiveData;
+    }
+
+    // endregion
+
+    // region Movie WatchProviders
+
+    /**
+     * Call repository to get movie watchProviders and update to liveData
+     *
+     * @param movieId Movie Id
+     */
+    public void getWatchProviderByMovie(long movieId) {
+        movieRepository.getWatchProviderByMovie(movieId);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<WatchProvidersResponse> getMovieWatchProvidersLiveData() {
+        return movieWatchProvidersLiveData;
+    }
+
+    // endregion
+
+    // region TvShow WatchProviders
+
+    /**
+     * Call repository to get tvShow watchProviders and update to liveData
+     *
+     * @param tvShowId TvShow Id
+     */
+    public void getWatchProviderByTvShow(long tvShowId) {
+        tvShowRepository.getWatchProviderByTvShow(tvShowId);
+    }
+
+    /**
+     * Get the liveData to observe it
+     *
+     * @return
+     */
+    public LiveData<WatchProvidersResponse> getTvShowWatchProvidersLiveData() {
+        return tvShowWatchProvidersLiveData;
     }
 
     // endregion

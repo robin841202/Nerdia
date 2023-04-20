@@ -10,6 +10,8 @@ public class StaticParameter {
     public static final String AuthLocalValidUrlPath = "allow";
     public static final String AuthLocalValidUrl = "nerdia://" + AuthLocalValidUrlAuthority + "/" + AuthLocalValidUrlPath;
     public static final String TmdbAuthFormatUrl = "https://www.themoviedb.org/authenticate/%s?redirect_to=" + AuthLocalValidUrl;
+    public static final String JustWatchSearchFormatUrl = "https://www.justwatch.com/tw/search?content_type=%s&q=%s";
+    public static final String PlayStoreDetailFormatUrl = "https://play.google.com/store/apps/details?id=%s";
     private static final String TmdbImageBaseUrl = "https://image.tmdb.org/t/p/";
     private static final String YoutubeThumbnailFormatUrl = "https://img.youtube.com/vi/%s/hqdefault.jpg";
     private static final String TmdbWebBaseUrl = "https://www.themoviedb.org/";
@@ -122,6 +124,23 @@ public class StaticParameter {
     public static class SortMode {
         public static final String CREATED_DATE_ASC = "created_at.asc";
         public static final String CREATED_DATE_DESC = "created_at.desc";
+    }
+
+    /**
+     * WatchProvider Id on TMDB API
+     */
+    public static class WatchProvidersID{
+        public static final long NetflixID = 8;
+        public static final long DisneyPlusID = 337;
+        public static final long CatchPlayID = 159;
+        public static final long PrimeVideoID = 119;
+    }
+
+    public static class ThirdPartyAppsPkgName{
+        public static final String Netflix = "com.netflix.mediaclient";
+        public static final String DisneyPlus = "com.disney.disneyplus";
+        public static final String CatchPlay = "com.catchplay.asiaplay";
+        public static final String PrimeVideo = "com.amazon.avod.thirdpartyclient";
     }
 
     /**

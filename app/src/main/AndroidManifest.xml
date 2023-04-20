@@ -18,6 +18,18 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
         </intent>
+
+        <!-- Netflix App -->
+        <package android:name="com.netflix.mediaclient" />
+
+        <!-- DisneyPlus App -->
+        <package android:name="com.disney.disneyplus" />
+
+        <!-- CatchPlay App -->
+        <package android:name="com.catchplay.asiaplay" />
+
+        <!-- PrimeVideo App -->
+        <package android:name="com.amazon.avod.thirdpartyclient" />
     </queries>
 
     <application

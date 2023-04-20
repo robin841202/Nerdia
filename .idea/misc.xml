@@ -89,6 +89,15 @@
         <entry key="..\:/Android/MovieInfo/app/src/main/res/layout/item_video_thumbnail_shimmer.xml" value="0.5057291666666667" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/menu/bottom_nav_menu.xml" value="0.26666666666666666" />
         <entry key="..\:/Android/MovieInfo/app/src/main/res/menu/search_menu.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout-land/activity_media_details.xml" value="0.4251313485113835" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/activity_media_details.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/activity_youtube_player.xml" value="0.1" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/bottom_sheet_rate_details.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/bottom_sheet_rating.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/bottom_sheet_watch_provider.xml" value="0.5057291666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_profile.xml" value="0.3052536231884058" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_tv_show_details_about_tab.xml" value="0.29739583333333336" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/item_slideshow_video.xml" value="0.5057291666666667" />
       </map>
     </option>
   </component>
