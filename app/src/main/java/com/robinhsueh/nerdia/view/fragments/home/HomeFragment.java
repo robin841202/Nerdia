@@ -31,7 +31,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     private final String LOG_TAG = "HomeFragment";
 
@@ -42,28 +42,34 @@ public class HomeFragment extends Fragment{
     // region Movies Variables
     private MoviesViewModel moviesViewModel;
 
-
+    // region upcomingMovies Variables
     private ShimmerFrameLayout upcomingMovies_Shimmer;
     private MoviesAdapter upcomingMoviesAdapter;
     private RecyclerView upcomingMovies_RcView;
     private LinearLayoutManager upcomingMoviesLayoutMgr;
     private int upcomingMoviesPage;
     private View upcomingMovies_ClickableLayout;
+    // endregion
 
+    // region nowPlayingMovies Variables
     private ShimmerFrameLayout nowPlayingMovies_Shimmer;
     private MoviesAdapter nowPlayingMoviesAdapter;
     private RecyclerView nowPlayingMovies_RcView;
     private LinearLayoutManager nowPlayingMoviesLayoutMgr;
     private int nowPlayingMoviesPage;
     private View nowPlayingMovies_ClickableLayout;
+    // endregion
 
+    // region trendingMovies Variables
     private ShimmerFrameLayout trendingMovies_Shimmer;
     private MoviesAdapter trendingMoviesAdapter;
     private RecyclerView trendingMovies_RcView;
     private LinearLayoutManager trendingMoviesLayoutMgr;
     private int trendingMoviesPage;
     private View trendingMovies_ClickableLayout;
+    // endregion
 
+    // region popularMovies Variables
     private ShimmerFrameLayout popularMovies_Shimmer;
     private MoviesAdapter popularMoviesAdapter;
     private RecyclerView popularMovies_RcView;
@@ -72,22 +78,47 @@ public class HomeFragment extends Fragment{
     private View popularMovies_ClickableLayout;
     // endregion
 
+    // region netflixMovies Variables
+    private ShimmerFrameLayout netflixMovies_Shimmer;
+    private MoviesAdapter netflixMoviesAdapter;
+    private RecyclerView netflixMovies_RcView;
+    private LinearLayoutManager netflixMoviesLayoutMgr;
+    private int netflixMoviesPage;
+    private View netflixMovies_ClickableLayout;
+    // endregion
+
+    // endregion
+
     // region TvShows Variables
     private TvShowsViewModel tvShowsViewModel;
 
+    // region popularTvShows Variables
     private ShimmerFrameLayout popularTvShows_Shimmer;
     private TvShowsAdapter popularTvShowsAdapter;
     private RecyclerView popularTvShows_RcView;
     private LinearLayoutManager popularTvShowsLayoutMgr;
     private int popularTvShowsPage;
     private View popularTvShows_ClickableLayout;
+    // endregion
 
+    // region trendingTvShows Variables
     private ShimmerFrameLayout trendingTvShows_Shimmer;
     private TvShowsAdapter trendingTvShowsAdapter;
     private RecyclerView trendingTvShows_RcView;
     private LinearLayoutManager trendingTvShowsLayoutMgr;
     private int trendingTvShowsPage;
     private View trendingTvShows_ClickableLayout;
+    // endregion
+
+    // region netflixTvShows Variables
+    private ShimmerFrameLayout netflixTvShows_Shimmer;
+    private TvShowsAdapter netflixTvShowsAdapter;
+    private RecyclerView netflixTvShows_RcView;
+    private LinearLayoutManager netflixTvShowsLayoutMgr;
+    private int netflixTvShowsPage;
+    private View netflixTvShows_ClickableLayout;
+    // endregion
+
     // endregion
 
     public HomeFragment() {
@@ -111,8 +142,59 @@ public class HomeFragment extends Fragment{
         moviesViewModel.getNowPlayingMoviesLiveData().observe(this, getNowPlayingMoviesObserver());
         moviesViewModel.getTrendingMoviesLiveData().observe(this, getTrendingMoviesObserver());
         moviesViewModel.getPopularMoviesLiveData().observe(this, getPopularMoviesObserver());
+        moviesViewModel.getNetflixMoviesLiveData().observe(this, getNetflixMoviesObserver());
+
         tvShowsViewModel.getPopularTvShowsLiveData().observe(this, getPopularTvShowsObserver());
         tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, getTrendingTvShowsObserver());
+        tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, getNetflixTvShowsObserver());
+    }
+
+    /**
+     * Initialize Views
+     * @param root
+     */
+    private void initViews(View root){
+        // upcoming Movies
+        upcomingMovies_Shimmer = root.findViewById(R.id.shimmer_upcoming_movies);
+        upcomingMovies_RcView = root.findViewById(R.id.recycler_upcoming_movies);
+        upcomingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_upcoming_movies);
+
+        // nowPlaying Movies
+        nowPlayingMovies_Shimmer = root.findViewById(R.id.shimmer_now_playing_movies);
+        nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
+        nowPlayingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_now_playing_movies);
+
+        // trending Movies
+        trendingMovies_Shimmer = root.findViewById(R.id.shimmer_trending_movies);
+        trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
+        trendingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_movies);
+
+        // popular Movies
+        popularMovies_Shimmer = root.findViewById(R.id.shimmer_popular_movies);
+        popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
+        popularMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_movies);
+
+        // netflix Movies
+        netflixMovies_Shimmer = root.findViewById(R.id.shimmer_netflix_movies);
+        netflixMovies_RcView = root.findViewById(R.id.recycler_netflix_movies);
+        netflixMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_netflix_movies);
+
+        // popular TvShows
+        popularTvShows_Shimmer = root.findViewById(R.id.shimmer_popular_shows);
+        popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
+        popularTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_shows);
+
+        // trending TvShows
+        trendingTvShows_Shimmer = root.findViewById(R.id.shimmer_trending_shows);
+        trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
+        trendingTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_shows);
+
+        // netflix TvShows
+        netflixTvShows_Shimmer = root.findViewById(R.id.shimmer_netflix_shows);
+        netflixTvShows_RcView = root.findViewById(R.id.recycler_netflix_shows);
+        netflixTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_netflix_shows);
+
+        pullToRefresh = root.findViewById(R.id.swiperefresh);
     }
 
     @Override
@@ -124,57 +206,47 @@ public class HomeFragment extends Fragment{
 
 
         // Initialize Views
-        upcomingMovies_Shimmer = root.findViewById(R.id.shimmer_upcoming_movies);
-        upcomingMovies_RcView = root.findViewById(R.id.recycler_upcoming_movies);
-        upcomingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_upcoming_movies);
-        nowPlayingMovies_Shimmer = root.findViewById(R.id.shimmer_now_playing_movies);
-        nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
-        nowPlayingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_now_playing_movies);
-        trendingMovies_Shimmer = root.findViewById(R.id.shimmer_trending_movies);
-        trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
-        trendingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_movies);
-        popularMovies_Shimmer = root.findViewById(R.id.shimmer_popular_movies);
-        popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
-        popularMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_movies);
-        popularTvShows_Shimmer = root.findViewById(R.id.shimmer_popular_shows);
-        popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
-        popularTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_shows);
-        trendingTvShows_Shimmer = root.findViewById(R.id.shimmer_trending_shows);
-        trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
-        trendingTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_shows);
-        pullToRefresh = root.findViewById(R.id.swiperefresh);
+        initViews(root);
 
         // Initialize Adapter
-        upcomingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-        nowPlayingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-        trendingMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-        popularMoviesAdapter = new MoviesAdapter((AppCompatActivity)getActivity());
-        popularTvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
-        trendingTvShowsAdapter = new TvShowsAdapter((AppCompatActivity)getActivity());
+        upcomingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        nowPlayingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        trendingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        popularMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        netflixMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
+        popularTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
+        trendingTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
+        netflixTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
 
         // Initialize linearLayoutManager
         upcomingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         nowPlayingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         trendingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         popularMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        netflixMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         popularTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         trendingTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        netflixTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
 
         // Set adapter
         upcomingMovies_RcView.setAdapter(upcomingMoviesAdapter);
         nowPlayingMovies_RcView.setAdapter(nowPlayingMoviesAdapter);
         trendingMovies_RcView.setAdapter(trendingMoviesAdapter);
         popularMovies_RcView.setAdapter(popularMoviesAdapter);
+        netflixMovies_RcView.setAdapter(netflixMoviesAdapter);
         popularTvShows_RcView.setAdapter(popularTvShowsAdapter);
         trendingTvShows_RcView.setAdapter(trendingTvShowsAdapter);
+        netflixTvShows_RcView.setAdapter(netflixTvShowsAdapter);
 
         // Set layoutManager
         upcomingMovies_RcView.setLayoutManager(upcomingMoviesLayoutMgr);
         nowPlayingMovies_RcView.setLayoutManager(nowPlayingMoviesLayoutMgr);
         trendingMovies_RcView.setLayoutManager(trendingMoviesLayoutMgr);
         popularMovies_RcView.setLayoutManager(popularMoviesLayoutMgr);
+        netflixMovies_RcView.setLayoutManager(netflixMoviesLayoutMgr);
         popularTvShows_RcView.setLayoutManager(popularTvShowsLayoutMgr);
         trendingTvShows_RcView.setLayoutManager(trendingTvShowsLayoutMgr);
+        netflixTvShows_RcView.setLayoutManager(netflixTvShowsLayoutMgr);
 
         return root;
     }
@@ -189,8 +261,10 @@ public class HomeFragment extends Fragment{
         nowPlayingMoviesPage = 1;
         trendingMoviesPage = 1;
         popularMoviesPage = 1;
+        netflixMoviesPage = 1;
         popularTvShowsPage = 1;
         trendingTvShowsPage = 1;
+        netflixTvShowsPage = 1;
 
         // Start getting data
         updateAllData();
@@ -205,8 +279,10 @@ public class HomeFragment extends Fragment{
             Log.d(LOG_TAG, "onRefreshNowPlayingMovies");
             Log.d(LOG_TAG, "onRefreshTrendingMovies");
             Log.d(LOG_TAG, "onRefreshPopularMovies");
+            Log.d(LOG_TAG, "onRefreshNetflixMovies");
             Log.d(LOG_TAG, "onRefreshPopularTvShows");
             Log.d(LOG_TAG, "onRefreshTrendingTvShows");
+            Log.d(LOG_TAG, "onRefreshNetflixTvShows");
 
             pullToRefresh.setRefreshing(false);
         });
@@ -224,11 +300,17 @@ public class HomeFragment extends Fragment{
         popularMovies_ClickableLayout.setOnClickListener(v -> {
             showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_MOVIES);
         });
+        netflixMovies_ClickableLayout.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.NETFLIX_MOVIES);
+        });
         popularTvShows_ClickableLayout.setOnClickListener(v -> {
             showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_TVSHOWS);
         });
         trendingTvShows_ClickableLayout.setOnClickListener(v -> {
             showVerticalBrowse(StaticParameter.HomeCategory.TRENDING_TVSHOWS);
+        });
+        netflixTvShows_ClickableLayout.setOnClickListener(v -> {
+            showVerticalBrowse(StaticParameter.HomeCategory.NETFLIX_TVSHOWS);
         });
 
     }
@@ -592,7 +674,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getUpcomingMoviesObserver() {
         return movies -> {
-            if (movies != null){
+            if (movies != null) {
                 // hide shimmer animation
                 upcomingMovies_Shimmer.stopShimmer();
                 upcomingMovies_Shimmer.setVisibility(View.GONE);
@@ -646,7 +728,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getNowPlayingMoviesObserver() {
         return movies -> {
-            if (movies != null){
+            if (movies != null) {
                 // hide shimmer animation
                 nowPlayingMovies_Shimmer.stopShimmer();
                 nowPlayingMovies_Shimmer.setVisibility(View.GONE);
@@ -699,7 +781,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getTrendingMoviesObserver() {
         return movies -> {
-            if (movies != null){
+            if (movies != null) {
                 // hide shimmer animation
                 trendingMovies_Shimmer.stopShimmer();
                 trendingMovies_Shimmer.setVisibility(View.GONE);
@@ -752,7 +834,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<MovieData>> getPopularMoviesObserver() {
         return movies -> {
-            if (movies != null){
+            if (movies != null) {
                 // hide shimmer animation
                 popularMovies_Shimmer.stopShimmer();
                 popularMovies_Shimmer.setVisibility(View.GONE);
@@ -788,6 +870,59 @@ public class HomeFragment extends Fragment{
 
     // endregion
 
+    // region Netflix Movies
+
+    /**
+     * Get Netflix Movies (using LiveData)
+     */
+    public void getNetflixMovies(int page) {
+        // show shimmer animation
+        netflixMovies_Shimmer.startShimmer();
+        netflixMovies_Shimmer.setVisibility(View.VISIBLE);
+        moviesViewModel.getNetflixMovies(page);
+    }
+
+    /**
+     * Observe when MovieData List LiveData changed (For Netflix Movies)
+     */
+    public Observer<ArrayList<MovieData>> getNetflixMoviesObserver() {
+        return movies -> {
+            if (movies != null) {
+                // hide shimmer animation
+                netflixMovies_Shimmer.stopShimmer();
+                netflixMovies_Shimmer.setVisibility(View.GONE);
+
+                // append data to adapter
+                netflixMoviesAdapter.appendMovies(movies);
+                // attach onScrollListener to RecyclerView
+                netflixMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = netflixMoviesLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = netflixMoviesLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = netflixMoviesLayoutMgr.findFirstVisibleItemPosition();
+
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            netflixMovies_RcView.removeOnScrollListener(this);
+
+                            // append nextPage data to recyclerView
+                            netflixMoviesPage++;
+                            getNetflixMovies(netflixMoviesPage);
+                        }
+                    }
+                });
+
+                Log.d(LOG_TAG, "netflix movies: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
     // region Popular TvShows
 
     /**
@@ -805,7 +940,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<TvShowData>> getPopularTvShowsObserver() {
         return tvShows -> {
-            if (tvShows != null){
+            if (tvShows != null) {
                 // hide shimmer animation
                 popularTvShows_Shimmer.stopShimmer();
                 popularTvShows_Shimmer.setVisibility(View.GONE);
@@ -858,7 +993,7 @@ public class HomeFragment extends Fragment{
      */
     public Observer<ArrayList<TvShowData>> getTrendingTvShowsObserver() {
         return tvShows -> {
-            if (tvShows != null){
+            if (tvShows != null) {
                 // hide shimmer animation
                 trendingTvShows_Shimmer.stopShimmer();
                 trendingTvShows_Shimmer.setVisibility(View.GONE);
@@ -894,6 +1029,59 @@ public class HomeFragment extends Fragment{
 
     // endregion
 
+    // region Netflix TvShows
+
+    /**
+     * Get Netflix TvShows (using LiveData)
+     */
+    public void getNetflixTvShows(int page) {
+        // show shimmer animation
+        netflixTvShows_Shimmer.startShimmer();
+        netflixTvShows_Shimmer.setVisibility(View.VISIBLE);
+        tvShowsViewModel.getNetflixTvShows(page);
+    }
+
+    /**
+     * Observe when TvShowData List LiveData changed (For Trending TvShows)
+     */
+    public Observer<ArrayList<TvShowData>> getNetflixTvShowsObserver() {
+        return tvShows -> {
+            if (tvShows != null) {
+                // hide shimmer animation
+                netflixTvShows_Shimmer.stopShimmer();
+                netflixTvShows_Shimmer.setVisibility(View.GONE);
+
+                // append data to adapter
+                netflixTvShowsAdapter.appendTvShows(tvShows);
+                // attach onScrollListener to RecyclerView
+                netflixTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        // get the number of all items in recyclerView
+                        int totalItemCount = netflixTvShowsLayoutMgr.getItemCount();
+                        // get the number of current items attached to recyclerView
+                        int visibleItemCount = netflixTvShowsLayoutMgr.getChildCount();
+                        // get the first visible item's position
+                        int firstVisibleItem = netflixTvShowsLayoutMgr.findFirstVisibleItemPosition();
+
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                            // detach current OnScrollListener
+                            netflixTvShows_RcView.removeOnScrollListener(this);
+
+                            // append nextPage data to recyclerView
+                            netflixTvShowsPage++;
+                            getNetflixTvShows(netflixTvShowsPage);
+                        }
+                    }
+                });
+
+                Log.d(LOG_TAG, "netflix tvShows: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
     // endregion
 
     /**
@@ -905,15 +1093,19 @@ public class HomeFragment extends Fragment{
         nowPlayingMoviesPage = 1;
         trendingMoviesPage = 1;
         popularMoviesPage = 1;
+        netflixMoviesPage = 1;
         popularTvShowsPage = 1;
         trendingTvShowsPage = 1;
+        netflixTvShowsPage = 1;
 
         upcomingMoviesAdapter.removeAllMovies();
         nowPlayingMoviesAdapter.removeAllMovies();
         trendingMoviesAdapter.removeAllMovies();
         popularMoviesAdapter.removeAllMovies();
+        netflixMoviesAdapter.removeAllMovies();
         popularTvShowsAdapter.removeAllTvShows();
         trendingTvShowsAdapter.removeAllTvShows();
+        netflixTvShowsAdapter.removeAllTvShows();
 
         updateAllData();
 
@@ -927,8 +1119,10 @@ public class HomeFragment extends Fragment{
         getNowPlayingMovies(nowPlayingMoviesPage);
         getTrendingMovies(trendingMoviesPage);
         getPopularMovies(popularMoviesPage);
+        getNetflixMovies(netflixMoviesPage);
         getPopularTvShows(popularTvShowsPage);
         getTrendingTvShows(trendingTvShowsPage);
+        getNetflixTvShows(netflixTvShowsPage);
     }
 
 

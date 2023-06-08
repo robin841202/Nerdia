@@ -3,6 +3,7 @@ package com.robinhsueh.nerdia.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.robinhsueh.nerdia.model.movie.MovieData;
 import com.robinhsueh.nerdia.model.repository.TvShowRepository;
 import com.robinhsueh.nerdia.model.tvshow.TvShowData;
 
@@ -14,6 +15,7 @@ public class TvShowsViewModel extends ViewModel {
     // used when multiple liveData needs to observe different data in same activity or fragment
     private LiveData<ArrayList<TvShowData>> popularTvShowsLiveData;
     private LiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
+    private LiveData<ArrayList<TvShowData>> netflixTvShowsLiveData;
 
     /**
      * Initialize ViewModel liveData, Prevent from triggering observer twice
@@ -22,6 +24,7 @@ public class TvShowsViewModel extends ViewModel {
         repository = new TvShowRepository();
         trendingTvShowsLiveData = repository.getTrendingTvShowsLiveData();
         popularTvShowsLiveData = repository.getPopularTvShowsLiveData();
+        netflixTvShowsLiveData = repository.getNetflixTvShowsLiveData();
     }
 
 
@@ -64,6 +67,27 @@ public class TvShowsViewModel extends ViewModel {
      */
     public LiveData<ArrayList<TvShowData>> getTrendingTvShowsLiveData() {
         return trendingTvShowsLiveData;
+    }
+    // endregion
+
+    // region Netflix TvShows
+
+    /**
+     * Call repository to get netflix tvShows and update to liveData
+     *
+     * @param page target page
+     */
+    public void getNetflixTvShows(int page) {
+        repository.getNetflixTvShows(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Netflix TvShows)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<TvShowData>> getNetflixTvShowsLiveData() {
+        return netflixTvShowsLiveData;
     }
     // endregion
 

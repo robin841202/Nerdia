@@ -51,7 +51,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,8 +83,6 @@
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
             </LinearLayout>
-
-
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -122,7 +119,6 @@
                     app:srcCompat="@drawable/ic_arrow_left" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -193,7 +189,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -262,7 +257,6 @@
                     app:srcCompat="@drawable/ic_arrow_left" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -333,8 +327,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -367,7 +359,6 @@
                 </com.facebook.shimmer.ShimmerFrameLayout>
 
             </LinearLayout>
-
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -438,6 +429,143 @@
 
             </LinearLayout>
 
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clickableLayout_netflix_movies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                <TextView
+                    android:id="@+id/text_netflix_movies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_nfx"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_movies"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_netflix_movies" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_left" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_netflix_movies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_netflix_movies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+            </LinearLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clickableLayout_netflix_shows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                <TextView
+                    android:id="@+id/text_netflix_shows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_nfx"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_tvshows"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_netflix_shows" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_left" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_netflix_shows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_netflix_shows"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                        <include layout="@layout/item_media_shimmer"/>
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

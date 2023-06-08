@@ -9,6 +9,8 @@ import com.robinhsueh.nerdia.BuildConfig;
 import com.robinhsueh.nerdia.model.ReviewsResponse;
 import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.WatchProvidersResponse;
+import com.robinhsueh.nerdia.model.movie.MovieData;
+import com.robinhsueh.nerdia.model.movie.MoviesResponse;
 import com.robinhsueh.nerdia.model.service.ITvShowService;
 import com.robinhsueh.nerdia.model.tvshow.TvShowData;
 import com.robinhsueh.nerdia.model.tvshow.TvShowDetailData;
@@ -43,6 +45,7 @@ public class TvShowRepository {
     // used when multiple liveData needs to observe different data in same activity or fragment
     private final MutableLiveData<ArrayList<TvShowData>> popularTvShowsLiveData = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<TvShowData>> trendingTvShowsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<TvShowData>> netflixTvShowsLiveData = new MutableLiveData<>();
 
     // endregion
 
@@ -287,6 +290,29 @@ public class TvShowRepository {
      */
     public MutableLiveData<ArrayList<TvShowData>> getTrendingTvShowsLiveData() {
         return trendingTvShowsLiveData;
+    }
+
+    // endregion
+
+    // region NETFLIX TVSHOWS
+
+    /**
+     * Get Netflix TvShows (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getNetflixTvShows(int page) {
+        Call<TvShowsResponse> call = service.discoverTvShows(apiKey, page, language, region, StaticParameter.WatchProvidersID.NetflixID);
+        Callback<TvShowsResponse> requestHandler = getTvShowsResponseRequestHandler(netflixTvShowsLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get TvShows Response Live Data (For Netflix TvShows)
+     * @return
+     */
+    public MutableLiveData<ArrayList<TvShowData>> getNetflixTvShowsLiveData() {
+        return netflixTvShowsLiveData;
     }
 
     // endregion

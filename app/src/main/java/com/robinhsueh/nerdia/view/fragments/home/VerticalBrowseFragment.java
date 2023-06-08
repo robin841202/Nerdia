@@ -169,11 +169,17 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
                 moviesViewModel.getPopularMoviesLiveData().observe(this, moviesObserver);
                 break;
+            case StaticParameter.HomeCategory.NETFLIX_MOVIES:
+                moviesViewModel.getNetflixMoviesLiveData().observe(this, moviesObserver);
+                break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
                 tvShowsViewModel.getPopularTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
                 tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, tvShowsObserver);
+                break;
+            case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
+                tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             default:
                 // do nothing
@@ -233,12 +239,14 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
+            case StaticParameter.HomeCategory.NETFLIX_MOVIES:
                 mRcView.setAdapter(movieAdapter);
                 // Set EmptyStateObserver
                 movieAdapter.registerAdapterDataObserver(emptyDataObserver);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
+            case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
                 mRcView.setAdapter(tvShowAdapter);
                 // Set EmptyStateObserver
                 tvShowAdapter.registerAdapterDataObserver(emptyDataObserver);
@@ -283,6 +291,11 @@ public class VerticalBrowseFragment extends Fragment {
                 toolBar.setTitle(getString(R.string.title_popular_movies));
                 moviesViewModel.getPopularMovies(currentPage);
                 break;
+            case StaticParameter.HomeCategory.NETFLIX_MOVIES:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_netflix_movies));
+                moviesViewModel.getNetflixMovies(currentPage);
+                break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_popular_tvShows));
@@ -292,6 +305,11 @@ public class VerticalBrowseFragment extends Fragment {
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_trending_tvShows));
                 tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, currentPage);
+                break;
+            case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_netflix_tvShows));
+                tvShowsViewModel.getNetflixTvShows(currentPage);
                 break;
             default:
                 // do nothing
@@ -314,10 +332,12 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
+            case StaticParameter.HomeCategory.NETFLIX_MOVIES:
                 movieAdapter.removeAllMovies();
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
+            case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
                 tvShowAdapter.removeAllTvShows();
                 break;
             default:

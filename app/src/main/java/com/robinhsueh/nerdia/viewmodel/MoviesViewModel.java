@@ -16,6 +16,7 @@ public class MoviesViewModel extends ViewModel {
     private LiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData;
     private LiveData<ArrayList<MovieData>> trendingMoviesLiveData;
     private LiveData<ArrayList<MovieData>> popularMoviesLiveData;
+    private LiveData<ArrayList<MovieData>> netflixMoviesLiveData;
 
     /**
      * Initialize ViewModel liveData, Prevent from triggering observer twice
@@ -26,6 +27,7 @@ public class MoviesViewModel extends ViewModel {
         nowPlayingMoviesLiveData = repository.getNowPlayingMoviesLiveData();
         trendingMoviesLiveData = repository.getTrendingMoviesLiveData();
         popularMoviesLiveData = repository.getPopularMoviesLiveData();
+        netflixMoviesLiveData = repository.getNetflixMoviesLiveData();
     }
 
     // region Upcoming Movies
@@ -109,6 +111,27 @@ public class MoviesViewModel extends ViewModel {
      */
     public LiveData<ArrayList<MovieData>> getPopularMoviesLiveData() {
         return popularMoviesLiveData;
+    }
+    // endregion
+
+    // region Netflix Movies
+
+    /**
+     * Call repository to get netflix movies and update to liveData
+     *
+     * @param page target page
+     */
+    public void getNetflixMovies(int page) {
+        repository.getNetflixMovies(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Netflix Movies)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<MovieData>> getNetflixMoviesLiveData() {
+        return netflixMoviesLiveData;
     }
     // endregion
 

@@ -17,8 +17,10 @@
     <string name="title_now_playing_movies">現正熱映電影</string>
     <string name="title_trending_movies">本週熱門電影</string>
     <string name="title_popular_movies">最多人觀看電影</string>
+    <string name="title_netflix_movies">Netflix電影</string>
     <string name="title_popular_tvShows">最多人觀看影集</string>
     <string name="title_trending_tvShows">本週熱門影集</string>
+    <string name="title_netflix_tvShows">Netflix影集</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_title_discover">探索</string>
