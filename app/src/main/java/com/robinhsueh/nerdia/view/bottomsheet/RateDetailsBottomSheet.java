@@ -220,31 +220,32 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
     public Observer<OmdbData> getOmdbObserver() {
         return omdbData -> {
 
-            if (omdbData != null){
-                // Set RottenTomatoes web page link on click
-                rottenTomatoesCard.setOnClickListener(v -> {
-                    String tomatoWebUrl = omdbData.getTomatoWebUrl();
-                    if (!Strings.isNullOrEmpty(tomatoWebUrl) && !tomatoWebUrl.equalsIgnoreCase("N/A")) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tomatoWebUrl));
+            // Set RottenTomatoes web page link on click
+            rottenTomatoesCard.setOnClickListener(v -> {
+                String tomatoWebUrl = omdbData.getTomatoWebUrl();
+                if (!Strings.isNullOrEmpty(tomatoWebUrl) && !tomatoWebUrl.equalsIgnoreCase("N/A")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tomatoWebUrl));
                     /*
                     Use the resolveActivity() method and the Android package manager to find an Activity that can handle your implicit Intent. Make sure that the request resolved successfully.
                     Make sure there is at least one Activity can handle your request.
                     Remember to add <queries><intent><action> in AndroidManifest since Android 11 needs that
                      */
-                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                            startActivity(intent);
-                        } else {
-                            Log.d(LOG_TAG, "no Activity on this device can handle this action!");
-                        }
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
                     } else {
-                        Toast.makeText(context, R.string.toastMsg_link_not_exist, Toast.LENGTH_SHORT).show();
+                        Log.d(LOG_TAG, "no Activity on this device can handle this action!");
                     }
-                });
+                } else {
+                    Toast.makeText(context, R.string.toastMsg_link_not_exist, Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                // region Retrieve ratings and populate in views
-                ArrayList<OmdbData.Rating> omdbRating_list = omdbData.getRatings();
-                String imdbRating = null;
-                String tomatoRating = null;
+            // region Retrieve ratings and populate in views
+            ArrayList<OmdbData.Rating> omdbRating_list = omdbData.getRatings();
+            String imdbRating = null;
+            String tomatoRating = null;
+            if (omdbRating_list != null){
+
                 for (OmdbData.Rating item : omdbRating_list) {
                     switch (item.getSource()) {
                         case StaticParameter.OmdbSourceName.IMDB:
@@ -258,19 +259,20 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
                             break;
                     }
                 }
-                if (!Strings.isNullOrEmpty(imdbRating)) {
-                    imdbRatingText.setText(imdbRating);
-                } else {
-                    imdbRatingText.setText(" - ");
-                }
-
-                if (!Strings.isNullOrEmpty(tomatoRating)) {
-                    tomatoRatingText.setText(tomatoRating);
-                } else {
-                    tomatoRatingText.setText(" - ");
-                }
-                // endregion
             }
+
+            if (!Strings.isNullOrEmpty(imdbRating)) {
+                imdbRatingText.setText(imdbRating);
+            } else {
+                imdbRatingText.setText(" - ");
+            }
+
+            if (!Strings.isNullOrEmpty(tomatoRating)) {
+                tomatoRatingText.setText(tomatoRating);
+            } else {
+                tomatoRatingText.setText(" - ");
+            }
+            // endregion
         };
     }
 
