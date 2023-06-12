@@ -26,10 +26,10 @@ public class VideosResponse {
     }
 
     /**
-     * Sort Videos, Taiwan(zh) videos always sort in first, then sort Trailer, Teaser on top
+     * Sort Videos, Taiwan(zh) videos always sort in first, then sort Trailer on top
      */
     public ArrayList<VideoData> sortVideos(ArrayList<VideoData> target) {
-        Collections.sort(target, getCustomVideoComparator());
+        Collections.sort(target, getTwLanguageFirstVideoComparator().thenComparing(getTrailerFirstVideoComparator()));
         return target;
     }
 
@@ -60,31 +60,20 @@ public class VideosResponse {
     }
 
     /**
-     * (Private) Get Video Custom Comparator
+     * (Private) Get Video TwLanguageFirst Comparator
      *
-     * @return Custom Comparator
+     * @return TwLanguageFirst Comparator
      */
-    private Comparator<VideoData> getCustomVideoComparator() {
+    private Comparator<VideoData> getTwLanguageFirstVideoComparator() {
         String tch_ISO = Locale.TRADITIONAL_CHINESE.getLanguage();
         return new Comparator<VideoData>() {
             @Override
             public int compare(VideoData o1, VideoData o2) {
                 String lc1 = o1.getLanguageCode();
                 String lc2 = o2.getLanguageCode();
-                String vt1 = o1.getVideoType();
-                String vt2 = o2.getVideoType();
 
-                if (lc1.equalsIgnoreCase(tch_ISO) && lc2.equalsIgnoreCase(tch_ISO)) {
-                    // region Assure VideoType TRAILER will always come first, TEASER comes second
-                    if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
-                        return -1;
-                    if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
-                        return -1;
-                    if (vt1.equalsIgnoreCase(vt2))
-                        return 0;
-                    return 1;
-                    // endregion
-                }
+                if (lc1.equalsIgnoreCase(lc2))
+                    return 0;
 
                 // region Assure specific language (zh) of video will always be top
                 if (lc1.equalsIgnoreCase(tch_ISO))
@@ -93,15 +82,34 @@ public class VideosResponse {
                     return 1;
                 // endregion
 
-                // region Assure VideoType TRAILER will always come first, TEASER comes second
-                if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
-                    return -1;
-                if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TEASER))
-                    return -1;
+                return 1;
+            }
+        };
+    }
+
+    /**
+     * (Private) Get Video TrailerFirst Comparator
+     *
+     * @return TrailerFirst Comparator
+     */
+    private Comparator<VideoData> getTrailerFirstVideoComparator() {
+        return new Comparator<VideoData>() {
+            @Override
+            public int compare(VideoData o1, VideoData o2) {
+                String vt1 = o1.getVideoType();
+                String vt2 = o2.getVideoType();
+
                 if (vt1.equalsIgnoreCase(vt2))
                     return 0;
-                return 1;
+
+                // region Assure VideoType TRAILER will always come first
+                if (vt1.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                    return -1;
+                if (vt2.equalsIgnoreCase(StaticParameter.VideoType.TRAILER))
+                    return 1;
                 // endregion
+
+                return 1;
             }
         };
     }
