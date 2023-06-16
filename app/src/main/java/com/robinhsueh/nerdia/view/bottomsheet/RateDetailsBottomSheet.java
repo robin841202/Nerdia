@@ -244,19 +244,23 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
             ArrayList<OmdbData.Rating> omdbRating_list = omdbData.getRatings();
             String imdbRating = null;
             String tomatoRating = null;
-            for (OmdbData.Rating item : omdbRating_list) {
-                switch (item.getSource()) {
-                    case StaticParameter.OmdbSourceName.IMDB:
-                        imdbRating = item.getValue();
-                        break;
-                    case StaticParameter.OmdbSourceName.ROTTEN_TOMATOES:
-                        tomatoRating = item.getValue();
-                        break;
-                    default:
-                        // do nothing
-                        break;
+            if (omdbRating_list != null){
+
+                for (OmdbData.Rating item : omdbRating_list) {
+                    switch (item.getSource()) {
+                        case StaticParameter.OmdbSourceName.IMDB:
+                            imdbRating = item.getValue();
+                            break;
+                        case StaticParameter.OmdbSourceName.ROTTEN_TOMATOES:
+                            tomatoRating = item.getValue();
+                            break;
+                        default:
+                            // do nothing
+                            break;
+                    }
                 }
             }
+
             if (!Strings.isNullOrEmpty(imdbRating)) {
                 imdbRatingText.setText(imdbRating);
             } else {
@@ -269,7 +273,6 @@ public class RateDetailsBottomSheet extends BottomSheetDialogFragment {
                 tomatoRatingText.setText(" - ");
             }
             // endregion
-
         };
     }
 
