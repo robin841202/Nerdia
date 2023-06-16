@@ -189,6 +189,30 @@ public interface ITvShowService {
                     String includeGenres
     );
 
+    /**
+     * Discover TvShows By multiple filter (WatchProviders)
+     *
+     * @param apiKey        TMDB API Key
+     * @param page          target page
+     * @param language      ISO 639-1 value to display translated data for the fields that support. ex: zh-TW
+     * @param watchRegion  ISO 3166-1 code to filter release dates. Must be uppercase. ex: TW
+     * @param watchProviderId Comma or pipe separated list of watch provider ID's. Combine this filter with watch_region in order to filter your results by a specific watch provider in a specific region.
+     * @return
+     */
+    @GET("discover/tv")
+    Call<TvShowsResponse> discoverTvShows(
+            @Query("api_key")
+                    String apiKey,
+            @Query("page")
+                    int page,
+            @Query("language")
+                    String language,
+            @Query("watch_region")
+                    String watchRegion,
+            @Query("with_watch_providers")
+                    long watchProviderId
+    );
+
 
     /**
      * Get TvShow Watchlist on TMDB

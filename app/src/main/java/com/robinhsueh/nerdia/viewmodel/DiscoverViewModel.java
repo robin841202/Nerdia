@@ -53,7 +53,7 @@ public class DiscoverViewModel extends ViewModel {
      * @param includeGenres Comma separated value of genre ids that you want to include in the results.
      */
     public void discoverMovies(int page, String includeGenres) {
-        movieRepository.discoverMovies(page, includeGenres);
+        movieRepository.discoverMoviesByGenres(page, includeGenres);
     }
 
     /**

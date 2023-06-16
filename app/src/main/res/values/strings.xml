@@ -17,8 +17,16 @@
     <string name="title_now_playing_movies">現正熱映電影</string>
     <string name="title_trending_movies">本週熱門電影</string>
     <string name="title_popular_movies">最多人觀看電影</string>
+    <string name="title_netflix_movies">Netflix電影</string>
+    <string name="title_disney_movies">Disney+電影</string>
+    <string name="title_catchplay_movies">CatchPlay+電影</string>
+    <string name="title_prime_movies">Prime Video電影</string>
     <string name="title_popular_tvShows">最多人觀看影集</string>
     <string name="title_trending_tvShows">本週熱門影集</string>
+    <string name="title_netflix_tvShows">Netflix影集</string>
+    <string name="title_disney_tvShows">Disney+影集</string>
+    <string name="title_catchplay_tvShows">CatchPlay+影集</string>
+    <string name="title_prime_tvShows">Prime Video影集</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_title_discover">探索</string>
@@ -108,5 +116,7 @@
     <string name="label_catchplay_plus">Catchplay+</string>
     <string name="label_tmdb">TMDB</string>
     <string name="label_justwatch">JustWatch</string>
-    <string name="label_prime_video">Prime Video</string>
+    <string name="label_prime_video">Amazon</string>
+    <string name="label_category_name">類別名稱</string>
+    <string name="label_sub_category_name">子類別名稱</string>
 </resources>

@@ -46,7 +46,10 @@ public class MovieRepository {
     private final MutableLiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<MovieData>> trendingMoviesLiveData = new MutableLiveData<>();
     private final MutableLiveData<ArrayList<MovieData>> popularMoviesLiveData = new MutableLiveData<>();
-
+    private final MutableLiveData<ArrayList<MovieData>> netflixMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> disneyMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> catchplayMoviesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ArrayList<MovieData>> primeMoviesLiveData = new MutableLiveData<>();
     // endregion
 
     // region MovieDetail LiveData
@@ -462,6 +465,98 @@ public class MovieRepository {
 
     // endregion
 
+    // region NETFLIX MOVIES
+
+    /**
+     * Get Netflix Movies (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getNetflixMovies(int page) {
+        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.NetflixID);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(netflixMoviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Movies Response Live Data (For Netflix Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getNetflixMoviesLiveData() {
+        return netflixMoviesLiveData;
+    }
+
+    // endregion
+
+    // region DISNEY MOVIES
+
+    /**
+     * Get Disney Movies (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getDisneyMovies(int page) {
+        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.DisneyPlusID);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(disneyMoviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Movies Response Live Data (For Netflix Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getDisneyMoviesLiveData() {
+        return disneyMoviesLiveData;
+    }
+
+    // endregion
+
+    // region CATCHPLAY MOVIES
+
+    /**
+     * Get Catchplay Movies (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getCatchplayMovies(int page) {
+        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.CatchPlayID);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(catchplayMoviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Movies Response Live Data (For Netflix Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getCatchplayMoviesLiveData() {
+        return catchplayMoviesLiveData;
+    }
+
+    // endregion
+
+    // region PRIME MOVIES
+
+    /**
+     * Get Prime Movies (using LiveData)
+     *
+     * @param page target page
+     */
+    public void getPrimeMovies(int page) {
+        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.PrimeVideoID);
+        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(primeMoviesLiveData);
+        call.enqueue(requestHandler);
+    }
+
+    /***
+     * Get Movies Response Live Data (For Netflix Movies)
+     * @return
+     */
+    public MutableLiveData<ArrayList<MovieData>> getPrimeMoviesLiveData() {
+        return primeMoviesLiveData;
+    }
+
+    // endregion
+
     /**
      * Search Movies By Keyword (using LiveData)
      *
@@ -515,12 +610,12 @@ public class MovieRepository {
     }
 
     /**
-     * Discover Movies (using LiveData)
+     * Discover Movies by Genres (using LiveData)
      *
      * @param page          target page
      * @param includeGenres Comma separated value of genre ids that you want to include in the results.
      */
-    public void discoverMovies(int page, String includeGenres) {
+    public void discoverMoviesByGenres(int page, String includeGenres) {
         Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, includeGenres);
         Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
         call.enqueue(requestHandler);
