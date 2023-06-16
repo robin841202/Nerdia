@@ -16,6 +16,9 @@ public class TvShowsViewModel extends ViewModel {
     private LiveData<ArrayList<TvShowData>> popularTvShowsLiveData;
     private LiveData<ArrayList<TvShowData>> trendingTvShowsLiveData;
     private LiveData<ArrayList<TvShowData>> netflixTvShowsLiveData;
+    private LiveData<ArrayList<TvShowData>> disneyTvShowsLiveData;
+    private LiveData<ArrayList<TvShowData>> catchplayTvShowsLiveData;
+    private LiveData<ArrayList<TvShowData>> primeTvShowsLiveData;
 
     /**
      * Initialize ViewModel liveData, Prevent from triggering observer twice
@@ -25,6 +28,9 @@ public class TvShowsViewModel extends ViewModel {
         trendingTvShowsLiveData = repository.getTrendingTvShowsLiveData();
         popularTvShowsLiveData = repository.getPopularTvShowsLiveData();
         netflixTvShowsLiveData = repository.getNetflixTvShowsLiveData();
+        disneyTvShowsLiveData = repository.getDisneyTvShowsLiveData();
+        catchplayTvShowsLiveData = repository.getCatchplayTvShowsLiveData();
+        primeTvShowsLiveData = repository.getPrimeTvShowsLiveData();
     }
 
 
@@ -91,4 +97,66 @@ public class TvShowsViewModel extends ViewModel {
     }
     // endregion
 
+    // region Disney TvShows
+
+    /**
+     * Call repository to get disney tvShows and update to liveData
+     *
+     * @param page target page
+     */
+    public void getDisneyTvShows(int page) {
+        repository.getDisneyTvShows(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Disney TvShows)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<TvShowData>> getDisneyTvShowsLiveData() {
+        return disneyTvShowsLiveData;
+    }
+    // endregion
+
+    // region Catchplay TvShows
+
+    /**
+     * Call repository to get catchplay tvShows and update to liveData
+     *
+     * @param page target page
+     */
+    public void getCatchplayTvShows(int page) {
+        repository.getCatchplayTvShows(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Catchplay TvShows)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<TvShowData>> getCatchplayTvShowsLiveData() {
+        return catchplayTvShowsLiveData;
+    }
+    // endregion
+
+    // region Prime TvShows
+
+    /**
+     * Call repository to get prime tvShows and update to liveData
+     *
+     * @param page target page
+     */
+    public void getPrimeTvShows(int page) {
+        repository.getPrimeTvShows(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Prime TvShows)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<TvShowData>> getPrimeTvShowsLiveData() {
+        return primeTvShowsLiveData;
+    }
+    // endregion
 }

@@ -181,6 +181,24 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
                 tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
+            case StaticParameter.HomeCategory.DISNEY_MOVIES:
+                moviesViewModel.getDisneyMoviesLiveData().observe(this, moviesObserver);
+                break;
+            case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
+                tvShowsViewModel.getDisneyTvShowsLiveData().observe(this, tvShowsObserver);
+                break;
+            case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
+                moviesViewModel.getCatchplayMoviesLiveData().observe(this, moviesObserver);
+                break;
+            case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
+                tvShowsViewModel.getCatchplayTvShowsLiveData().observe(this, tvShowsObserver);
+                break;
+            case StaticParameter.HomeCategory.PRIME_MOVIES:
+                moviesViewModel.getPrimeMoviesLiveData().observe(this, moviesObserver);
+                break;
+            case StaticParameter.HomeCategory.PRIME_TVSHOWS:
+                tvShowsViewModel.getPrimeTvShowsLiveData().observe(this, tvShowsObserver);
+                break;
             default:
                 // do nothing
                 break;
@@ -240,6 +258,9 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
             case StaticParameter.HomeCategory.NETFLIX_MOVIES:
+            case StaticParameter.HomeCategory.DISNEY_MOVIES:
+            case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
+            case StaticParameter.HomeCategory.PRIME_MOVIES:
                 mRcView.setAdapter(movieAdapter);
                 // Set EmptyStateObserver
                 movieAdapter.registerAdapterDataObserver(emptyDataObserver);
@@ -247,6 +268,9 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
             case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
+            case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
+            case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
+            case StaticParameter.HomeCategory.PRIME_TVSHOWS:
                 mRcView.setAdapter(tvShowAdapter);
                 // Set EmptyStateObserver
                 tvShowAdapter.registerAdapterDataObserver(emptyDataObserver);
@@ -311,6 +335,36 @@ public class VerticalBrowseFragment extends Fragment {
                 toolBar.setTitle(getString(R.string.title_netflix_tvShows));
                 tvShowsViewModel.getNetflixTvShows(currentPage);
                 break;
+            case StaticParameter.HomeCategory.DISNEY_MOVIES:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_disney_movies));
+                moviesViewModel.getDisneyMovies(currentPage);
+                break;
+            case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_disney_tvShows));
+                tvShowsViewModel.getDisneyTvShows(currentPage);
+                break;
+            case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_catchplay_movies));
+                moviesViewModel.getCatchplayMovies(currentPage);
+                break;
+            case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_catchplay_tvShows));
+                tvShowsViewModel.getCatchplayTvShows(currentPage);
+                break;
+            case StaticParameter.HomeCategory.PRIME_MOVIES:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_prime_movies));
+                moviesViewModel.getPrimeMovies(currentPage);
+                break;
+            case StaticParameter.HomeCategory.PRIME_TVSHOWS:
+                // set toolbar title
+                toolBar.setTitle(getString(R.string.title_prime_tvShows));
+                tvShowsViewModel.getPrimeTvShows(currentPage);
+                break;
             default:
                 // do nothing
                 return;
@@ -333,11 +387,17 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
             case StaticParameter.HomeCategory.NETFLIX_MOVIES:
+            case StaticParameter.HomeCategory.DISNEY_MOVIES:
+            case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
+            case StaticParameter.HomeCategory.PRIME_MOVIES:
                 movieAdapter.removeAllMovies();
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
             case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
+            case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
+            case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
+            case StaticParameter.HomeCategory.PRIME_TVSHOWS:
                 tvShowAdapter.removeAllTvShows();
                 break;
             default:

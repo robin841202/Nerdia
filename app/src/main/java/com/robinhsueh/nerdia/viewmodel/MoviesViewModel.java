@@ -17,6 +17,9 @@ public class MoviesViewModel extends ViewModel {
     private LiveData<ArrayList<MovieData>> trendingMoviesLiveData;
     private LiveData<ArrayList<MovieData>> popularMoviesLiveData;
     private LiveData<ArrayList<MovieData>> netflixMoviesLiveData;
+    private LiveData<ArrayList<MovieData>> disneyMoviesLiveData;
+    private LiveData<ArrayList<MovieData>> catchplayMoviesLiveData;
+    private LiveData<ArrayList<MovieData>> primeMoviesLiveData;
 
     /**
      * Initialize ViewModel liveData, Prevent from triggering observer twice
@@ -28,6 +31,9 @@ public class MoviesViewModel extends ViewModel {
         trendingMoviesLiveData = repository.getTrendingMoviesLiveData();
         popularMoviesLiveData = repository.getPopularMoviesLiveData();
         netflixMoviesLiveData = repository.getNetflixMoviesLiveData();
+        disneyMoviesLiveData = repository.getDisneyMoviesLiveData();
+        catchplayMoviesLiveData = repository.getCatchplayMoviesLiveData();
+        primeMoviesLiveData = repository.getPrimeMoviesLiveData();
     }
 
     // region Upcoming Movies
@@ -132,6 +138,69 @@ public class MoviesViewModel extends ViewModel {
      */
     public LiveData<ArrayList<MovieData>> getNetflixMoviesLiveData() {
         return netflixMoviesLiveData;
+    }
+    // endregion
+
+    // region Disney Movies
+
+    /**
+     * Call repository to get disney movies and update to liveData
+     *
+     * @param page target page
+     */
+    public void getDisneyMovies(int page) {
+        repository.getDisneyMovies(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Disney Movies)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<MovieData>> getDisneyMoviesLiveData() {
+        return disneyMoviesLiveData;
+    }
+    // endregion
+
+    // region Catchplay Movies
+
+    /**
+     * Call repository to get catchplay movies and update to liveData
+     *
+     * @param page target page
+     */
+    public void getCatchplayMovies(int page) {
+        repository.getCatchplayMovies(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Catchplay Movies)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<MovieData>> getCatchplayMoviesLiveData() {
+        return catchplayMoviesLiveData;
+    }
+    // endregion
+
+    // region Prime Movies
+
+    /**
+     * Call repository to get prime movies and update to liveData
+     *
+     * @param page target page
+     */
+    public void getPrimeMovies(int page) {
+        repository.getPrimeMovies(page);
+    }
+
+    /**
+     * Get the liveData to observe it (For Prime Movies)
+     *
+     * @return
+     */
+    public LiveData<ArrayList<MovieData>> getPrimeMoviesLiveData() {
+        return primeMoviesLiveData;
     }
     // endregion
 

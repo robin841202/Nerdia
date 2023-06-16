@@ -5,11 +5,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -20,18 +18,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.robinhsueh.nerdia.R;
+import com.robinhsueh.nerdia.model.CategoryData;
 import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.movie.MovieData;
 import com.robinhsueh.nerdia.model.tvshow.TvShowData;
-import com.robinhsueh.nerdia.view.adapter.MoviesAdapter;
-import com.robinhsueh.nerdia.view.adapter.TvShowsAdapter;
+import com.robinhsueh.nerdia.view.adapter.CategoryAdapter;
 import com.robinhsueh.nerdia.viewmodel.MoviesViewModel;
 import com.robinhsueh.nerdia.viewmodel.TvShowsViewModel;
-import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryListener {
 
     private final String LOG_TAG = "HomeFragment";
 
@@ -41,85 +39,17 @@ public class HomeFragment extends Fragment {
 
     // region Movies Variables
     private MoviesViewModel moviesViewModel;
-
-    // region upcomingMovies Variables
-    private ShimmerFrameLayout upcomingMovies_Shimmer;
-    private MoviesAdapter upcomingMoviesAdapter;
-    private RecyclerView upcomingMovies_RcView;
-    private LinearLayoutManager upcomingMoviesLayoutMgr;
-    private int upcomingMoviesPage;
-    private View upcomingMovies_ClickableLayout;
-    // endregion
-
-    // region nowPlayingMovies Variables
-    private ShimmerFrameLayout nowPlayingMovies_Shimmer;
-    private MoviesAdapter nowPlayingMoviesAdapter;
-    private RecyclerView nowPlayingMovies_RcView;
-    private LinearLayoutManager nowPlayingMoviesLayoutMgr;
-    private int nowPlayingMoviesPage;
-    private View nowPlayingMovies_ClickableLayout;
-    // endregion
-
-    // region trendingMovies Variables
-    private ShimmerFrameLayout trendingMovies_Shimmer;
-    private MoviesAdapter trendingMoviesAdapter;
-    private RecyclerView trendingMovies_RcView;
-    private LinearLayoutManager trendingMoviesLayoutMgr;
-    private int trendingMoviesPage;
-    private View trendingMovies_ClickableLayout;
-    // endregion
-
-    // region popularMovies Variables
-    private ShimmerFrameLayout popularMovies_Shimmer;
-    private MoviesAdapter popularMoviesAdapter;
-    private RecyclerView popularMovies_RcView;
-    private LinearLayoutManager popularMoviesLayoutMgr;
-    private int popularMoviesPage;
-    private View popularMovies_ClickableLayout;
-    // endregion
-
-    // region netflixMovies Variables
-    private ShimmerFrameLayout netflixMovies_Shimmer;
-    private MoviesAdapter netflixMoviesAdapter;
-    private RecyclerView netflixMovies_RcView;
-    private LinearLayoutManager netflixMoviesLayoutMgr;
-    private int netflixMoviesPage;
-    private View netflixMovies_ClickableLayout;
-    // endregion
-
     // endregion
 
     // region TvShows Variables
     private TvShowsViewModel tvShowsViewModel;
-
-    // region popularTvShows Variables
-    private ShimmerFrameLayout popularTvShows_Shimmer;
-    private TvShowsAdapter popularTvShowsAdapter;
-    private RecyclerView popularTvShows_RcView;
-    private LinearLayoutManager popularTvShowsLayoutMgr;
-    private int popularTvShowsPage;
-    private View popularTvShows_ClickableLayout;
     // endregion
 
-    // region trendingTvShows Variables
-    private ShimmerFrameLayout trendingTvShows_Shimmer;
-    private TvShowsAdapter trendingTvShowsAdapter;
-    private RecyclerView trendingTvShows_RcView;
-    private LinearLayoutManager trendingTvShowsLayoutMgr;
-    private int trendingTvShowsPage;
-    private View trendingTvShows_ClickableLayout;
-    // endregion
-
-    // region netflixTvShows Variables
-    private ShimmerFrameLayout netflixTvShows_Shimmer;
-    private TvShowsAdapter netflixTvShowsAdapter;
-    private RecyclerView netflixTvShows_RcView;
-    private LinearLayoutManager netflixTvShowsLayoutMgr;
-    private int netflixTvShowsPage;
-    private View netflixTvShows_ClickableLayout;
-    // endregion
-
-    // endregion
+    //region Categories Variables
+    private CategoryAdapter mAdapter;
+    private RecyclerView mRcView;
+    private ArrayList<CategoryData> categoryList;
+    //endregion
 
     public HomeFragment() {
         // Required empty public constructor
@@ -138,63 +68,32 @@ public class HomeFragment extends Fragment {
         tvShowsViewModel.init();
 
         // Set observer
-        moviesViewModel.getUpcomingMoviesLiveData().observe(this, getUpcomingMoviesObserver());
-        moviesViewModel.getNowPlayingMoviesLiveData().observe(this, getNowPlayingMoviesObserver());
-        moviesViewModel.getTrendingMoviesLiveData().observe(this, getTrendingMoviesObserver());
-        moviesViewModel.getPopularMoviesLiveData().observe(this, getPopularMoviesObserver());
-        moviesViewModel.getNetflixMoviesLiveData().observe(this, getNetflixMoviesObserver());
+        moviesViewModel.getUpcomingMoviesLiveData().observe(this, getUpcomingMoviesObserver(StaticParameter.HomeCategory.UPCOMING_MOVIES));
+        moviesViewModel.getNowPlayingMoviesLiveData().observe(this, getNowPlayingMoviesObserver(StaticParameter.HomeCategory.NOWPLAYING_MOVIES));
+        moviesViewModel.getTrendingMoviesLiveData().observe(this, getTrendingMoviesObserver(StaticParameter.HomeCategory.TRENDING_MOVIES));
+        moviesViewModel.getPopularMoviesLiveData().observe(this, getPopularMoviesObserver(StaticParameter.HomeCategory.POPULAR_MOVIES));
+        moviesViewModel.getNetflixMoviesLiveData().observe(this, getNetflixMoviesObserver(StaticParameter.HomeCategory.NETFLIX_MOVIES));
+        moviesViewModel.getDisneyMoviesLiveData().observe(this, getDisneyMoviesObserver(StaticParameter.HomeCategory.DISNEY_MOVIES));
+        moviesViewModel.getCatchplayMoviesLiveData().observe(this, getCatchplayMoviesObserver(StaticParameter.HomeCategory.CATCHPLAY_MOVIES));
+        moviesViewModel.getPrimeMoviesLiveData().observe(this, getPrimeMoviesObserver(StaticParameter.HomeCategory.PRIME_MOVIES));
 
-        tvShowsViewModel.getPopularTvShowsLiveData().observe(this, getPopularTvShowsObserver());
-        tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, getTrendingTvShowsObserver());
-        tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, getNetflixTvShowsObserver());
+        tvShowsViewModel.getPopularTvShowsLiveData().observe(this, getPopularTvShowsObserver(StaticParameter.HomeCategory.POPULAR_TVSHOWS));
+        tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, getTrendingTvShowsObserver(StaticParameter.HomeCategory.TRENDING_TVSHOWS));
+        tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, getNetflixTvShowsObserver(StaticParameter.HomeCategory.NETFLIX_TVSHOWS));
+        tvShowsViewModel.getDisneyTvShowsLiveData().observe(this, getDisneyTvShowsObserver(StaticParameter.HomeCategory.DISNEY_TVSHOWS));
+        tvShowsViewModel.getCatchplayTvShowsLiveData().observe(this, getCatchplayTvShowsObserver(StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS));
+        tvShowsViewModel.getPrimeTvShowsLiveData().observe(this, getPrimeTvShowsObserver(StaticParameter.HomeCategory.PRIME_TVSHOWS));
+
     }
 
     /**
      * Initialize Views
+     *
      * @param root
      */
-    private void initViews(View root){
-        // upcoming Movies
-        upcomingMovies_Shimmer = root.findViewById(R.id.shimmer_upcoming_movies);
-        upcomingMovies_RcView = root.findViewById(R.id.recycler_upcoming_movies);
-        upcomingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_upcoming_movies);
-
-        // nowPlaying Movies
-        nowPlayingMovies_Shimmer = root.findViewById(R.id.shimmer_now_playing_movies);
-        nowPlayingMovies_RcView = root.findViewById(R.id.recycler_now_playing_movies);
-        nowPlayingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_now_playing_movies);
-
-        // trending Movies
-        trendingMovies_Shimmer = root.findViewById(R.id.shimmer_trending_movies);
-        trendingMovies_RcView = root.findViewById(R.id.recycler_trending_movies);
-        trendingMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_movies);
-
-        // popular Movies
-        popularMovies_Shimmer = root.findViewById(R.id.shimmer_popular_movies);
-        popularMovies_RcView = root.findViewById(R.id.recycler_popular_movies);
-        popularMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_movies);
-
-        // netflix Movies
-        netflixMovies_Shimmer = root.findViewById(R.id.shimmer_netflix_movies);
-        netflixMovies_RcView = root.findViewById(R.id.recycler_netflix_movies);
-        netflixMovies_ClickableLayout = root.findViewById(R.id.clickableLayout_netflix_movies);
-
-        // popular TvShows
-        popularTvShows_Shimmer = root.findViewById(R.id.shimmer_popular_shows);
-        popularTvShows_RcView = root.findViewById(R.id.recycler_popular_shows);
-        popularTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_popular_shows);
-
-        // trending TvShows
-        trendingTvShows_Shimmer = root.findViewById(R.id.shimmer_trending_shows);
-        trendingTvShows_RcView = root.findViewById(R.id.recycler_trending_shows);
-        trendingTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_trending_shows);
-
-        // netflix TvShows
-        netflixTvShows_Shimmer = root.findViewById(R.id.shimmer_netflix_shows);
-        netflixTvShows_RcView = root.findViewById(R.id.recycler_netflix_shows);
-        netflixTvShows_ClickableLayout = root.findViewById(R.id.clickableLayout_netflix_shows);
-
+    private void initViews(View root) {
         pullToRefresh = root.findViewById(R.id.swiperefresh);
+        mRcView = root.findViewById(R.id.recycler_category);
     }
 
     @Override
@@ -209,44 +108,13 @@ public class HomeFragment extends Fragment {
         initViews(root);
 
         // Initialize Adapter
-        upcomingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-        nowPlayingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-        trendingMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-        popularMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-        netflixMoviesAdapter = new MoviesAdapter((AppCompatActivity) getActivity());
-        popularTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
-        trendingTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
-        netflixTvShowsAdapter = new TvShowsAdapter((AppCompatActivity) getActivity());
-
-        // Initialize linearLayoutManager
-        upcomingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        nowPlayingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        trendingMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        popularMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        netflixMoviesLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        popularTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        trendingTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        netflixTvShowsLayoutMgr = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mAdapter = new CategoryAdapter(this, this);
 
         // Set adapter
-        upcomingMovies_RcView.setAdapter(upcomingMoviesAdapter);
-        nowPlayingMovies_RcView.setAdapter(nowPlayingMoviesAdapter);
-        trendingMovies_RcView.setAdapter(trendingMoviesAdapter);
-        popularMovies_RcView.setAdapter(popularMoviesAdapter);
-        netflixMovies_RcView.setAdapter(netflixMoviesAdapter);
-        popularTvShows_RcView.setAdapter(popularTvShowsAdapter);
-        trendingTvShows_RcView.setAdapter(trendingTvShowsAdapter);
-        netflixTvShows_RcView.setAdapter(netflixTvShowsAdapter);
+        mRcView.setAdapter(mAdapter);
 
         // Set layoutManager
-        upcomingMovies_RcView.setLayoutManager(upcomingMoviesLayoutMgr);
-        nowPlayingMovies_RcView.setLayoutManager(nowPlayingMoviesLayoutMgr);
-        trendingMovies_RcView.setLayoutManager(trendingMoviesLayoutMgr);
-        popularMovies_RcView.setLayoutManager(popularMoviesLayoutMgr);
-        netflixMovies_RcView.setLayoutManager(netflixMoviesLayoutMgr);
-        popularTvShows_RcView.setLayoutManager(popularTvShowsLayoutMgr);
-        trendingTvShows_RcView.setLayoutManager(trendingTvShowsLayoutMgr);
-        netflixTvShows_RcView.setLayoutManager(netflixTvShowsLayoutMgr);
+        mRcView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
         return root;
     }
@@ -256,61 +124,17 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // set default page
-        upcomingMoviesPage = 1;
-        nowPlayingMoviesPage = 1;
-        trendingMoviesPage = 1;
-        popularMoviesPage = 1;
-        netflixMoviesPage = 1;
-        popularTvShowsPage = 1;
-        trendingTvShowsPage = 1;
-        netflixTvShowsPage = 1;
-
         // Start getting data
-        updateAllData();
-
+        initialAllData();
 
         // Set SwipeRefreshListener
         pullToRefresh.setOnRefreshListener(() -> {
             // reset all results
             resetResults();
 
-            Log.d(LOG_TAG, "onRefreshUpcomingMovies");
-            Log.d(LOG_TAG, "onRefreshNowPlayingMovies");
-            Log.d(LOG_TAG, "onRefreshTrendingMovies");
-            Log.d(LOG_TAG, "onRefreshPopularMovies");
-            Log.d(LOG_TAG, "onRefreshNetflixMovies");
-            Log.d(LOG_TAG, "onRefreshPopularTvShows");
-            Log.d(LOG_TAG, "onRefreshTrendingTvShows");
-            Log.d(LOG_TAG, "onRefreshNetflixTvShows");
+            Log.d(LOG_TAG, "onRefresh");
 
             pullToRefresh.setRefreshing(false);
-        });
-
-        //  Set ClickableLayout Listener
-        upcomingMovies_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.UPCOMING_MOVIES);
-        });
-        nowPlayingMovies_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.NOWPLAYING_MOVIES);
-        });
-        trendingMovies_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.TRENDING_MOVIES);
-        });
-        popularMovies_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_MOVIES);
-        });
-        netflixMovies_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.NETFLIX_MOVIES);
-        });
-        popularTvShows_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.POPULAR_TVSHOWS);
-        });
-        trendingTvShows_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.TRENDING_TVSHOWS);
-        });
-        netflixTvShows_ClickableLayout.setOnClickListener(v -> {
-            showVerticalBrowse(StaticParameter.HomeCategory.NETFLIX_TVSHOWS);
         });
 
     }
@@ -662,52 +486,35 @@ public class HomeFragment extends Fragment {
     /**
      * Get Upcoming Movies (using LiveData)
      */
+    @Override
     public void getUpcomingMovies(int page) {
-        // show shimmer animation
-        upcomingMovies_Shimmer.startShimmer();
-        upcomingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getUpcomingMovies(page);
     }
 
     /**
      * Observe when MovieData List LiveData changed (For Upcoming Movies)
      */
-    public Observer<ArrayList<MovieData>> getUpcomingMoviesObserver() {
+    public Observer<ArrayList<MovieData>> getUpcomingMoviesObserver(int categoryType) {
         return movies -> {
             if (movies != null) {
-                // hide shimmer animation
-                upcomingMovies_Shimmer.stopShimmer();
-                upcomingMovies_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
 
-                // append data to adapter
-                upcomingMoviesAdapter.appendMovies(movies);
-
-                // attach onScrollListener to RecyclerView
-                upcomingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = upcomingMoviesLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = upcomingMoviesLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = upcomingMoviesLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            upcomingMovies_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            upcomingMoviesPage++;
-                            getUpcomingMovies(upcomingMoviesPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "upcoming movies: data fetched successfully");
             }
         };
     }
+
 
     // endregion
 
@@ -716,47 +523,30 @@ public class HomeFragment extends Fragment {
     /**
      * Get Now-Playing Movies (using LiveData)
      */
+    @Override
     public void getNowPlayingMovies(int page) {
-        // show shimmer animation
-        nowPlayingMovies_Shimmer.startShimmer();
-        nowPlayingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getNowPlayingMovies(page);
     }
 
     /**
      * Observe when MovieData List LiveData changed (For NowPlaying Movies)
      */
-    public Observer<ArrayList<MovieData>> getNowPlayingMoviesObserver() {
+    public Observer<ArrayList<MovieData>> getNowPlayingMoviesObserver(int categoryType) {
         return movies -> {
             if (movies != null) {
-                // hide shimmer animation
-                nowPlayingMovies_Shimmer.stopShimmer();
-                nowPlayingMovies_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
 
-                // append data to adapter
-                nowPlayingMoviesAdapter.appendMovies(movies);
-                // attach onScrollListener to RecyclerView
-                nowPlayingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = nowPlayingMoviesLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = nowPlayingMoviesLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = nowPlayingMoviesLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            nowPlayingMovies_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            nowPlayingMoviesPage++;
-                            getNowPlayingMovies(nowPlayingMoviesPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "nowPlaying movies: data fetched successfully");
             }
         };
@@ -769,47 +559,30 @@ public class HomeFragment extends Fragment {
     /**
      * Get Trending Movies (using LiveData)
      */
+    @Override
     public void getTrendingMovies(int page) {
-        // show shimmer animation
-        trendingMovies_Shimmer.startShimmer();
-        trendingMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
     /**
      * Observe when MovieData List LiveData changed (For Trending Movies)
      */
-    public Observer<ArrayList<MovieData>> getTrendingMoviesObserver() {
+    public Observer<ArrayList<MovieData>> getTrendingMoviesObserver(int categoryType) {
         return movies -> {
             if (movies != null) {
-                // hide shimmer animation
-                trendingMovies_Shimmer.stopShimmer();
-                trendingMovies_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
 
-                // append data to adapter
-                trendingMoviesAdapter.appendMovies(movies);
-                // attach onScrollListener to RecyclerView
-                trendingMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = trendingMoviesLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = trendingMoviesLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = trendingMoviesLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            trendingMovies_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            trendingMoviesPage++;
-                            getTrendingMovies(trendingMoviesPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "trending movies: data fetched successfully");
             }
         };
@@ -822,47 +595,30 @@ public class HomeFragment extends Fragment {
     /**
      * Get Popular Movies (using LiveData)
      */
+    @Override
     public void getPopularMovies(int page) {
-        // show shimmer animation
-        popularMovies_Shimmer.startShimmer();
-        popularMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getPopularMovies(page);
     }
 
     /**
      * Observe when MovieData List LiveData changed (For Popular Movies)
      */
-    public Observer<ArrayList<MovieData>> getPopularMoviesObserver() {
+    public Observer<ArrayList<MovieData>> getPopularMoviesObserver(int categoryType) {
         return movies -> {
             if (movies != null) {
-                // hide shimmer animation
-                popularMovies_Shimmer.stopShimmer();
-                popularMovies_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
 
-                // append data to adapter
-                popularMoviesAdapter.appendMovies(movies);
-                // attach onScrollListener to RecyclerView
-                popularMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = popularMoviesLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = popularMoviesLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = popularMoviesLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            popularMovies_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            popularMoviesPage++;
-                            getPopularMovies(popularMoviesPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "popular movies: data fetched successfully");
             }
         };
@@ -875,48 +631,139 @@ public class HomeFragment extends Fragment {
     /**
      * Get Netflix Movies (using LiveData)
      */
+    @Override
     public void getNetflixMovies(int page) {
-        // show shimmer animation
-        netflixMovies_Shimmer.startShimmer();
-        netflixMovies_Shimmer.setVisibility(View.VISIBLE);
         moviesViewModel.getNetflixMovies(page);
     }
 
     /**
      * Observe when MovieData List LiveData changed (For Netflix Movies)
      */
-    public Observer<ArrayList<MovieData>> getNetflixMoviesObserver() {
+    public Observer<ArrayList<MovieData>> getNetflixMoviesObserver(int categoryType) {
         return movies -> {
             if (movies != null) {
-                // hide shimmer animation
-                netflixMovies_Shimmer.stopShimmer();
-                netflixMovies_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
 
-                // append data to adapter
-                netflixMoviesAdapter.appendMovies(movies);
-                // attach onScrollListener to RecyclerView
-                netflixMovies_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = netflixMoviesLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = netflixMoviesLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = netflixMoviesLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            netflixMovies_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            netflixMoviesPage++;
-                            getNetflixMovies(netflixMoviesPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "netflix movies: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Disney Movies
+
+    /**
+     * Get Disney Movies (using LiveData)
+     */
+    @Override
+    public void getDisneyMovies(int page) {
+        moviesViewModel.getDisneyMovies(page);
+    }
+
+    /**
+     * Observe when MovieData List LiveData changed (For Disney Movies)
+     */
+    public Observer<ArrayList<MovieData>> getDisneyMoviesObserver(int categoryType) {
+        return movies -> {
+            if (movies != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "disney movies: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Catchplay Movies
+
+    /**
+     * Get Catchplay Movies (using LiveData)
+     */
+    @Override
+    public void getCatchplayMovies(int page) {
+        moviesViewModel.getCatchplayMovies(page);
+    }
+
+    /**
+     * Observe when MovieData List LiveData changed (For Catchplay Movies)
+     */
+    public Observer<ArrayList<MovieData>> getCatchplayMoviesObserver(int categoryType) {
+        return movies -> {
+            if (movies != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "catchplay movies: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Prime Movies
+
+    /**
+     * Get Prime Movies (using LiveData)
+     */
+    @Override
+    public void getPrimeMovies(int page) {
+        moviesViewModel.getPrimeMovies(page);
+    }
+
+    /**
+     * Observe when MovieData List LiveData changed (For Prime Movies)
+     */
+    public Observer<ArrayList<MovieData>> getPrimeMoviesObserver(int categoryType) {
+        return movies -> {
+            if (movies != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendMoviesToMediaRcView(movies);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && movies.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "prime movies: data fetched successfully");
             }
         };
     }
@@ -928,47 +775,30 @@ public class HomeFragment extends Fragment {
     /**
      * Get Popular TvShows (using LiveData)
      */
+    @Override
     public void getPopularTvShows(int page) {
-        // show shimmer animation
-        popularTvShows_Shimmer.startShimmer();
-        popularTvShows_Shimmer.setVisibility(View.VISIBLE);
         tvShowsViewModel.getPopularTvShows(page);
     }
 
     /**
      * Observe when TvShowData List LiveData changed (For Popular TvShows)
      */
-    public Observer<ArrayList<TvShowData>> getPopularTvShowsObserver() {
+    public Observer<ArrayList<TvShowData>> getPopularTvShowsObserver(int categoryType) {
         return tvShows -> {
             if (tvShows != null) {
-                // hide shimmer animation
-                popularTvShows_Shimmer.stopShimmer();
-                popularTvShows_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
 
-                // append data to adapter
-                popularTvShowsAdapter.appendTvShows(tvShows);
-                // attach onScrollListener to RecyclerView
-                popularTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = popularTvShowsLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = popularTvShowsLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = popularTvShowsLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            popularTvShows_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            popularTvShowsPage++;
-                            getPopularTvShows(popularTvShowsPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "popular tvShows: data fetched successfully");
             }
         };
@@ -981,47 +811,30 @@ public class HomeFragment extends Fragment {
     /**
      * Get Trending TvShows (using LiveData)
      */
+    @Override
     public void getTrendingTvShows(int page) {
-        // show shimmer animation
-        trendingTvShows_Shimmer.startShimmer();
-        trendingTvShows_Shimmer.setVisibility(View.VISIBLE);
         tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
     /**
      * Observe when TvShowData List LiveData changed (For Trending TvShows)
      */
-    public Observer<ArrayList<TvShowData>> getTrendingTvShowsObserver() {
+    public Observer<ArrayList<TvShowData>> getTrendingTvShowsObserver(int categoryType) {
         return tvShows -> {
             if (tvShows != null) {
-                // hide shimmer animation
-                trendingTvShows_Shimmer.stopShimmer();
-                trendingTvShows_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
 
-                // append data to adapter
-                trendingTvShowsAdapter.appendTvShows(tvShows);
-                // attach onScrollListener to RecyclerView
-                trendingTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = trendingTvShowsLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = trendingTvShowsLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = trendingTvShowsLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            trendingTvShows_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            trendingTvShowsPage++;
-                            getTrendingTvShows(trendingTvShowsPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "trending tvShows: data fetched successfully");
             }
         };
@@ -1034,48 +847,139 @@ public class HomeFragment extends Fragment {
     /**
      * Get Netflix TvShows (using LiveData)
      */
+    @Override
     public void getNetflixTvShows(int page) {
-        // show shimmer animation
-        netflixTvShows_Shimmer.startShimmer();
-        netflixTvShows_Shimmer.setVisibility(View.VISIBLE);
         tvShowsViewModel.getNetflixTvShows(page);
     }
 
     /**
-     * Observe when TvShowData List LiveData changed (For Trending TvShows)
+     * Observe when TvShowData List LiveData changed (For Netflix TvShows)
      */
-    public Observer<ArrayList<TvShowData>> getNetflixTvShowsObserver() {
+    public Observer<ArrayList<TvShowData>> getNetflixTvShowsObserver(int categoryType) {
         return tvShows -> {
             if (tvShows != null) {
-                // hide shimmer animation
-                netflixTvShows_Shimmer.stopShimmer();
-                netflixTvShows_Shimmer.setVisibility(View.GONE);
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
 
-                // append data to adapter
-                netflixTvShowsAdapter.appendTvShows(tvShows);
-                // attach onScrollListener to RecyclerView
-                netflixTvShows_RcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                        // get the number of all items in recyclerView
-                        int totalItemCount = netflixTvShowsLayoutMgr.getItemCount();
-                        // get the number of current items attached to recyclerView
-                        int visibleItemCount = netflixTvShowsLayoutMgr.getChildCount();
-                        // get the first visible item's position
-                        int firstVisibleItem = netflixTvShowsLayoutMgr.findFirstVisibleItemPosition();
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
-                            // detach current OnScrollListener
-                            netflixTvShows_RcView.removeOnScrollListener(this);
-
-                            // append nextPage data to recyclerView
-                            netflixTvShowsPage++;
-                            getNetflixTvShows(netflixTvShowsPage);
-                        }
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
                     }
-                });
-
+                }
                 Log.d(LOG_TAG, "netflix tvShows: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Disney TvShows
+
+    /**
+     * Get Disney TvShows (using LiveData)
+     */
+    @Override
+    public void getDisneyTvShows(int page) {
+        tvShowsViewModel.getDisneyTvShows(page);
+    }
+
+    /**
+     * Observe when TvShowData List LiveData changed (For Disney TvShows)
+     */
+    public Observer<ArrayList<TvShowData>> getDisneyTvShowsObserver(int categoryType) {
+        return tvShows -> {
+            if (tvShows != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "disney tvShows: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Catchplay TvShows
+
+    /**
+     * Get Catchplay TvShows (using LiveData)
+     */
+    @Override
+    public void getCatchplayTvShows(int page) {
+        tvShowsViewModel.getCatchplayTvShows(page);
+    }
+
+    /**
+     * Observe when TvShowData List LiveData changed (For Catchplay TvShows)
+     */
+    public Observer<ArrayList<TvShowData>> getCatchplayTvShowsObserver(int categoryType) {
+        return tvShows -> {
+            if (tvShows != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "catchplay tvShows: data fetched successfully");
+            }
+        };
+    }
+
+    // endregion
+
+    // region Prime TvShows
+
+    /**
+     * Get Prime TvShows (using LiveData)
+     */
+    @Override
+    public void getPrimeTvShows(int page) {
+        tvShowsViewModel.getPrimeTvShows(page);
+    }
+
+    /**
+     * Observe when TvShowData List LiveData changed (For Prime TvShows)
+     */
+    public Observer<ArrayList<TvShowData>> getPrimeTvShowsObserver(int categoryType) {
+        return tvShows -> {
+            if (tvShows != null) {
+                // get the specific viewHolder in category RecyclerView by using category type
+                CategoryAdapter.CategoryViewHolder viewHolder = getCategoryViewHolderByType(categoryType);
+                if (viewHolder != null) {
+                    viewHolder.stopShimmering();
+                    viewHolder.appendTvShowsToMediaRcView(tvShows);
+
+                    // update the onScroll event in media RecyclerView
+                    CategoryData targetCategoryData = mAdapter.getCategoryByType(categoryType);
+                    // only update onScroll event when get data
+                    if (targetCategoryData != null && tvShows.size() > 0) {
+                        viewHolder.updateMediaRcViewScrollEvent(targetCategoryData);
+                    }
+                }
+                Log.d(LOG_TAG, "prime tvShows: data fetched successfully");
             }
         };
     }
@@ -1088,55 +992,43 @@ public class HomeFragment extends Fragment {
      * Reset all results
      */
     private void resetResults() {
-        // set default page
-        upcomingMoviesPage = 1;
-        nowPlayingMoviesPage = 1;
-        trendingMoviesPage = 1;
-        popularMoviesPage = 1;
-        netflixMoviesPage = 1;
-        popularTvShowsPage = 1;
-        trendingTvShowsPage = 1;
-        netflixTvShowsPage = 1;
-
-        upcomingMoviesAdapter.removeAllMovies();
-        nowPlayingMoviesAdapter.removeAllMovies();
-        trendingMoviesAdapter.removeAllMovies();
-        popularMoviesAdapter.removeAllMovies();
-        netflixMoviesAdapter.removeAllMovies();
-        popularTvShowsAdapter.removeAllTvShows();
-        trendingTvShowsAdapter.removeAllTvShows();
-        netflixTvShowsAdapter.removeAllTvShows();
-
-        updateAllData();
-
+        mAdapter.removeAllItems();
+        initialAllData();
     }
 
     /**
      * Update all data
      */
-    private void updateAllData() {
-        getUpcomingMovies(upcomingMoviesPage);
-        getNowPlayingMovies(nowPlayingMoviesPage);
-        getTrendingMovies(trendingMoviesPage);
-        getPopularMovies(popularMoviesPage);
-        getNetflixMovies(netflixMoviesPage);
-        getPopularTvShows(popularTvShowsPage);
-        getTrendingTvShows(trendingTvShowsPage);
-        getNetflixTvShows(netflixTvShowsPage);
+    private void initialAllData() {
+        categoryList = new ArrayList<>(Arrays.asList(
+                new CategoryData(getString(R.string.upcoming), getString(R.string.label_movies), StaticParameter.HomeCategory.UPCOMING_MOVIES),
+                new CategoryData(getString(R.string.now_playing), getString(R.string.label_movies), StaticParameter.HomeCategory.NOWPLAYING_MOVIES),
+                new CategoryData(getString(R.string.trending), getString(R.string.label_movies), StaticParameter.HomeCategory.TRENDING_MOVIES),
+                new CategoryData(getString(R.string.trending), getString(R.string.label_tvshows), StaticParameter.HomeCategory.TRENDING_TVSHOWS),
+                new CategoryData(getString(R.string.popular), getString(R.string.label_movies), StaticParameter.HomeCategory.POPULAR_MOVIES),
+                new CategoryData(getString(R.string.popular), getString(R.string.label_tvshows), StaticParameter.HomeCategory.POPULAR_TVSHOWS),
+                new CategoryData(getString(R.string.label_nfx), getString(R.string.label_movies), StaticParameter.HomeCategory.NETFLIX_MOVIES),
+                new CategoryData(getString(R.string.label_nfx), getString(R.string.label_tvshows), StaticParameter.HomeCategory.NETFLIX_TVSHOWS),
+                new CategoryData(getString(R.string.label_disney_plus), getString(R.string.label_movies), StaticParameter.HomeCategory.DISNEY_MOVIES),
+                new CategoryData(getString(R.string.label_disney_plus), getString(R.string.label_tvshows), StaticParameter.HomeCategory.DISNEY_TVSHOWS),
+                new CategoryData(getString(R.string.label_catchplay_plus), getString(R.string.label_movies), StaticParameter.HomeCategory.CATCHPLAY_MOVIES),
+                new CategoryData(getString(R.string.label_catchplay_plus), getString(R.string.label_tvshows), StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS),
+                new CategoryData(getString(R.string.label_prime_video), getString(R.string.label_movies), StaticParameter.HomeCategory.PRIME_MOVIES),
+                new CategoryData(getString(R.string.label_prime_video), getString(R.string.label_tvshows), StaticParameter.HomeCategory.PRIME_TVSHOWS)));
+
+        mAdapter.setItems(categoryList);
     }
 
-
     /**
-     * Navigate to VerticalBrowseFragment
+     * Get single category viewholder by categoryType
      *
-     * @param homeCategory homeCategory from StaticParameter.HomeCategory
+     * @param categoryType categoryType, defined in StaticParameter.HomeCategory
+     * @return
      */
-    private void showVerticalBrowse(int homeCategory) {
-        Bundle arguments = new Bundle();
-        arguments.putInt(StaticParameter.ExtraDataKey.EXTRA_DATA_VERTICAL_BROWSE_KEY, homeCategory);
-        // navigate to verticalBrowseFragment
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_homeFragment_to_verticalBrowseFragment, arguments);
+    private CategoryAdapter.CategoryViewHolder getCategoryViewHolderByType(int categoryType) {
+        CategoryData targetCategoryData = categoryList.stream().filter(data -> data.getCategoryType() == categoryType).findFirst().orElse(null);
+        int position = categoryList.indexOf(targetCategoryData);
+        return (CategoryAdapter.CategoryViewHolder) mRcView.findViewHolderForAdapterPosition(position);
     }
 
 }
