@@ -59,6 +59,10 @@ dependencies {
     // Support - GridLayout
     implementation "androidx.gridlayout:gridlayout:$rootProject.gridLayoutVersion"
 
+    // Google Play Core Library - In-app update
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+
 
     // Material Components - In order to use "BottomNavigationView" & "Bottom Sheets" in this project
     implementation "com.google.android.material:material:$rootProject.materialVersion"

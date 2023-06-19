@@ -119,4 +119,6 @@
     <string name="label_prime_video">Amazon</string>
     <string name="label_category_name">類別名稱</string>
     <string name="label_sub_category_name">子類別名稱</string>
+    <string name="label_ready_to_update">已準備好更新</string>
+    <string name="label_install">安裝</string>
 </resources>
