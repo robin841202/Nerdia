@@ -79,6 +79,14 @@ public class StaticParameter {
         public static final int POPULAR_MOVIES = 3;
         public static final int POPULAR_TVSHOWS = 4;
         public static final int TRENDING_TVSHOWS = 5;
+        public static final int NETFLIX_MOVIES = 6;
+        public static final int NETFLIX_TVSHOWS = 7;
+        public static final int DISNEY_MOVIES = 8;
+        public static final int DISNEY_TVSHOWS = 9;
+        public static final int CATCHPLAY_MOVIES = 10;
+        public static final int CATCHPLAY_TVSHOWS = 11;
+        public static final int PRIME_MOVIES = 12;
+        public static final int PRIME_TVSHOWS = 13;
     }
 
     public static class VideoType {

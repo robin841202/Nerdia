@@ -1,5 +1,6 @@
 package com.robinhsueh.nerdia.view;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -8,11 +9,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.robinhsueh.nerdia.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.robinhsueh.nerdia.utils.InAppUpdate;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "MainActivity";
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     private BottomNavigationView bottomNavView;
+    private InAppUpdate inAppUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +65,32 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
+
+        // initialize InAppUpdate
+        inAppUpdate = new InAppUpdate(this);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        inAppUpdate.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        inAppUpdate.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        inAppUpdate.onDestroy();
     }
 }
