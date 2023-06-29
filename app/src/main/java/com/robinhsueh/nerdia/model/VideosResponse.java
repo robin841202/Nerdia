@@ -82,7 +82,8 @@ public class VideosResponse {
                     return 1;
                 // endregion
 
-                return 1;
+                // if these 2 objects aren't tw language, then return 0 to continue comparing in next comparator
+                return 0;
             }
         };
     }
@@ -109,7 +110,8 @@ public class VideosResponse {
                     return 1;
                 // endregion
 
-                return 1;
+                // if these 2 objects aren't trailer type, then return 0 to remain the same or continue comparing in next comparator
+                return 0;
             }
         };
     }
