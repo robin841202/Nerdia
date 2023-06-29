@@ -196,7 +196,7 @@
                 android:paddingBottom="12dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
-                tools:text="1.2.0" />
+                tools:text="1.2.1" />
 
         </LinearLayout>
 
