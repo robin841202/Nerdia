@@ -23,8 +23,7 @@ import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.movie.MovieData;
 import com.robinhsueh.nerdia.model.tvshow.TvShowData;
 import com.robinhsueh.nerdia.view.adapter.CategoryAdapter;
-import com.robinhsueh.nerdia.viewmodel.MoviesViewModel;
-import com.robinhsueh.nerdia.viewmodel.TvShowsViewModel;
+import com.robinhsueh.nerdia.viewmodel.HomeViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,13 +36,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
 
     private SwipeRefreshLayout pullToRefresh;
 
-    // region Movies Variables
-    private MoviesViewModel moviesViewModel;
-    // endregion
-
-    // region TvShows Variables
-    private TvShowsViewModel tvShowsViewModel;
-    // endregion
+    private HomeViewModel viewModel;
 
     //region Categories Variables
     private CategoryAdapter mAdapter;
@@ -62,27 +55,25 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
         context = getContext();
 
         // Initialize viewModel, data only survive this fragment lifecycle
-        moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
-        moviesViewModel.init();
-        tvShowsViewModel = new ViewModelProvider(this).get(TvShowsViewModel.class);
-        tvShowsViewModel.init();
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel.init();
 
         // Set observer
-        moviesViewModel.getUpcomingMoviesLiveData().observe(this, getUpcomingMoviesObserver(StaticParameter.HomeCategory.UPCOMING_MOVIES));
-        moviesViewModel.getNowPlayingMoviesLiveData().observe(this, getNowPlayingMoviesObserver(StaticParameter.HomeCategory.NOWPLAYING_MOVIES));
-        moviesViewModel.getTrendingMoviesLiveData().observe(this, getTrendingMoviesObserver(StaticParameter.HomeCategory.TRENDING_MOVIES));
-        moviesViewModel.getPopularMoviesLiveData().observe(this, getPopularMoviesObserver(StaticParameter.HomeCategory.POPULAR_MOVIES));
-        moviesViewModel.getNetflixMoviesLiveData().observe(this, getNetflixMoviesObserver(StaticParameter.HomeCategory.NETFLIX_MOVIES));
-        moviesViewModel.getDisneyMoviesLiveData().observe(this, getDisneyMoviesObserver(StaticParameter.HomeCategory.DISNEY_MOVIES));
-        moviesViewModel.getCatchplayMoviesLiveData().observe(this, getCatchplayMoviesObserver(StaticParameter.HomeCategory.CATCHPLAY_MOVIES));
-        moviesViewModel.getPrimeMoviesLiveData().observe(this, getPrimeMoviesObserver(StaticParameter.HomeCategory.PRIME_MOVIES));
+        viewModel.getUpcomingMoviesLiveData().observe(this, getUpcomingMoviesObserver(StaticParameter.HomeCategory.UPCOMING_MOVIES));
+        viewModel.getNowPlayingMoviesLiveData().observe(this, getNowPlayingMoviesObserver(StaticParameter.HomeCategory.NOWPLAYING_MOVIES));
+        viewModel.getTrendingMoviesLiveData().observe(this, getTrendingMoviesObserver(StaticParameter.HomeCategory.TRENDING_MOVIES));
+        viewModel.getPopularMoviesLiveData().observe(this, getPopularMoviesObserver(StaticParameter.HomeCategory.POPULAR_MOVIES));
+        viewModel.getNetflixMoviesLiveData().observe(this, getNetflixMoviesObserver(StaticParameter.HomeCategory.NETFLIX_MOVIES));
+        viewModel.getDisneyMoviesLiveData().observe(this, getDisneyMoviesObserver(StaticParameter.HomeCategory.DISNEY_MOVIES));
+        viewModel.getCatchplayMoviesLiveData().observe(this, getCatchplayMoviesObserver(StaticParameter.HomeCategory.CATCHPLAY_MOVIES));
+        viewModel.getPrimeMoviesLiveData().observe(this, getPrimeMoviesObserver(StaticParameter.HomeCategory.PRIME_MOVIES));
 
-        tvShowsViewModel.getPopularTvShowsLiveData().observe(this, getPopularTvShowsObserver(StaticParameter.HomeCategory.POPULAR_TVSHOWS));
-        tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, getTrendingTvShowsObserver(StaticParameter.HomeCategory.TRENDING_TVSHOWS));
-        tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, getNetflixTvShowsObserver(StaticParameter.HomeCategory.NETFLIX_TVSHOWS));
-        tvShowsViewModel.getDisneyTvShowsLiveData().observe(this, getDisneyTvShowsObserver(StaticParameter.HomeCategory.DISNEY_TVSHOWS));
-        tvShowsViewModel.getCatchplayTvShowsLiveData().observe(this, getCatchplayTvShowsObserver(StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS));
-        tvShowsViewModel.getPrimeTvShowsLiveData().observe(this, getPrimeTvShowsObserver(StaticParameter.HomeCategory.PRIME_TVSHOWS));
+        viewModel.getPopularTvShowsLiveData().observe(this, getPopularTvShowsObserver(StaticParameter.HomeCategory.POPULAR_TVSHOWS));
+        viewModel.getTrendingTvShowsLiveData().observe(this, getTrendingTvShowsObserver(StaticParameter.HomeCategory.TRENDING_TVSHOWS));
+        viewModel.getNetflixTvShowsLiveData().observe(this, getNetflixTvShowsObserver(StaticParameter.HomeCategory.NETFLIX_TVSHOWS));
+        viewModel.getDisneyTvShowsLiveData().observe(this, getDisneyTvShowsObserver(StaticParameter.HomeCategory.DISNEY_TVSHOWS));
+        viewModel.getCatchplayTvShowsLiveData().observe(this, getCatchplayTvShowsObserver(StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS));
+        viewModel.getPrimeTvShowsLiveData().observe(this, getPrimeTvShowsObserver(StaticParameter.HomeCategory.PRIME_TVSHOWS));
 
     }
 
@@ -102,7 +93,6 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-
 
         // Initialize Views
         initViews(root);
@@ -488,7 +478,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getUpcomingMovies(int page) {
-        moviesViewModel.getUpcomingMovies(page);
+        viewModel.getUpcomingMovies(page);
     }
 
     /**
@@ -525,7 +515,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getNowPlayingMovies(int page) {
-        moviesViewModel.getNowPlayingMovies(page);
+        viewModel.getNowPlayingMovies(page);
     }
 
     /**
@@ -561,7 +551,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getTrendingMovies(int page) {
-        moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, page);
+        viewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
     /**
@@ -597,7 +587,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getPopularMovies(int page) {
-        moviesViewModel.getPopularMovies(page);
+        viewModel.getPopularMovies(page);
     }
 
     /**
@@ -633,7 +623,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getNetflixMovies(int page) {
-        moviesViewModel.getNetflixMovies(page);
+        viewModel.getNetflixMovies(page);
     }
 
     /**
@@ -669,7 +659,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getDisneyMovies(int page) {
-        moviesViewModel.getDisneyMovies(page);
+        viewModel.getDisneyMovies(page);
     }
 
     /**
@@ -705,7 +695,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getCatchplayMovies(int page) {
-        moviesViewModel.getCatchplayMovies(page);
+        viewModel.getCatchplayMovies(page);
     }
 
     /**
@@ -741,7 +731,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getPrimeMovies(int page) {
-        moviesViewModel.getPrimeMovies(page);
+        viewModel.getPrimeMovies(page);
     }
 
     /**
@@ -777,7 +767,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getPopularTvShows(int page) {
-        tvShowsViewModel.getPopularTvShows(page);
+        viewModel.getPopularTvShows(page);
     }
 
     /**
@@ -813,7 +803,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getTrendingTvShows(int page) {
-        tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, page);
+        viewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, page);
     }
 
     /**
@@ -849,7 +839,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getNetflixTvShows(int page) {
-        tvShowsViewModel.getNetflixTvShows(page);
+        viewModel.getNetflixTvShows(page);
     }
 
     /**
@@ -885,7 +875,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getDisneyTvShows(int page) {
-        tvShowsViewModel.getDisneyTvShows(page);
+        viewModel.getDisneyTvShows(page);
     }
 
     /**
@@ -921,7 +911,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getCatchplayTvShows(int page) {
-        tvShowsViewModel.getCatchplayTvShows(page);
+        viewModel.getCatchplayTvShows(page);
     }
 
     /**
@@ -957,7 +947,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.ICategoryL
      */
     @Override
     public void getPrimeTvShows(int page) {
-        tvShowsViewModel.getPrimeTvShows(page);
+        viewModel.getPrimeTvShows(page);
     }
 
     /**

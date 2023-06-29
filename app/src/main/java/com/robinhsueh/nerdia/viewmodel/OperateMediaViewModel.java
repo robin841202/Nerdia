@@ -1,10 +1,12 @@
 package com.robinhsueh.nerdia.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.robinhsueh.nerdia.model.TmdbStatusResponse;
 import com.robinhsueh.nerdia.model.database.entity.MovieWatchlistEntity;
@@ -15,11 +17,16 @@ import com.robinhsueh.nerdia.model.user.AccountStatesOnMedia;
 import com.robinhsueh.nerdia.model.user.RequestBody.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class OperateMediaViewModel extends AndroidViewModel {
+    private final String LOG_TAG = "OperateMediaViewModel";
     private final WatchlistRepository watchlistRepository;
     private UserRepository userRepository;
-    private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
-    private LiveData<AccountStatesOnMedia> accountStatesLiveData;
+    private MutableLiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
+    private MutableLiveData<AccountStatesOnMedia> accountStatesLiveData;
 
     public OperateMediaViewModel(@NonNull Application application) {
         super(application);
@@ -31,8 +38,8 @@ public class OperateMediaViewModel extends AndroidViewModel {
      */
     public void init() {
         userRepository = new UserRepository();
-        watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
-        accountStatesLiveData = userRepository.getAccountStatesLiveData();
+        watchlistUpdateResponseLiveData = new MutableLiveData<>();
+        accountStatesLiveData = new MutableLiveData<>();
     }
 
     // region Room Database
@@ -120,7 +127,25 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * @param session Valid session
      */
     public void getTMDBAccountStatesOnMovie(long movieId, String session) {
-        userRepository.getTMDBAccountStatesOnMovie(movieId, session);
+        Call<AccountStatesOnMedia> response = userRepository.getTMDBAccountStatesOnMovie(movieId, session);
+        response.enqueue(new Callback<AccountStatesOnMedia>() {
+            @Override
+            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    if (response.body() != null) { // Data exists
+                        // post result data to liveData
+                        accountStatesLiveData.postValue(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
+                // post null to liveData
+                accountStatesLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnMovie,\n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -130,7 +155,25 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * @param session Valid session
      */
     public void getTMDBAccountStatesOnTvShow(long tvShowId, String session) {
-        userRepository.getTMDBAccountStatesOnTvShow(tvShowId, session);
+        Call<AccountStatesOnMedia> response = userRepository.getTMDBAccountStatesOnTvShow(tvShowId, session);
+        response.enqueue(new Callback<AccountStatesOnMedia>() {
+            @Override
+            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    if (response.body() != null) { // Data exists
+                        // post result data to liveData
+                        accountStatesLiveData.postValue(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
+                // post null to liveData
+                accountStatesLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnTvShow,\n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -154,7 +197,25 @@ public class OperateMediaViewModel extends AndroidViewModel {
      * @param bodyWatchlist Post body
      */
     public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
-        userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
+        Call<TmdbStatusResponse> response = userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
+        response.enqueue(new Callback<TmdbStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TmdbStatusResponse> call, @NonNull Response<TmdbStatusResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    if (response.body() != null) { // Data exists
+                        // post result data to liveData
+                        watchlistUpdateResponseLiveData.postValue(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TmdbStatusResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                watchlistUpdateResponseLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: updateMediaToWatchlistTMDB,\n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**

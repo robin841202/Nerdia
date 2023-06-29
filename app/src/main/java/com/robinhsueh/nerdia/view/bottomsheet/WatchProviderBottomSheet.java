@@ -65,16 +65,8 @@ public class WatchProviderBottomSheet extends BottomSheetDialogFragment {
         // Get the same viewModel that created in parent activity, in order to share the data
         viewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
 
-        switch (mediaType) {
-            case StaticParameter.MediaType.MOVIE:
-                // Set movieWatchProvider observer
-                viewModel.getMovieWatchProvidersLiveData().observe(this, getMovieWatchProviderObserver());
-                break;
-            case StaticParameter.MediaType.TV:
-                // Set tvShowWatchProvider observer
-                viewModel.getTvShowWatchProvidersLiveData().observe(this, getMovieWatchProviderObserver());
-                break;
-        }
+        // Set movieWatchProvider observer
+        viewModel.getWatchProvidersLiveData().observe(this, getMovieWatchProviderObserver());
 
     }
 
