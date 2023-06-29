@@ -29,15 +29,6 @@ public class UserRepository {
     private final IUserService service;
     private final String apiKey = BuildConfig.TMDB_API_KEY;
 
-    // UserData LiveData
-    private final MutableLiveData<UserData> userLiveData = new MutableLiveData<>();
-
-    // TmdbStatusResponse LiveData
-    private final MutableLiveData<TmdbStatusResponse> statusResponseLiveData = new MutableLiveData<>();
-
-    // AccountStatesOnMedia LiveData
-    private final MutableLiveData<AccountStatesOnMedia> accountStatesLiveData = new MutableLiveData<>();
-
     public UserRepository() {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -57,35 +48,8 @@ public class UserRepository {
      *
      * @param session User session
      */
-    public void getUserData(String session) {
-        Call<UserData> call = service.getUserData(apiKey, session);
-        call.enqueue(new Callback<UserData>() {
-            @Override
-            public void onResponse(@NonNull Call<UserData> call, @NonNull Response<UserData> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    UserData responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        userLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<UserData> call, @NonNull Throwable t) {
-                // post null to liveData
-                userLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: getUserData,\n %s ", t.getMessage()));
-            }
-        });
-    }
-
-    /***
-     * Get UserData Live Data
-     * @return
-     */
-    public MutableLiveData<UserData> getUserLiveData() {
-        return userLiveData;
+    public Call<UserData> getUserData(String session) {
+        return service.getUserData(apiKey, session);
     }
 
     // endregion
@@ -99,27 +63,8 @@ public class UserRepository {
      * @param session       Valid session
      * @param bodyWatchlist Post body
      */
-    public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
-        Call<TmdbStatusResponse> call = service.updateMediaToWatchlistTMDB(userId, apiKey, session, bodyWatchlist);
-        call.enqueue(new Callback<TmdbStatusResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<TmdbStatusResponse> call, @NonNull Response<TmdbStatusResponse> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    TmdbStatusResponse responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        statusResponseLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<TmdbStatusResponse> call, @NonNull Throwable t) {
-                // post null to liveData
-                statusResponseLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: updateMediaToWatchlistTMDB,\n %s ", t.getMessage()));
-            }
-        });
+    public Call<TmdbStatusResponse> updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
+        return service.updateMediaToWatchlistTMDB(userId, apiKey, session, bodyWatchlist);
     }
 
     /**
@@ -234,14 +179,6 @@ public class UserRepository {
         return isSuccess;
     }
 
-    /***
-     * Get TmdbStatusResponse Live Data
-     * @return
-     */
-    public MutableLiveData<TmdbStatusResponse> getStatusResponseLiveData() {
-        return statusResponseLiveData;
-    }
-
     // endregion
 
     // region ACCOUNT STATES ON MEDIA
@@ -252,27 +189,8 @@ public class UserRepository {
      * @param movieId Movie Id
      * @param session User session
      */
-    public void getTMDBAccountStatesOnMovie(long movieId, String session) {
-        Call<AccountStatesOnMedia> call = service.getTMDBAccountStatesOnMovie(movieId, apiKey, session);
-        call.enqueue(new Callback<AccountStatesOnMedia>() {
-            @Override
-            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    AccountStatesOnMedia responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        accountStatesLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
-                // post null to liveData
-                accountStatesLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnMovie,\n %s ", t.getMessage()));
-            }
-        });
+    public Call<AccountStatesOnMedia> getTMDBAccountStatesOnMovie(long movieId, String session) {
+        return service.getTMDBAccountStatesOnMovie(movieId, apiKey, session);
     }
 
     /**
@@ -281,35 +199,8 @@ public class UserRepository {
      * @param tvShowId TvShow Id
      * @param session  User session
      */
-    public void getTMDBAccountStatesOnTvShow(long tvShowId, String session) {
-        Call<AccountStatesOnMedia> call = service.getTMDBAccountStatesOnTvShow(tvShowId, apiKey, session);
-        call.enqueue(new Callback<AccountStatesOnMedia>() {
-            @Override
-            public void onResponse(@NonNull Call<AccountStatesOnMedia> call, @NonNull Response<AccountStatesOnMedia> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    AccountStatesOnMedia responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        accountStatesLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<AccountStatesOnMedia> call, @NonNull Throwable t) {
-                // post null to liveData
-                accountStatesLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: getTMDBAccountStatesOnTvShow,\n %s ", t.getMessage()));
-            }
-        });
-    }
-
-    /***
-     * Get AccountStatesOnMedia Live Data
-     * @return
-     */
-    public MutableLiveData<AccountStatesOnMedia> getAccountStatesLiveData() {
-        return accountStatesLiveData;
+    public Call<AccountStatesOnMedia> getTMDBAccountStatesOnTvShow(long tvShowId, String session) {
+        return service.getTMDBAccountStatesOnTvShow(tvShowId, apiKey, session);
     }
 
     // endregion

@@ -1,28 +1,37 @@
 package com.robinhsueh.nerdia.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.robinhsueh.nerdia.model.database.entity.MovieWatchlistEntity;
 import com.robinhsueh.nerdia.model.database.entity.TvShowWatchlistEntity;
 import com.robinhsueh.nerdia.model.movie.MovieData;
+import com.robinhsueh.nerdia.model.movie.MoviesResponse;
 import com.robinhsueh.nerdia.model.repository.MovieRepository;
 import com.robinhsueh.nerdia.model.repository.TvShowRepository;
 import com.robinhsueh.nerdia.model.repository.WatchlistRepository;
 import com.robinhsueh.nerdia.model.tvshow.TvShowData;
+import com.robinhsueh.nerdia.model.tvshow.TvShowsResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class WatchlistViewModel extends AndroidViewModel {
+    private final String LOG_TAG = "WatchlistViewModel";
     private final WatchlistRepository watchlistRepository;
     private MovieRepository movieRepository;
     private TvShowRepository tvShowRepository;
-    private LiveData<ArrayList<MovieData>> movieWatchlistLiveData;
-    private LiveData<ArrayList<TvShowData>> tvShowWatchlistLiveData;
+    private MutableLiveData<ArrayList<MovieData>> movieWatchlistLiveData;
+    private MutableLiveData<ArrayList<TvShowData>> tvShowWatchlistLiveData;
 
     public WatchlistViewModel(@NonNull Application application) {
         super(application);
@@ -35,8 +44,8 @@ public class WatchlistViewModel extends AndroidViewModel {
     public void initLiveData() {
         movieRepository = new MovieRepository();
         tvShowRepository = new TvShowRepository();
-        movieWatchlistLiveData = movieRepository.getMoviesLiveData();
-        tvShowWatchlistLiveData = tvShowRepository.getTvShowsLiveData();
+        movieWatchlistLiveData = new MutableLiveData<>();
+        tvShowWatchlistLiveData = new MutableLiveData<>();
     }
 
     // region Room Database
@@ -59,7 +68,7 @@ public class WatchlistViewModel extends AndroidViewModel {
 
     // region Remote Data Source (API)
 
-    // region Movie Watchlist
+    // region Get Movie Watchlist
 
     /**
      * Call repository to get movie watchlist and update to liveData
@@ -70,7 +79,26 @@ public class WatchlistViewModel extends AndroidViewModel {
      * @param page     target page
      */
     public void getTMDBMovieWatchlist(long userId, String session, String sortMode, int page) {
-        movieRepository.getTMDBMovieWatchlist(userId, session, sortMode, page);
+        Call<MoviesResponse> response = movieRepository.getTMDBMovieWatchlist(userId, session, sortMode, page);
+        response.enqueue(new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    MoviesResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        movieWatchlistLiveData.postValue(responseBody.movie_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                movieWatchlistLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -83,7 +111,7 @@ public class WatchlistViewModel extends AndroidViewModel {
     }
     // endregion
 
-    // region TvShow Watchlist
+    // region Get TvShow Watchlist
 
     /**
      * Call repository to get tvShow watchlist and update to liveData
@@ -94,7 +122,26 @@ public class WatchlistViewModel extends AndroidViewModel {
      * @param page     target page
      */
     public void getTMDBTvShowWatchlist(long userId, String session, String sortMode, int page) {
-        tvShowRepository.getTMDBTvShowWatchlist(userId, session, sortMode, page);
+        Call<TvShowsResponse> response = tvShowRepository.getTMDBTvShowWatchlist(userId, session, sortMode, page);
+        response.enqueue(new Callback<TvShowsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TvShowsResponse> call, @NonNull Response<TvShowsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    TvShowsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        tvShowWatchlistLiveData.postValue(responseBody.tvShow_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TvShowsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                tvShowWatchlistLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**

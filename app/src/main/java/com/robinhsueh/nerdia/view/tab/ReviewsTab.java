@@ -78,14 +78,7 @@ public class ReviewsTab extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(MediaDetailViewModel.class);
 
         // Set observer
-        switch (mediaType) {
-            case StaticParameter.MediaType.MOVIE:
-                viewModel.getMovieReviewsLiveData().observe(this, reviewsObserver);
-                break;
-            case StaticParameter.MediaType.TV:
-                viewModel.getTvShowReviewsLiveData().observe(this, reviewsObserver);
-                break;
-        }
+        viewModel.getReviewsLiveData().observe(this, reviewsObserver);
 
     }
 

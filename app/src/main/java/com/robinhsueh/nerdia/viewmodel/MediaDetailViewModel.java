@@ -2,13 +2,18 @@ package com.robinhsueh.nerdia.viewmodel;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.robinhsueh.nerdia.model.OmdbData;
 import com.robinhsueh.nerdia.model.ReviewsResponse;
 import com.robinhsueh.nerdia.model.StaticParameter;
@@ -23,12 +28,18 @@ import com.robinhsueh.nerdia.model.repository.TvShowRepository;
 import com.robinhsueh.nerdia.model.repository.UserRepository;
 import com.robinhsueh.nerdia.model.repository.WatchlistRepository;
 import com.robinhsueh.nerdia.model.tvshow.TvShowDetailData;
+import com.robinhsueh.nerdia.model.user.AccountStatesOnMedia;
 import com.robinhsueh.nerdia.model.user.RequestBody.BodyRate;
 import com.robinhsueh.nerdia.model.user.RequestBody.BodyWatchlist;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MediaDetailViewModel extends AndroidViewModel {
 
@@ -66,19 +77,18 @@ public class MediaDetailViewModel extends AndroidViewModel {
 
     // endregion
 
+    private final String LOG_TAG = "MediaDetailViewModel";
     private MovieRepository movieRepository;
     private TvShowRepository tvShowRepository;
     private OmdbRepository omdbRepository;
     private UserRepository userRepository;
     private final WatchlistRepository watchlistRepository;
-    private LiveData<MovieDetailData> movieDetailLiveData;
-    private LiveData<TvShowDetailData> tvShowDetailLiveData;
-    private LiveData<OmdbData> omdbLiveData;
-    private LiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
-    private LiveData<ArrayList<ReviewsResponse.ReviewData>> movieReviewsLiveData;
-    private LiveData<ArrayList<ReviewsResponse.ReviewData>> tvShowReviewsLiveData;
-    private LiveData<WatchProvidersResponse> movieWatchProvidersLiveData;
-    private LiveData<WatchProvidersResponse> tvShowWatchProvidersLiveData;
+    private MutableLiveData<MovieDetailData> movieDetailLiveData;
+    private MutableLiveData<TvShowDetailData> tvShowDetailLiveData;
+    private MutableLiveData<OmdbData> omdbLiveData;
+    private MutableLiveData<TmdbStatusResponse> watchlistUpdateResponseLiveData;
+    private MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> reviewsLiveData;
+    private MutableLiveData<WatchProvidersResponse> watchProvidersLiveData;
 
     // Used to observe MovieDetailData.accountStatesOnMedia.score
     private final MediatorLiveData<Double> ratedScore = new MediatorLiveData<>();
@@ -96,14 +106,13 @@ public class MediaDetailViewModel extends AndroidViewModel {
         tvShowRepository = new TvShowRepository();
         omdbRepository = new OmdbRepository();
         userRepository = new UserRepository();
-        movieDetailLiveData = movieRepository.getMovieDetailLiveData();
-        tvShowDetailLiveData = tvShowRepository.getTvShowDetailLiveData();
-        movieReviewsLiveData = movieRepository.getReviewsLiveData();
-        tvShowReviewsLiveData = tvShowRepository.getReviewsLiveData();
-        movieWatchProvidersLiveData = movieRepository.getWatchProvidersLiveData();
-        tvShowWatchProvidersLiveData = tvShowRepository.getWatchProvidersLiveData();
-        omdbLiveData = omdbRepository.getOmdbLiveData();
-        watchlistUpdateResponseLiveData = userRepository.getStatusResponseLiveData();
+
+        movieDetailLiveData = new MutableLiveData<>();
+        tvShowDetailLiveData = new MutableLiveData<>();
+        reviewsLiveData = new MutableLiveData<>();
+        watchProvidersLiveData = new MutableLiveData<>();
+        omdbLiveData = new MutableLiveData<>();
+        watchlistUpdateResponseLiveData = new MutableLiveData<>();
         ratedScore.addSource(Transformations.map(movieDetailLiveData, input -> input != null ? input.getAccountStatesOnMedia().getScore() : 0.0), score -> ratedScore.postValue(score));
         ratedScore.addSource(Transformations.map(tvShowDetailLiveData, input -> input != null ? input.getAccountStatesOnMedia().getScore() : 0.0), score -> ratedScore.postValue(score));
     }
@@ -118,7 +127,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param movieId Movie Id
      */
     public void getMovieDetail(long movieId) {
-        movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+        Call<MovieDetailData> response = movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+        response.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
     }
 
     /**
@@ -128,7 +138,54 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param session Valid session
      */
     public void getMovieDetailWithLogin(long movieId, String session) {
-        movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
+        Call<MovieDetailData> response = movieRepository.getMovieDetail(movieId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
+        response.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
+    }
+
+    /**
+     * (private) Get MovieDetail Request Handler (using LiveData)
+     *
+     * @param movieDetailLiveData live data
+     * @return Request Handler
+     */
+    private Callback<MovieDetailData> getMovieDetailRequestHandler(MutableLiveData<MovieDetailData> movieDetailLiveData) {
+        return new Callback<MovieDetailData>() {
+            @Override
+            public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    MovieDetailData movieDetailData = response.body();
+                    if (movieDetailData != null) { // Data exists
+
+                        // region Handle rated score in accountStates
+                        if (movieDetailData.getAccountStatesOnMedia() != null) {
+                            if (movieDetailData.getAccountStatesOnMedia().getRated() instanceof LinkedTreeMap<?, ?>) { // rate score existed
+                                Type type = new TypeToken<AccountStatesOnMedia.Rated>() {
+                                }.getType();
+                                Gson gson = new Gson();
+                                AccountStatesOnMedia.Rated ratedObj = gson.fromJson(gson.toJson(movieDetailData.getAccountStatesOnMedia().getRated()), type);
+                                double score = ratedObj.score;
+                                // Set the score
+                                movieDetailData.getAccountStatesOnMedia().setScore(score);
+                            } else { // rate score not existed, type will be Boolean
+                                // Set the score to negative
+                                movieDetailData.getAccountStatesOnMedia().setScore(-1);
+                            }
+                        }
+                        // endregion
+
+                        // post result data to liveData
+                        movieDetailLiveData.postValue(movieDetailData);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MovieDetailData> call, @NonNull Throwable t) {
+                // post null to liveData
+                movieDetailLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getMovieDetail,\n %s ", t.getMessage()));
+            }
+        };
     }
 
     /**
@@ -150,7 +207,8 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param tvShowId TvShow Id
      */
     public void getTvShowDetail(long tvShowId) {
-        tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+        Call<TvShowDetailData> response = tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE, VIDEO_LANGUAGES, IMAGE_LANGUAGES);
+        response.enqueue(getTvShowDetailRequestHandler(tvShowDetailLiveData));
     }
 
     /**
@@ -160,7 +218,53 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param session  Valid session
      */
     public void getTvShowDetailWithLogin(long tvShowId, String session) {
-        tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
+        Call<TvShowDetailData> response = tvShowRepository.getTvShowDetail(tvShowId, SUB_REQUEST_TYPE_LOGIN, VIDEO_LANGUAGES, IMAGE_LANGUAGES, session);
+        response.enqueue(getTvShowDetailRequestHandler(tvShowDetailLiveData));
+    }
+
+    /**
+     * (private) Get TvShowDetail Request Handler (using LiveData)
+     *
+     * @param tvShowDetailLiveData live data
+     * @return Request Handler
+     */
+    private Callback<TvShowDetailData> getTvShowDetailRequestHandler(MutableLiveData<TvShowDetailData> tvShowDetailLiveData) {
+        return new Callback<TvShowDetailData>() {
+            @Override
+            public void onResponse(@NonNull Call<TvShowDetailData> call, @NonNull Response<TvShowDetailData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    TvShowDetailData tvShowDetailData = response.body();
+                    if (tvShowDetailData != null) { // Data exists
+                        // region Handle rated score in accountStates
+                        if (tvShowDetailData.getAccountStatesOnMedia() != null) {
+                            if (tvShowDetailData.getAccountStatesOnMedia().getRated() instanceof LinkedTreeMap<?, ?>) { // rate score existed
+                                Type type = new TypeToken<AccountStatesOnMedia.Rated>() {
+                                }.getType();
+                                Gson gson = new Gson();
+                                AccountStatesOnMedia.Rated ratedObj = gson.fromJson(gson.toJson(tvShowDetailData.getAccountStatesOnMedia().getRated()), type);
+                                double score = ratedObj.score;
+                                // Set the score
+                                tvShowDetailData.getAccountStatesOnMedia().setScore(score);
+                            } else { // rate score not existed, type will be Boolean
+                                // Set the score to negative
+                                tvShowDetailData.getAccountStatesOnMedia().setScore(-1);
+                            }
+                        }
+                        // endregion
+
+                        // post result data to liveData
+                        tvShowDetailLiveData.postValue(tvShowDetailData);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TvShowDetailData> call, Throwable t) {
+                // post null to liveData
+                tvShowDetailLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getTvShowDetail,\n %s ", t.getMessage()));
+            }
+        };
     }
 
     /**
@@ -174,7 +278,7 @@ public class MediaDetailViewModel extends AndroidViewModel {
 
     // endregion
 
-    // region Movie Reviews
+    // region Reviews
 
     /**
      * Call repository to get movie reviews and update to liveData
@@ -183,21 +287,27 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param page    target page
      */
     public void getTMDBMovieReviews(long movieId, int page) {
-        movieRepository.getTMDBMovieReviews(movieId, page);
+        Call<ReviewsResponse> response = movieRepository.getTMDBMovieReviews(movieId, page);
+        response.enqueue(new Callback<ReviewsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewsResponse> call, @NonNull Response<ReviewsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    ReviewsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        reviewsLiveData.postValue(responseBody.review_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                reviewsLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
-
-    /**
-     * Get the liveData to observe it
-     *
-     * @return
-     */
-    public LiveData<ArrayList<ReviewsResponse.ReviewData>> getMovieReviewsLiveData() {
-        return movieReviewsLiveData;
-    }
-
-    // endregion
-
-    // region TvShow Reviews
 
     /**
      * Call repository to get tvShow reviews and update to liveData
@@ -206,7 +316,26 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param page     target page
      */
     public void getTMDBTvShowReviews(long tvShowId, int page) {
-        tvShowRepository.getTMDBTvShowReviews(tvShowId, page);
+        Call<ReviewsResponse> response = tvShowRepository.getTMDBTvShowReviews(tvShowId, page);
+        response.enqueue(new Callback<ReviewsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewsResponse> call, @NonNull Response<ReviewsResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    ReviewsResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        reviewsLiveData.postValue(responseBody.review_list);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewsResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                reviewsLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -214,13 +343,13 @@ public class MediaDetailViewModel extends AndroidViewModel {
      *
      * @return
      */
-    public LiveData<ArrayList<ReviewsResponse.ReviewData>> getTvShowReviewsLiveData() {
-        return tvShowReviewsLiveData;
+    public LiveData<ArrayList<ReviewsResponse.ReviewData>> getReviewsLiveData() {
+        return reviewsLiveData;
     }
 
     // endregion
 
-    // region Movie WatchProviders
+    // region WatchProviders
 
     /**
      * Call repository to get movie watchProviders and update to liveData
@@ -228,21 +357,27 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param movieId Movie Id
      */
     public void getWatchProviderByMovie(long movieId) {
-        movieRepository.getWatchProviderByMovie(movieId);
+        Call<WatchProvidersResponse> response = movieRepository.getWatchProviderByMovie(movieId);
+        response.enqueue(new Callback<WatchProvidersResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WatchProvidersResponse> call, @NonNull Response<WatchProvidersResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    WatchProvidersResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        watchProvidersLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<WatchProvidersResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                watchProvidersLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
-
-    /**
-     * Get the liveData to observe it
-     *
-     * @return
-     */
-    public LiveData<WatchProvidersResponse> getMovieWatchProvidersLiveData() {
-        return movieWatchProvidersLiveData;
-    }
-
-    // endregion
-
-    // region TvShow WatchProviders
 
     /**
      * Call repository to get tvShow watchProviders and update to liveData
@@ -250,7 +385,26 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param tvShowId TvShow Id
      */
     public void getWatchProviderByTvShow(long tvShowId) {
-        tvShowRepository.getWatchProviderByTvShow(tvShowId);
+        Call<WatchProvidersResponse> response = tvShowRepository.getWatchProviderByTvShow(tvShowId);
+        response.enqueue(new Callback<WatchProvidersResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WatchProvidersResponse> call, @NonNull Response<WatchProvidersResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    WatchProvidersResponse responseBody = response.body();
+                    if (responseBody != null) { // Data exists
+                        // post result data to liveData
+                        watchProvidersLiveData.postValue(responseBody);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<WatchProvidersResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                watchProvidersLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -258,9 +412,14 @@ public class MediaDetailViewModel extends AndroidViewModel {
      *
      * @return
      */
-    public LiveData<WatchProvidersResponse> getTvShowWatchProvidersLiveData() {
-        return tvShowWatchProvidersLiveData;
+    public LiveData<WatchProvidersResponse> getWatchProvidersLiveData() {
+        return watchProvidersLiveData;
     }
+
+    // endregion
+
+    // region TvShow WatchProviders
+
 
     // endregion
 
@@ -272,7 +431,25 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param imdbId IMDB Id
      */
     public void getDataByImdbId(String imdbId) {
-        omdbRepository.getDataByImdbId(imdbId);
+        Call<OmdbData> response = omdbRepository.getDataByImdbId(imdbId);
+        response.enqueue(new Callback<OmdbData>() {
+            @Override
+            public void onResponse(@NonNull Call<OmdbData> call, @NonNull Response<OmdbData> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    if (response.body() != null) { // Data exists
+                        // post result data to liveData
+                        omdbLiveData.postValue(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<OmdbData> call, @NonNull Throwable t) {
+                // post null to liveData
+                omdbLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: getDataByImdbId,\n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**
@@ -296,7 +473,25 @@ public class MediaDetailViewModel extends AndroidViewModel {
      * @param bodyWatchlist Post body
      */
     public void updateMediaToWatchlistTMDB(long userId, String session, BodyWatchlist bodyWatchlist) {
-        userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
+        Call<TmdbStatusResponse> response = userRepository.updateMediaToWatchlistTMDB(userId, session, bodyWatchlist);
+        response.enqueue(new Callback<TmdbStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TmdbStatusResponse> call, @NonNull Response<TmdbStatusResponse> response) {
+                if (response.isSuccessful()) { // Request successfully
+                    if (response.body() != null) { // Data exists
+                        // post result data to liveData
+                        watchlistUpdateResponseLiveData.postValue(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TmdbStatusResponse> call, @NonNull Throwable t) {
+                // post null to liveData
+                watchlistUpdateResponseLiveData.postValue(null);
+                Log.d(LOG_TAG, String.format("data fetch failed: updateMediaToWatchlistTMDB,\n %s ", t.getMessage()));
+            }
+        });
     }
 
     /**

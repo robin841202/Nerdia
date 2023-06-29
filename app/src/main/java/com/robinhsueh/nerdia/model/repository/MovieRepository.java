@@ -1,30 +1,14 @@
 package com.robinhsueh.nerdia.model.repository;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-
 import com.robinhsueh.nerdia.BuildConfig;
 import com.robinhsueh.nerdia.model.ReviewsResponse;
 import com.robinhsueh.nerdia.model.StaticParameter;
 import com.robinhsueh.nerdia.model.WatchProvidersResponse;
-import com.robinhsueh.nerdia.model.movie.MovieData;
 import com.robinhsueh.nerdia.model.movie.MovieDetailData;
 import com.robinhsueh.nerdia.model.movie.MoviesResponse;
 import com.robinhsueh.nerdia.model.service.IMovieService;
-import com.robinhsueh.nerdia.model.user.AccountStatesOnMedia;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Locale;
-
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -36,33 +20,6 @@ public class MovieRepository {
     private String region;
     // set default mediaType to movie
     private final String mediaType = StaticParameter.MediaType.MOVIE;
-
-    // region MovieData List LiveData
-
-    private final MutableLiveData<ArrayList<MovieData>> moviesLiveData = new MutableLiveData<>();
-
-    // used when multiple liveData needs to observe different data in same activity or fragment
-    private final MutableLiveData<ArrayList<MovieData>> upcomingMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> nowPlayingMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> trendingMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> popularMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> netflixMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> disneyMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> catchplayMoviesLiveData = new MutableLiveData<>();
-    private final MutableLiveData<ArrayList<MovieData>> primeMoviesLiveData = new MutableLiveData<>();
-    // endregion
-
-    // region MovieDetail LiveData
-    private final MutableLiveData<MovieDetailData> movieDetailLiveData = new MutableLiveData<>();
-    // endregion
-
-    // region ReviewData List LiveData
-    private final MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> reviewsLiveData = new MutableLiveData<>();
-    // endregion
-
-    // region WatchProvidersResponse LiveData
-    private final MutableLiveData<WatchProvidersResponse> watchProvidersLiveData = new MutableLiveData<>();
-    // endregion
 
     public MovieRepository() {
         this.language = Locale.TRADITIONAL_CHINESE.toLanguageTag();
@@ -284,7 +241,6 @@ public class MovieRepository {
 
     // region MVVM architecture using LiveData
 
-
     // region MOVIE DETAILS
 
     /**
@@ -295,9 +251,8 @@ public class MovieRepository {
      * @param videoLanguages Can include multiple languages of video ex:zh-TW,en
      * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      */
-    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
-        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
-        call.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
+    public Call<MovieDetailData> getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages) {
+        return service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages);
     }
 
     /**
@@ -309,116 +264,41 @@ public class MovieRepository {
      * @param imageLanguages Can include multiple languages of image ex:zh-TW,en
      * @param session        Valid session
      */
-    public void getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages, String session) {
-        Call<MovieDetailData> call = service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages, session);
-        call.enqueue(getMovieDetailRequestHandler(movieDetailLiveData));
-    }
-
-    /**
-     * (private) Get MovieDetail Request Handler (using LiveData)
-     *
-     * @param movieDetailLiveData live data
-     * @return Request Handler
-     */
-    private Callback<MovieDetailData> getMovieDetailRequestHandler(MutableLiveData<MovieDetailData> movieDetailLiveData) {
-        return new Callback<MovieDetailData>() {
-            @Override
-            public void onResponse(@NonNull Call<MovieDetailData> call, @NonNull Response<MovieDetailData> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    MovieDetailData movieDetailData = response.body();
-                    if (movieDetailData != null) { // Data exists
-
-                        // region Handle rated score in accountStates
-                        if (movieDetailData.getAccountStatesOnMedia() != null) {
-                            if (movieDetailData.getAccountStatesOnMedia().getRated() instanceof LinkedTreeMap<?, ?>) { // rate score existed
-                                Type type = new TypeToken<AccountStatesOnMedia.Rated>() {
-                                }.getType();
-                                Gson gson = new Gson();
-                                AccountStatesOnMedia.Rated ratedObj = gson.fromJson(gson.toJson(movieDetailData.getAccountStatesOnMedia().getRated()), type);
-                                double score = ratedObj.score;
-                                // Set the score
-                                movieDetailData.getAccountStatesOnMedia().setScore(score);
-                            } else { // rate score not existed, type will be Boolean
-                                // Set the score to negative
-                                movieDetailData.getAccountStatesOnMedia().setScore(-1);
-                            }
-                        }
-                        // endregion
-
-                        // post result data to liveData
-                        movieDetailLiveData.postValue(movieDetailData);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MovieDetailData> call, @NonNull Throwable t) {
-                // post null to liveData
-                movieDetailLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: getMovieDetail,\n %s ", t.getMessage()));
-            }
-        };
-    }
-
-    /***
-     * Get Movie Detail Live Data
-     * @return
-     */
-    public MutableLiveData<MovieDetailData> getMovieDetailLiveData() {
-        return movieDetailLiveData;
+    public Call<MovieDetailData> getMovieDetail(long movieId, String subRequestType, String videoLanguages, String imageLanguages, String session) {
+        return service.getMovieDetail(movieId, apiKey, language, subRequestType, videoLanguages, imageLanguages, session);
     }
 
     // endregion
 
     // region MOVIES RESPONSE
 
-    // region UPCOMING MOVIES
+    // region GET UPCOMING MOVIES
 
     /**
      * Get Upcoming Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getUpcomingMovies(int page) {
-        Call<MoviesResponse> call = service.getUpcomingMovies(apiKey, page, language, region);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(upcomingMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Upcoming Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getUpcomingMoviesLiveData() {
-        return upcomingMoviesLiveData;
+    public Call<MoviesResponse> getUpcomingMovies(int page) {
+        return service.getUpcomingMovies(apiKey, page, language, region);
     }
 
     // endregion
 
-    // region NOW-PLAYING MOVIES
+    // region GET NOW-PLAYING MOVIES
 
     /**
      * Get Now-Playing Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getNowPlayingMovies(int page) {
-        Call<MoviesResponse> call = service.getNowPlayingMovies(apiKey, page, language, region);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(nowPlayingMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Now-Playing Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getNowPlayingMoviesLiveData() {
-        return nowPlayingMoviesLiveData;
+    public Call<MoviesResponse> getNowPlayingMovies(int page) {
+        return service.getNowPlayingMovies(apiKey, page, language, region);
     }
 
     // endregion
 
-    // region TRENDING MOVIES
+    // region GET TRENDING MOVIES
 
     /**
      * Get Trending Movies (using LiveData)
@@ -426,161 +306,102 @@ public class MovieRepository {
      * @param timeWindow weekly or daily trending: "day", "week"
      * @param page       target page
      */
-    public void getTrendingMovies(String timeWindow, int page) {
-        Call<MoviesResponse> call = service.getTrendingMedia(mediaType, timeWindow, apiKey, page, language, region);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(trendingMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Trending Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getTrendingMoviesLiveData() {
-        return trendingMoviesLiveData;
+    public Call<MoviesResponse> getTrendingMovies(String timeWindow, int page) {
+        return service.getTrendingMedia(mediaType, timeWindow, apiKey, page, language, region);
     }
 
     // endregion
 
-    // region POPULAR MOVIES
+    // region GET POPULAR MOVIES
 
     /**
      * Get Popular Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getPopularMovies(int page) {
-        Call<MoviesResponse> call = service.getPopularMovies(apiKey, page, language, region);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(popularMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Popular Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getPopularMoviesLiveData() {
-        return popularMoviesLiveData;
+    public Call<MoviesResponse> getPopularMovies(int page) {
+        return service.getPopularMovies(apiKey, page, language, region);
     }
 
     // endregion
 
-    // region NETFLIX MOVIES
+    // region GET NETFLIX MOVIES
 
     /**
      * Get Netflix Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getNetflixMovies(int page) {
-        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.NetflixID);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(netflixMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Netflix Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getNetflixMoviesLiveData() {
-        return netflixMoviesLiveData;
+    public Call<MoviesResponse> getNetflixMovies(int page) {
+        return service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.NetflixID);
     }
 
     // endregion
 
-    // region DISNEY MOVIES
+    // region GET DISNEY MOVIES
 
     /**
      * Get Disney Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getDisneyMovies(int page) {
-        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.DisneyPlusID);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(disneyMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Netflix Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getDisneyMoviesLiveData() {
-        return disneyMoviesLiveData;
+    public Call<MoviesResponse> getDisneyMovies(int page) {
+        return service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.DisneyPlusID);
     }
 
     // endregion
 
-    // region CATCHPLAY MOVIES
+    // region GET CATCHPLAY MOVIES
 
     /**
      * Get Catchplay Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getCatchplayMovies(int page) {
-        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.CatchPlayID);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(catchplayMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Netflix Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getCatchplayMoviesLiveData() {
-        return catchplayMoviesLiveData;
+    public Call<MoviesResponse> getCatchplayMovies(int page) {
+        return service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.CatchPlayID);
     }
 
     // endregion
 
-    // region PRIME MOVIES
+    // region GET PRIME MOVIES
 
     /**
      * Get Prime Movies (using LiveData)
      *
      * @param page target page
      */
-    public void getPrimeMovies(int page) {
-        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.PrimeVideoID);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(primeMoviesLiveData);
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Movies Response Live Data (For Netflix Movies)
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getPrimeMoviesLiveData() {
-        return primeMoviesLiveData;
+    public Call<MoviesResponse> getPrimeMovies(int page) {
+        return service.discoverMovies(apiKey, page, language, region, StaticParameter.WatchProvidersID.PrimeVideoID);
     }
 
     // endregion
 
+    // region SEARCH MOVIES
     /**
      * Search Movies By Keyword (using LiveData)
      *
      * @param keyWord keyword for searching
      * @param page    target page
      */
-    public void searchMovies(String keyWord, int page) {
-        Call<MoviesResponse> call = service.searchMovies(apiKey, keyWord, page, language, region);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
-        call.enqueue(requestHandler);
+    public Call<MoviesResponse> searchMovies(String keyWord, int page) {
+        return service.searchMovies(apiKey, keyWord, page, language, region);
     }
+    // endregion
 
+    // region GET SIMILAR MOVIES
     /**
      * Get Similar Movies (using LiveData)
      *
      * @param movieId Movie Id
      * @param page    target page
      */
-    public void getSimilarMovies(long movieId, int page) {
-        Call<MoviesResponse> call = service.getSimilarMovies(movieId, apiKey, page, language);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
-        call.enqueue(requestHandler);
+    public Call<MoviesResponse> getSimilarMovies(long movieId, int page) {
+        return service.getSimilarMovies(movieId, apiKey, page, language);
     }
+    // endregion
 
+    // region GET MOVIE WATCHLIST
     /**
      * Get Movie Watchlist on TMDB (using LiveData)
      *
@@ -589,12 +410,12 @@ public class MovieRepository {
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
      * @param page     target page
      */
-    public void getTMDBMovieWatchlist(long userId, String session, String sortMode, int page) {
-        Call<MoviesResponse> call = service.getTMDBMovieWatchlist(userId, apiKey, session, sortMode, page, language);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
-        call.enqueue(requestHandler);
+    public Call<MoviesResponse> getTMDBMovieWatchlist(long userId, String session, String sortMode, int page) {
+        return service.getTMDBMovieWatchlist(userId, apiKey, session, sortMode, page, language);
     }
+    // endregion
 
+    // region GET RATED MOVIES
     /**
      * Get Movies rated by user on TMDB (using LiveData)
      *
@@ -603,60 +424,22 @@ public class MovieRepository {
      * @param sortMode Allowed Values: created_at.asc, created_at.desc, defined in StaticParameter.SortMode
      * @param page     target page
      */
-    public void getTMDBRatedMovies(long userId, String session, String sortMode, int page) {
-        Call<MoviesResponse> call = service.getTMDBRatedMovies(userId, apiKey, session, sortMode, page, language);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
-        call.enqueue(requestHandler);
+    public Call<MoviesResponse> getTMDBRatedMovies(long userId, String session, String sortMode, int page) {
+        return service.getTMDBRatedMovies(userId, apiKey, session, sortMode, page, language);
     }
+    // endregion
 
+    // region DISCOVER MOVIES BY GENRES
     /**
      * Discover Movies by Genres (using LiveData)
      *
      * @param page          target page
      * @param includeGenres Comma separated value of genre ids that you want to include in the results.
      */
-    public void discoverMoviesByGenres(int page, String includeGenres) {
-        Call<MoviesResponse> call = service.discoverMovies(apiKey, page, language, region, includeGenres);
-        Callback<MoviesResponse> requestHandler = getMoviesResponseRequestHandler(moviesLiveData);
-        call.enqueue(requestHandler);
+    public Call<MoviesResponse> discoverMoviesByGenres(int page, String includeGenres) {
+        return service.discoverMovies(apiKey, page, language, region, includeGenres);
     }
-
-
-    /**
-     * (private) Get Request Handler (using LiveData)
-     *
-     * @param moviesLiveData live data
-     * @return Request Handler
-     */
-    private Callback<MoviesResponse> getMoviesResponseRequestHandler(MutableLiveData<ArrayList<MovieData>> moviesLiveData) {
-        return new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    MoviesResponse responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        moviesLiveData.postValue(responseBody.movie_list);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
-                // post null to liveData
-                moviesLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
-            }
-        };
-    }
-
-    /***
-     * Get Movies Response Live Data
-     * @return
-     */
-    public MutableLiveData<ArrayList<MovieData>> getMoviesLiveData() {
-        return moviesLiveData;
-    }
+    // endregion
 
     // endregion
 
@@ -668,36 +451,8 @@ public class MovieRepository {
      * @param movieId Movie Id
      * @param page    target page
      */
-    public void getTMDBMovieReviews(long movieId, int page) {
-        Call<ReviewsResponse> call = service.getTMDBMovieReviews(movieId, apiKey, page);
-        Callback<ReviewsResponse> requestHandler = new Callback<ReviewsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReviewsResponse> call, @NonNull Response<ReviewsResponse> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    ReviewsResponse responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        reviewsLiveData.postValue(responseBody.review_list);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ReviewsResponse> call, @NonNull Throwable t) {
-                // post null to liveData
-                reviewsLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
-            }
-        };
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get Reviews Response Live Data
-     * @return
-     */
-    public MutableLiveData<ArrayList<ReviewsResponse.ReviewData>> getReviewsLiveData() {
-        return reviewsLiveData;
+    public Call<ReviewsResponse> getTMDBMovieReviews(long movieId, int page) {
+        return service.getTMDBMovieReviews(movieId, apiKey, page);
     }
 
     // endregion
@@ -709,40 +464,11 @@ public class MovieRepository {
      *
      * @param movieId Movie Id
      */
-    public void getWatchProviderByMovie(long movieId) {
-        Call<WatchProvidersResponse> call = service.getWatchProviderByMovie(movieId, apiKey);
-        Callback<WatchProvidersResponse> requestHandler = new Callback<WatchProvidersResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<WatchProvidersResponse> call, @NonNull Response<WatchProvidersResponse> response) {
-                if (response.isSuccessful()) { // Request successfully
-                    WatchProvidersResponse responseBody = response.body();
-                    if (responseBody != null) { // Data exists
-                        // post result data to liveData
-                        watchProvidersLiveData.postValue(responseBody);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<WatchProvidersResponse> call, @NonNull Throwable t) {
-                // post null to liveData
-                watchProvidersLiveData.postValue(null);
-                Log.d(LOG_TAG, String.format("data fetch failed: \n %s ", t.getMessage()));
-            }
-        };
-        call.enqueue(requestHandler);
-    }
-
-    /***
-     * Get WatchProviders Response Live Data
-     * @return
-     */
-    public MutableLiveData<WatchProvidersResponse> getWatchProvidersLiveData() {
-        return watchProvidersLiveData;
+    public Call<WatchProvidersResponse> getWatchProviderByMovie(long movieId) {
+        return service.getWatchProviderByMovie(movieId, apiKey);
     }
 
     // endregion
-
 
     // endregion
 }

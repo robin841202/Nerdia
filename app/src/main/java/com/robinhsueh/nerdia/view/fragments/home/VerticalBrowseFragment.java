@@ -25,8 +25,7 @@ import com.robinhsueh.nerdia.model.tvshow.TvShowData;
 import com.robinhsueh.nerdia.view.adapter.EmptyDataObserver;
 import com.robinhsueh.nerdia.view.adapter.MoviesAdapter;
 import com.robinhsueh.nerdia.view.adapter.TvShowsAdapter;
-import com.robinhsueh.nerdia.viewmodel.MoviesViewModel;
-import com.robinhsueh.nerdia.viewmodel.TvShowsViewModel;
+import com.robinhsueh.nerdia.viewmodel.HomeViewModel;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
@@ -48,8 +47,7 @@ public class VerticalBrowseFragment extends Fragment {
     private GridLayoutManager mLayoutMgr;
     private int currentPage;
 
-    private MoviesViewModel moviesViewModel;
-    private TvShowsViewModel tvShowsViewModel;
+    private HomeViewModel viewModel;
 
     public VerticalBrowseFragment() {
         // Required empty public constructor
@@ -66,10 +64,8 @@ public class VerticalBrowseFragment extends Fragment {
         currentPage = 1;
 
         // Initialize viewModel, data only survive this fragment lifecycle
-        moviesViewModel = new ViewModelProvider(this).get(MoviesViewModel.class);
-        moviesViewModel.init();
-        tvShowsViewModel = new ViewModelProvider(this).get(TvShowsViewModel.class);
-        tvShowsViewModel.init();
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel.init();
 
         /**
          * Create a observer that observe when MovieData List LiveData changed
@@ -158,46 +154,46 @@ public class VerticalBrowseFragment extends Fragment {
         // Set observer
         switch (homeCategory) {
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
-                moviesViewModel.getUpcomingMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getUpcomingMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
-                moviesViewModel.getNowPlayingMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getNowPlayingMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
-                moviesViewModel.getTrendingMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getTrendingMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
-                moviesViewModel.getPopularMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getPopularMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.NETFLIX_MOVIES:
-                moviesViewModel.getNetflixMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getNetflixMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
-                tvShowsViewModel.getPopularTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getPopularTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
-                tvShowsViewModel.getTrendingTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getTrendingTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
-                tvShowsViewModel.getNetflixTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getNetflixTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.DISNEY_MOVIES:
-                moviesViewModel.getDisneyMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getDisneyMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
-                tvShowsViewModel.getDisneyTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getDisneyTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
-                moviesViewModel.getCatchplayMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getCatchplayMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
-                tvShowsViewModel.getCatchplayTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getCatchplayTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             case StaticParameter.HomeCategory.PRIME_MOVIES:
-                moviesViewModel.getPrimeMoviesLiveData().observe(this, moviesObserver);
+                viewModel.getPrimeMoviesLiveData().observe(this, moviesObserver);
                 break;
             case StaticParameter.HomeCategory.PRIME_TVSHOWS:
-                tvShowsViewModel.getPrimeTvShowsLiveData().observe(this, tvShowsObserver);
+                viewModel.getPrimeTvShowsLiveData().observe(this, tvShowsObserver);
                 break;
             default:
                 // do nothing
@@ -298,72 +294,72 @@ public class VerticalBrowseFragment extends Fragment {
             case StaticParameter.HomeCategory.UPCOMING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_upcoming_movies));
-                moviesViewModel.getUpcomingMovies(currentPage);
+                viewModel.getUpcomingMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.NOWPLAYING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_now_playing_movies));
-                moviesViewModel.getNowPlayingMovies(currentPage);
+                viewModel.getNowPlayingMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.TRENDING_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_trending_movies));
-                moviesViewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, currentPage);
+                viewModel.getTrendingMovies(StaticParameter.TimeWindow.WEEKLY, currentPage);
                 break;
             case StaticParameter.HomeCategory.POPULAR_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_popular_movies));
-                moviesViewModel.getPopularMovies(currentPage);
+                viewModel.getPopularMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.NETFLIX_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_netflix_movies));
-                moviesViewModel.getNetflixMovies(currentPage);
+                viewModel.getNetflixMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.POPULAR_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_popular_tvShows));
-                tvShowsViewModel.getPopularTvShows(currentPage);
+                viewModel.getPopularTvShows(currentPage);
                 break;
             case StaticParameter.HomeCategory.TRENDING_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_trending_tvShows));
-                tvShowsViewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, currentPage);
+                viewModel.getTrendingTvShows(StaticParameter.TimeWindow.WEEKLY, currentPage);
                 break;
             case StaticParameter.HomeCategory.NETFLIX_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_netflix_tvShows));
-                tvShowsViewModel.getNetflixTvShows(currentPage);
+                viewModel.getNetflixTvShows(currentPage);
                 break;
             case StaticParameter.HomeCategory.DISNEY_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_disney_movies));
-                moviesViewModel.getDisneyMovies(currentPage);
+                viewModel.getDisneyMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.DISNEY_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_disney_tvShows));
-                tvShowsViewModel.getDisneyTvShows(currentPage);
+                viewModel.getDisneyTvShows(currentPage);
                 break;
             case StaticParameter.HomeCategory.CATCHPLAY_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_catchplay_movies));
-                moviesViewModel.getCatchplayMovies(currentPage);
+                viewModel.getCatchplayMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.CATCHPLAY_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_catchplay_tvShows));
-                tvShowsViewModel.getCatchplayTvShows(currentPage);
+                viewModel.getCatchplayTvShows(currentPage);
                 break;
             case StaticParameter.HomeCategory.PRIME_MOVIES:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_prime_movies));
-                moviesViewModel.getPrimeMovies(currentPage);
+                viewModel.getPrimeMovies(currentPage);
                 break;
             case StaticParameter.HomeCategory.PRIME_TVSHOWS:
                 // set toolbar title
                 toolBar.setTitle(getString(R.string.title_prime_tvShows));
-                tvShowsViewModel.getPrimeTvShows(currentPage);
+                viewModel.getPrimeTvShows(currentPage);
                 break;
             default:
                 // do nothing
