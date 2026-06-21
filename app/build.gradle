@@ -6,11 +6,6 @@ android {
     namespace "com.robinhsueh.nerdia"
     compileSdk 35
 
-    configurations.all {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-    }
-
     defaultConfig {
         applicationId "com.robinhsueh.nerdia"
         minSdk 27
