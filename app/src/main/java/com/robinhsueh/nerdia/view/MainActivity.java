@@ -51,18 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
         // show and hide toolbar depends on destination fragments
         navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            switch (navDestination.getId()){
-                case R.id.homeFragment:
-                case R.id.discoverFragment:
-                case R.id.watchlistFragment:
-                case R.id.profileFragment:
-                    // Hide Toolbar
-                    toolbar.setVisibility(View.GONE);
-                    break;
-                default:
-                    // Show Toolbar
-                    toolbar.setVisibility(View.VISIBLE);
-                    break;
+            int id = navDestination.getId();
+            if (id == R.id.homeFragment || id == R.id.discoverFragment || id == R.id.watchlistFragment || id == R.id.profileFragment) {
+                // Hide Toolbar
+                toolbar.setVisibility(View.GONE);
+            } else {
+                // Show Toolbar
+                toolbar.setVisibility(View.VISIBLE);
             }
         });
 
