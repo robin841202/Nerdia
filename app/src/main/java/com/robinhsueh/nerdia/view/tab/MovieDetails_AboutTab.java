@@ -31,7 +31,7 @@ import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 
-import io.github.giangpham96.expandabletextview.ExpandableTextView;
+import io.github.giangpham96.expandable_textview.ExpandableTextView;
 
 public class MovieDetails_AboutTab extends Fragment implements ThumbnailsAdapter.IThumbnailListener {
 

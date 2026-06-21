@@ -1,6 +1,5 @@
 package com.robinhsueh.nerdia.view.bottomsheet;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,11 +112,7 @@ public class RatingBottomSheet extends BottomSheetDialogFragment {
      */
     private void setScoreOnRatingBarChange(float score) {
         int scoreInPercent = (int) (score * 10);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            progressBar.setProgress(scoreInPercent, true);
-        } else {
-            progressBar.setProgress(scoreInPercent);
-        }
+        progressBar.setProgress(scoreInPercent, true);
         progressText.setText(String.format(Locale.TAIWAN, "%.1f", score));
     }
 

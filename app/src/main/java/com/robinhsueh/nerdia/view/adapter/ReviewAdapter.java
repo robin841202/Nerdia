@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import io.github.giangpham96.expandabletextview.ExpandableTextView;
+import io.github.giangpham96.expandable_textview.ExpandableTextView;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
     private final String LOG_TAG = "ReviewAdapter";

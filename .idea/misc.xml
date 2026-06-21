@@ -98,7 +98,8 @@
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/bottom_sheet_watch_provider.xml" value="0.5057291666666667" />
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_cast_tab.xml" value="0.378125" />
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_discover.xml" value="0.378125" />
-        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_home.xml" value="0.22922521075873142" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_general_list.xml" value="0.3541666666666667" />
+        <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_profile.xml" value="0.3052536231884058" />
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/fragment_tv_show_details_about_tab.xml" value="0.29739583333333336" />
         <entry key="..\:/Android/Nerdia/app/src/main/res/layout/item_category.xml" value="0.33" />
@@ -109,7 +110,8 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

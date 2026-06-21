@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import io.github.giangpham96.expandabletextview.ExpandableTextView;
+import io.github.giangpham96.expandable_textview.ExpandableTextView;
 
 public class PersonDetails_AboutTab extends Fragment implements ProfileImageAdapter.IProfileImageListener {
 
