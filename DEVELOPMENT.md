@@ -10,6 +10,12 @@ To maintain consistency in development, please refer to the following documentat
 
 ## Setup
 
+### Prerequisites
+- **Android Studio**: Ladybug | 2024.1.3 or higher.
+- **JDK**: 17+ (JDK 21 recommended for Gradle 9.6.0).
+- **Gradle**: 9.6.0.
+
+### Instructions
 1. Clone the repository.
 2. Add your API keys to `gradle.properties`:
    ```properties
