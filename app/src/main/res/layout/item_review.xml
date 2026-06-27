@@ -83,7 +83,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <io.github.giangpham96.expandabletextview.ExpandableTextView
+            <io.github.giangpham96.expandable_textview.ExpandableTextView
                 android:id="@+id/expandText_review"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

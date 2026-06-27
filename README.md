@@ -40,3 +40,11 @@
 
 ## Play商店連結
 <a href="https://play.google.com/store/apps/details?id=com.robinhsueh.nerdia"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="75"></a>
+
+---
+
+## 🛠 開發者資源 (Developer Resources)
+如果您是開發者，請參考以下技術文件以進行環境設定與開發：
+- **開發指南**: [DEVELOPMENT.md](DEVELOPMENT.md)
+- **Git 工作流**: [GIT_WORKFLOW.md](GIT_WORKFLOW.md)
+

@@ -93,7 +93,7 @@
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
-        <io.github.giangpham96.expandabletextview.ExpandableTextView
+        <io.github.giangpham96.expandable_textview.ExpandableTextView
             android:id="@+id/expandText_biography"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
