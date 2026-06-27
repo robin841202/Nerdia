@@ -91,19 +91,20 @@
 
 ### B. 發布新版本 (Releasing a Version)
 1.  在 `develop` 分支更新 `app/build.gradle` 中的 `versionName` 與 `versionCode`。
-2.  提交變更：
+2.  在 `develop` 分支更新 `fragment_profile.xml` -> `text_app_version` -> `tools:text`
+3.  提交變更：
     ```text
     更新版本號至 1.3.0
-
-    chore: update app version to 1.3.0
+   
+    chore: update app version to 1.3.0 & version code 6
     ```
-3.  將 `develop` 合併至 `master`:
+4.  將 `develop` 合併至 `master`:
     ```bash
     git checkout master
     git merge develop
     ```
-4.  打上版本標籤：`git tag -a v1.3.0 -m "Release v1.3.0"`
-5.  推送至 GitHub：`git push origin master --tags`
+5.  打上版本標籤：`git tag -a v1.3.0 -m "Release v1.3.0"`
+6.  推送至 GitHub：`git push origin master --tags`
 
 ### C. 緊急修復 Bug (Handling a Hotfix)
 1.  從 `develop` 或 `master` (取決於 Bug 影響範圍) 建立 hotfix 分支：`git checkout -b hotfix/1.2.2`
