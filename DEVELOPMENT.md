@@ -7,6 +7,7 @@ This document provides technical details for developers. For a product overview 
 To maintain consistency in development, please refer to the following documentation:
 
 - **Git Workflow**: See [GIT_WORKFLOW.md](GIT_WORKFLOW.md) for branching, commit message conventions, and release procedures.
+- **AI Agent Team Workflow**: See [AI_WORKFLOW_GUIDE.md](AI_WORKFLOW_GUIDE.md) for our 4+1 Multi-Agent (PM, UI/UX, Senior RD, QA, and Human RD) workflow, rules, and slash commands in Google Antigravity.
 
 ## Setup
 
